@@ -10,14 +10,9 @@
 
 <body>
 <form id="register" method="POST">
-    <label>First Name</label><br>
-    <input class="input-field" id="userFirstName" type="text" autocomplete="off" required/><br><br>
 
-    <label>Last Name</label><br>
-    <input class="input-field" id="userLastName" type="text" autocomplete="off" required/><br><br>
-
-    <label>Create Username</label><br>
-    <input class="input-field" id="userUserName" type="text" autocomplete="off" required/><br><br>
+    <label>Email Address</label><br>
+    <input class="input-field" id="userEmailAddress" type="text" autocomplete="off" required/><br><br>
 
     <label>Create Password</label><br>
     <input class="input-field" id="userCreatePassword" type="password" autocomplete="off" required/><br><br>
@@ -25,7 +20,24 @@
     <label>Confirm Password</label><br>
     <input class="input-field" id="userConfirmPassword" type="password" autocomplete="off" required/><br><br>
 
-    <button type="submit" id="register-btn">Sign Up</button>
+    <button onclick="store()" type="button" id="register-btn">Sign Up</button>
+    <button onclick="get()" type="button" id="display-btn">Display Email</button>
+
+    <script  type="text/javascript">
+      function store() {
+        var email = document.getElementById('userEmailAddress');
+        var createpw = document.getElementById('userCreatePassword');
+        var confirmpw = document.getElementById('userConfirmPassword');
+        localStorage.setItem('email', email.value);
+        localStorage.setItem('createpw', createpw.value);
+        localStorage.setItem('confirmpw', confirmpw.value);
+        alert("Successfully submitted.");
+      }
+      function get() {
+        var storedEmail = localStorage.getItem('email');
+        alert(storedEmail);
+      }
+    </script>
 </form>
 <p>Have an account? <a href="login.html"> Log In </a></p>
 </body>
