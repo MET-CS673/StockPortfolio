@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8"/>
+    <title>Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" href="favicon.ico"/>
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script>
+      var ExcelApp = new ActiveXObject("Excel.Application");
+      var ExcelSheet = new ActiveXObject("Excel.Sheet");
+      // a text is stored in the first cell
+      ExcelSheet.ActiveSheet.Cells(1,1).Value = "Texto1";
+      // the sheet is saved
+      ExcelSheet.SaveAs("Signup Info.xlsx");
+      // close Excel with the Quit() method of the Application object
+      ExcelSheet.Application.Quit();
+    </script>
+</head>
+
+<body>
+<form id="register" method="POST">
+    <label>Email Address</label><br>
+    <input class="input-field" id="userEmailAddress" name = "EmailAdd" type="text" autocomplete="off" required/><br><br>
+
+    <label>Create Password</label><br>
+    <input class="input-field" id="userCreatePassword" name = "CreatePass" type="password" autocomplete="off" required/><br><br>
+
+    <label>Confirm Password</label><br>
+    <input class="input-field" id="userConfirmPassword" name = "ConfirmPass" type="password" autocomplete="off" required/><br><br>
+
+    <button type="submit" id="register-btn">Sign Up</button>
+</form>
+<p>Have an account? <a href="Login.html"> Log In </a></p>
+</body>
+
+</html>
