@@ -32,7 +32,7 @@ public class UserService {
      * @return True if the username is not in the database. Otherwise, false.
      */
     public boolean isUserNameAvailable(String username) {
-
+        return userRepository.findAllByUsername(username) == null;
     }
 
     /**
@@ -41,7 +41,7 @@ public class UserService {
      * @param user A user object, which can be either new or existing.
      * @return The new or updated user.
      */
-    public Long save(User user) {
+    public User save(User user) {
         if (user.getId() != null) {
             return userRepository.findById(user.getId())
                     .map(userToBeUpdated -> {
@@ -49,7 +49,7 @@ public class UserService {
                         userToBeUpdated.setUsername(user.getUsername());
                         // TODO: 6/16/21 update password securely
                         userToBeUpdated.setPortfolio(user.getPortfolio());
-                        return userToBeUpdated.getId();
+                        return userToBeUpdated;
                     }).orElseThrow(UserNotFoundException::new);
         }
 
@@ -59,8 +59,9 @@ public class UserService {
         random.nextBytes(salt);
         String encodedSalt = Base64.getEncoder().encodeToString(salt);
         String hashedPassword = hashService.getHashedValue(user.getPassword(), encodedSalt);
-        return userRepository.save(new User(user.getUserId(), user.getUsername(),
-                encodedSalt, hashedPassword, user.getUsername()));
+        return userRepository.save(
+                new User(user.getId(), user.getUsername(), hashedPassword,
+                        user.getSalt(), user.getEmail(), user.getPortfolio()));
     }
 
     public User findUserById(Long id) {

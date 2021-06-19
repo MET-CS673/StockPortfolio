@@ -39,8 +39,8 @@ public class SignupController {
         }
 
         if (signupError == null) {
-            Long userId = userService.save(user);
-            if (userId < 0) {
+            User savedUser = userService.save(user);
+            if (savedUser.getId() < 0) {
                 signupError = "There was an error signing up. Please try again.";
             }
         }
