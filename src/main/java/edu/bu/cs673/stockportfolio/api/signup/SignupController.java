@@ -1,4 +1,4 @@
-package edu.bu.cs673.stockportfolio.api.user;
+package edu.bu.cs673.stockportfolio.api.signup;
 
 import edu.bu.cs673.stockportfolio.domain.user.User;
 import edu.bu.cs673.stockportfolio.service.user.UserService;
@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  *
  *********************************************************************************************************************/
 @Controller
-@RequestMapping("/user")
+@RequestMapping("/signup")
 public class SignupController {
 
     private final UserService userService;

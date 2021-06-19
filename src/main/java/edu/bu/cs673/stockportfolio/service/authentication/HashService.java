@@ -1,4 +1,4 @@
-package edu.bu.cs673.stockportfolio.service.user;
+package edu.bu.cs673.stockportfolio.service.authentication;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

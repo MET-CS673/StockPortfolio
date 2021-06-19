@@ -2,6 +2,7 @@ package edu.bu.cs673.stockportfolio.service.user;
 
 import edu.bu.cs673.stockportfolio.domain.user.User;
 import edu.bu.cs673.stockportfolio.domain.user.UserRepository;
+import edu.bu.cs673.stockportfolio.service.authentication.HashService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,12 +60,17 @@ public class UserService {
         random.nextBytes(salt);
         String encodedSalt = Base64.getEncoder().encodeToString(salt);
         String hashedPassword = hashService.getHashedValue(user.getPassword(), encodedSalt);
-        return userRepository.save(
-                new User(user.getId(), user.getUsername(), hashedPassword,
-                        user.getSalt(), user.getEmail(), user.getPortfolio()));
+        User savedUser = userRepository.save(
+                new User(user.getUsername(), hashedPassword, encodedSalt, user.getEmail(), user.getPortfolio()));
+
+        return savedUser;
     }
 
     public User findUserById(Long id) {
         return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    }
+
+    public User findUserByName(String userName) {
+        return userRepository.findAllByUsername(userName);
     }
 }

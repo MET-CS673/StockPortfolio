@@ -1,4 +1,4 @@
-package edu.bu.cs673.stockportfolio.service.user;
+package edu.bu.cs673.stockportfolio.service.authentication;
 
 import edu.bu.cs673.stockportfolio.domain.user.User;
 import edu.bu.cs673.stockportfolio.domain.user.UserRepository;
