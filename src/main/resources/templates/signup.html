@@ -1,46 +1,56 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/bootstrap.min.css}">
+    <link rel="icon" href="../icons/favicon.ico" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="../css/login_register.css" rel="stylesheet">
 
-    <title>Sign Up</title>
+    <title>Signup</title>
 </head>
-<body class="p-3 mb-2 bg-light text-black">
-<div class="container justify-content-center w-50 p-3" style="background-color: #eeeeee; margin-top: 5em;">
-    <div class="form-group">
-        <label><a th:href="@{/login}">Back to Login</a></label>
-    </div>
-
-    <h1 class="display-5">Sign Up</h1>
+<body class="text-center">
     <form action="#" th:action="@{/signup}" method="POST">
         <div id="success-msg" th:if="${signupSuccess}" class="alert alert-dark">
-            You successfully signed up! Please continue to the <a id="login-link" th:href="@{/login}">login</a> page.
+            You successfully signed up! Please continue to the <a id="login-link" href="login.html">login</a> page.
         </div>
         <div id="error-msg" th:if="${signupError}" class="alert alert-danger">
-            <span th:text="${signupError}"></span>
+            Invalid<span th:text="${signupError}"></span>
         </div>
-        <div class="form-row">
-            <div class="form-group col-md-4">
-                <label for="inputEmail">Email</label>
-                <input type="email" name="email" class="form-control" id="inputEmail" placeholder="Enter Email"
-                       maxlength="50" required>
-            </div>
-            <div class="form-group col-md-4">
-                <label for="inputUsername">Username</label>
-                <input type="input" name="username" class="form-control" id="inputUsername" placeholder="Enter Username"
-                       maxlength="50" required>
-            </div>
-            <div class="form-group col-md-4">
-                <label for="inputPassword">Password</label>
-                <input type="password" name="password" class="form-control" id="inputPassword"
-                       placeholder="Enter Password" maxlength="20" required>
-            </div>
+
+        <img class="mb-4" src="../icons/favicon.ico" alt="" width="72" height="72">
+        <h1 class="h3 mb-3 font-weight-normal">Sign Up</h1>
+        <div class="form-group">
+          <label for="inputEmail" class="sr-only">Email Address</label>
+          <input type="text" id="userEmailAddress" class="form-control" placeholder="Email Address" required>
+          <label for="inputCreatePassword" class="sr-only">Create Password</label>
+          <input type="password" id="userCreatePassword" class="form-control" placeholder="Create Password" required>
+          <label for="inputConfirmPassword" class="sr-only">Confirm Password</label>
+          <input type="password" id="userConfirmPassword" class="form-control" placeholder="Confirm Password" required>
         </div>
-        <button id="submitButton" type="submit" class="btn btn-primary">Sign Up</button>
+        <button onclick="store()" id="submitButton" type="submit" class="btn btn-primary">Sign Up</button>
+        <button onclick="get()" id="submitButton" type="submit" class="btn btn-primary">Display</button>
+        <script  type="text/javascript">
+          function store() {
+            var email = document.getElementById('userEmailAddress');
+            var createpw = document.getElementById('userCreatePassword');
+            var confirmpw = document.getElementById('userConfirmPassword');
+            localStorage.setItem('email', email.value);
+            localStorage.setItem('createpw', createpw.value);
+            localStorage.setItem('confirmpw', confirmpw.value);
+            alert("Successfully submitted.");
+          }
+          function get() {
+            var storedEmail = localStorage.getItem('email');
+            alert(storedEmail);
+          }
+        </script>
+        <p class="loginhere">
+            Already have an account ? <a href="login.html" class="loginhere-link">Login here</a>
+        </p>
     </form>
-</div>
 </body>
 </html>
