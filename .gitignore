@@ -31,3 +31,6 @@ target/
 
 ### MacOs ###
 .DS_Store
+
+#API
+src/main/resources/secrets.properties
