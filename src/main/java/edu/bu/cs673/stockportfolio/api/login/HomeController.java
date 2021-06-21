@@ -1,6 +1,7 @@
 package edu.bu.cs673.stockportfolio.api.login;
 
 import edu.bu.cs673.stockportfolio.domain.user.User;
+import edu.bu.cs673.stockportfolio.service.portfolio.MarketDataService;
 import edu.bu.cs673.stockportfolio.service.user.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -16,16 +17,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class HomeController {
 
     private final UserService userService;
+    private final MarketDataService marketDataService;
 
-    public HomeController(UserService userService) {
+    public HomeController(UserService userService, MarketDataService marketDataService) {
         this.userService = userService;
+        this.marketDataService = marketDataService;
     }
 
     @GetMapping
     public String getHomePage(Authentication authentication, Model model) {
         User user = userService.findUserByName(authentication.getName());
 
-        // TODO: 6/19/21 add user data to model 
+        // TODO: 6/21/21 delete this. used for api testing 
+        marketDataService.run();
+
+        // TODO: 6/19/21 add user data to model
         
         return "home";
     }
