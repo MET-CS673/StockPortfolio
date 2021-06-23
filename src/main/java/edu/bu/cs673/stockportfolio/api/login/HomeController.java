@@ -30,6 +30,7 @@ public class HomeController {
 
         // TODO: 6/21/21 delete this. used for api testing 
         marketDataService.run();
+        marketDataService.runBatch();
 
         // TODO: 6/19/21 add user data to model
         
