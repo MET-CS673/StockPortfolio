@@ -2,10 +2,8 @@ package edu.bu.cs673.stockportfolio.service.portfolio;
 
 import edu.bu.cs673.stockportfolio.domain.portfolio.Portfolio;
 import edu.bu.cs673.stockportfolio.domain.portfolio.PortfolioRepository;
-import edu.bu.cs673.stockportfolio.domain.user.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 /**********************************************************************************************************************
  * Implements business logic for Portfolio requests.
@@ -16,11 +14,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class PortfolioService {
 
     private final PortfolioRepository portfolioRepository;
-    private final MarketDataService marketDataService;
+    private final MarketDataServiceImpl marketDataServiceImpl;
 
-    public PortfolioService(PortfolioRepository portfolioRepository, MarketDataService marketDataService) {
+    public PortfolioService(PortfolioRepository portfolioRepository, MarketDataServiceImpl marketDataServiceImpl) {
         this.portfolioRepository = portfolioRepository;
-        this.marketDataService = marketDataService;
+        this.marketDataServiceImpl = marketDataServiceImpl;
     }
 
     public boolean save(Portfolio portfolio) {
@@ -37,9 +35,5 @@ public class PortfolioService {
         portfolioRepository.delete(portfolio);
 
         return portfolioRepository.findById(portfolio.getId()).isEmpty();
-    }
-
-    public void test() {
-        marketDataService.run();
     }
 }

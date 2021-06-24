@@ -1,4 +1,4 @@
-package edu.bu.cs673.stockportfolio.domain.security;
+package edu.bu.cs673.stockportfolio.domain.security.quotes;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -6,15 +6,15 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
         "quote"
 })
-public class Stock {
+public class StockQuote {
 
     @JsonProperty("quote")
     private Quote quote;
 
-    public Stock() {
+    public StockQuote() {
     }
 
-    public Stock(Quote quote) {
+    public StockQuote(Quote quote) {
         this.quote = quote;
     }
 
