@@ -1,16 +1,17 @@
-package edu.bu.cs673.stockportfolio.domain.security;
+package edu.bu.cs673.stockportfolio.domain.security.quotes;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonRootName;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "symbol",
-        "latestPrice"
+        "latestPrice",
+        "marketCap"
 })
 public class Quote {
 
@@ -18,10 +19,11 @@ public class Quote {
     private String symbol;
     @JsonProperty("latestPrice")
     private BigDecimal latestPrice;
+    @JsonProperty("marketCap")
+    private BigInteger marketCap;
 
     /**
      * No args constructor for use in serialization
-     *
      */
     public Quote() {
     }
@@ -30,11 +32,13 @@ public class Quote {
      *
      * @param symbol
      * @param latestPrice
+     * @param marketCap
      */
-    public Quote(String symbol, BigDecimal latestPrice) {
+    public Quote(String symbol, BigDecimal latestPrice, BigInteger marketCap) {
         super();
         this.symbol = symbol;
         this.latestPrice = latestPrice;
+        this.marketCap = marketCap;
     }
 
     @JsonProperty("symbol")
@@ -55,5 +59,15 @@ public class Quote {
     @JsonProperty("latestPrice")
     public void setLatestPrice(BigDecimal latestPrice) {
         this.latestPrice = latestPrice;
+    }
+
+    @JsonProperty("marketCap")
+    public BigInteger getMarketCap() {
+        return marketCap;
+    }
+
+    @JsonProperty("marketCap")
+    public void setMarketCap(BigInteger marketCap) {
+        this.marketCap = marketCap;
     }
 }
