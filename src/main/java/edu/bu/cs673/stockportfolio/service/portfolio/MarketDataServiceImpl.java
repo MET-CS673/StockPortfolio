@@ -12,12 +12,10 @@ public class MarketDataServiceImpl implements MarketDataService {
     private final String BASE_URL = "https://cloud.iexapis.com/";
     private final String VERSION = "stable/";
     private final String TOKEN = "&token=";
-    private final IexCloudConfig iexCloudConfig;
     private final RestTemplate restTemplate;
     private final String apiKey;
 
     public MarketDataServiceImpl(IexCloudConfig iexCloudConfig, RestTemplate restTemplate) {
-        this.iexCloudConfig = iexCloudConfig;
         this.restTemplate = restTemplate;
         this.apiKey = iexCloudConfig.getApiKey();
     }
@@ -26,7 +24,7 @@ public class MarketDataServiceImpl implements MarketDataService {
     public void doGetQuotes() {
         String symbols = "aapl,fb,tsla";
         String endpointPath = "stock/market/batch";
-        String queryParams = String.format("?symbols=%s&types=quote&filter=symbol,latestPrice", symbols);
+        String queryParams = String.format("?symbols=%s&types=quote&filter=symbol,latestPrice,marketCap", symbols);
 
         QuoteRoot quoteRoot = restTemplate.getForObject(
                 BASE_URL + VERSION + endpointPath + queryParams + TOKEN + apiKey, QuoteRoot.class);
