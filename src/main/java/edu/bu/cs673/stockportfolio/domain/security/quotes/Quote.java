@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -20,7 +19,7 @@ public class Quote {
     @JsonProperty("latestPrice")
     private BigDecimal latestPrice;
     @JsonProperty("marketCap")
-    private BigInteger marketCap;
+    private Long marketCap;
 
     /**
      * No args constructor for use in serialization
@@ -34,7 +33,7 @@ public class Quote {
      * @param latestPrice
      * @param marketCap
      */
-    public Quote(String symbol, BigDecimal latestPrice, BigInteger marketCap) {
+    public Quote(String symbol, BigDecimal latestPrice, Long marketCap) {
         super();
         this.symbol = symbol;
         this.latestPrice = latestPrice;
@@ -62,12 +61,12 @@ public class Quote {
     }
 
     @JsonProperty("marketCap")
-    public BigInteger getMarketCap() {
+    public Long getMarketCap() {
         return marketCap;
     }
 
     @JsonProperty("marketCap")
-    public void setMarketCap(BigInteger marketCap) {
+    public void setMarketCap(Long marketCap) {
         this.marketCap = marketCap;
     }
 }
