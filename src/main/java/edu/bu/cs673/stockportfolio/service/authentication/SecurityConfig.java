@@ -30,7 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // Allow unauthenticated users to access the signup endpoint. Allow authenticated users access to all endpoints
         http.authorizeRequests()
-                .antMatchers("/signup", "/css/*", "/js/*").permitAll()
+                .antMatchers("/signup", "/css/*", "/js/*", "/images/*").permitAll()
                 .anyRequest().authenticated();
 
         // permit all requests to the login endpoint
