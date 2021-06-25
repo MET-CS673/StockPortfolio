@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <link rel="icon" href="/icons/favicon.ico" />
-    <link href="/css/login.css" rel="stylesheet">
+    <link rel="icon" href="/images/logo.jpg" />
+    <link href="/css/login-and-register.css" rel="stylesheet">
 
     <title>Login</title>
 </head>
@@ -22,7 +22,7 @@
         <div id="logoutMsg" th:if="${param.logout}" class="alert alert-dark">
             You have been logged out
         </div>
-        <img class="mb-4" src="../icons/favicon.ico" alt="" width="72" height="72">
+        <img class="mb-4" src="/images/logo.jpg" alt="" width="72" height="72">
         <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
 
         <label for="inputUsername" class="sr-only">Username</label>
@@ -34,7 +34,7 @@
         <button class="btn btn-lg btn-primary btn-block" type="submit" id="submitButton" >Sign in</button>
 
         <div class="form-group" style="margin-top: 0.5em;">
-            <label><a id="signup-link" th:href="@{/signup}">Click here to sign up</a></label>
+            <label><a th:href="@{/signup}">Click here to sign up</a></label>
         </div>
     </form>
 </body>
