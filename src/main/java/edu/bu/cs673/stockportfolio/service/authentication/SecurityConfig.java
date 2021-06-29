@@ -5,6 +5,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 
 /**********************************************************************************************************************'
  * Spring configuration class that implements the methods that modify Spring's configuration to use our Services. The
@@ -28,20 +29,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // Allow unauthenticated users to access the signup endpoint. Allow authenticated users access to all endpoints
+        // Allow unauthenticated users to access the signup endpoint.
+        // Allow authenticated users access to all endpoints
         http.authorizeRequests()
                 .antMatchers("/signup", "/css/*", "/js/*", "/images/*").permitAll()
                 .anyRequest().authenticated();
 
-        // permit all requests to the login endpoint
+        // Permit all requests to the login endpoint.
         http.formLogin()
                 .loginPage("/login")
                 .permitAll();
 
-        // automatically redirect successful logins to the home endpoint
+        // Automatically redirect successful logins to the home endpoint.
         http.formLogin()
                 .defaultSuccessUrl("/home", true);
 
         http.logout().permitAll();
+
+        // Sessions timeout occurs at 300 seconds (set in properties file). This redirects timed out session to login.
+        http.sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .invalidSessionUrl("/login");
     }
 }
