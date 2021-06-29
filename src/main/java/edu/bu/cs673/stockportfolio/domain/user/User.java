@@ -13,7 +13,10 @@ import javax.persistence.*;
  *
  *********************************************************************************************************************/
 @Entity
-@Check(constraints = "LENGTH(TRIM(username)) > 0 && LENGTH(TRIM(password)) > 7 && LENGTH(TRIM(email)) > 0")
+@Check(constraints = "LENGTH(TRIM(username)) > 0 &&"
+        + " LENGTH(TRIM(username)) > 0 &&"
+        + " LENGTH(TRIM(email)) > 0 &&"
+        + " LENGTH(TRIM(password)) > 10")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
