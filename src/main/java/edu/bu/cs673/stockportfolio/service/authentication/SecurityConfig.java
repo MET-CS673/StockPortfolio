@@ -29,6 +29,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
+        // Cross site scripting protection https://www.baeldung.com/spring-prevent-xss
+        http.
+                headers()
+                .xssProtection()
+                .and()
+                .contentSecurityPolicy("script-src 'self'");
+
         // Allow unauthenticated users to access the signup endpoint.
         // Allow authenticated users access to all endpoints
         http.authorizeRequests()
