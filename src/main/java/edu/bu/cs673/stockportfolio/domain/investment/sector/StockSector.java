@@ -1,7 +1,8 @@
-package edu.bu.cs673.stockportfolio.domain.security.sectors;
+package edu.bu.cs673.stockportfolio.domain.investment.sector;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import edu.bu.cs673.stockportfolio.domain.investment.sector.Company;
 
 @JsonPropertyOrder({
         "company"

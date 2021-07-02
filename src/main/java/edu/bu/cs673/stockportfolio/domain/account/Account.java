@@ -1,7 +1,7 @@
 package edu.bu.cs673.stockportfolio.domain.account;
 
 import edu.bu.cs673.stockportfolio.domain.portfolio.Portfolio;
-import edu.bu.cs673.stockportfolio.domain.security.Security;
+import edu.bu.cs673.stockportfolio.domain.investment.quote.Quote;
 
 import javax.persistence.*;
 import java.util.List;
@@ -20,13 +20,21 @@ public class Account {
     @JoinColumn(name = "portfolio_id")
     private Portfolio portfolio;
 
+//    @ManyToMany(cascade = CascadeType.ALL)
+//    @JoinTable(
+//            name = "account_line",
+//            joinColumns = {@JoinColumn(name = "account_id")},
+//            inverseJoinColumns = {@JoinColumn(name = "security_id")}
+//    )
+//    private List<Security> securities;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "account_line",
             joinColumns = {@JoinColumn(name = "account_id")},
-            inverseJoinColumns = {@JoinColumn(name = "security_id")}
+            inverseJoinColumns = {@JoinColumn(name = "quote_id")}
     )
-    private List<Security> securities;
+    private List<Quote> quotes;
 
     private String accountType;
 
@@ -35,15 +43,17 @@ public class Account {
     public Account() {
     }
 
-    public Account(Portfolio portfolio, String accountType, String platform) {
+    public Account(Portfolio portfolio, List<Quote> quotes, String accountType, String platform) {
         this.portfolio = portfolio;
+        this.quotes = quotes;
         this.accountType = accountType;
         this.platform = platform;
     }
 
-    public Account(Long id, Portfolio portfolio, String accountType, String platform) {
+    public Account(Long id, Portfolio portfolio, List<Quote> quotes, String accountType, String platform) {
         this.id = id;
         this.portfolio = portfolio;
+        this.quotes = quotes;
         this.accountType = accountType;
         this.platform = platform;
     }
@@ -78,5 +88,13 @@ public class Account {
 
     public void setPlatform(String platform) {
         this.platform = platform;
+    }
+
+    public List<Quote> getQuotes() {
+        return quotes;
+    }
+
+    public void setQuotes(List<Quote> quotes) {
+        this.quotes = quotes;
     }
 }

@@ -1,4 +1,4 @@
-package edu.bu.cs673.stockportfolio.domain.security.quotes;
+package edu.bu.cs673.stockportfolio.domain.investment.quote;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
