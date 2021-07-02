@@ -58,7 +58,7 @@
           <div class="sidebar-sticky">
             <ul class="nav flex-column dashboard-list">
               <li class="nav-item">
-                <a class="nav-link active"> Home </a>
+                <a class="nav-link" th:href="@{/home}"> Home </a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" th:href="@{/stock_breakdown}">
@@ -78,7 +78,7 @@
             </ul>
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link" th:href="@{/account}">
+                <a class="nav-link active">
                   Account
                 </a>
               </li>
@@ -99,70 +99,9 @@
               border-bottom
             "
           >
-            <h1 class="h2">Home</h1>
-            <div class="btn-toolbar mb-2 mb-md-0">
-              <input type="file" id="csvUpload" accept=".csv" hidden />
-              <button
-                class="btn btn-sm btn-outline-secondary"
-                id="btn-upload-csv"
-                onclick="csvUpload.click()"
-              >
-                Import Account
-              </button>
-            </div>
+            <h1 class="h2">Account</h1>
           </div>
 
-          <h2>Portfolio</h2>
-          <div class="table-responsive">
-            <table class="table table-striped table-sm">
-              <thead>
-                <tr>
-                  <th>Company Name</th>
-                  <th>Ticker Symbol</th>
-                  <th>Quantity</th>
-                  <th>Price</th>
-                  <th>Total Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Facebook</td>
-                  <td>FB</td>
-                  <td>4</td>
-                  <td>$347.71</td>
-                  <td>$1389.64</td>
-                </tr>
-                <tr>
-                  <td>Apple</td>
-                  <td>AAPL</td>
-                  <td>10</td>
-                  <td>$124.50</td>
-                  <td>$1245.00</td>
-                </tr>
-                <tr>
-                  <td>Amazon</td>
-                  <td>AMZN</td>
-                  <td>1</td>
-                  <td>$3424.21</td>
-                  <td>$3424.21</td>
-                </tr>
-                <tr>
-                  <td>Netflix</td>
-                  <td>NFLX</td>
-                  <td>2</td>
-                  <td>$528.01</td>
-                  <td>$1056.02</td>
-                </tr>
-                <tr>
-                  <td>Google</td>
-                  <td>GOOG</td>
-                  <td>1</td>
-                  <td>$2441.31</td>
-                  <td>$2441.31</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
         </main>
       </div>
     </div>
