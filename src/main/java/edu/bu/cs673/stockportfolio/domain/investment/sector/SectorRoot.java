@@ -1,4 +1,4 @@
-package edu.bu.cs673.stockportfolio.domain.security.sectors;
+package edu.bu.cs673.stockportfolio.domain.investment.sector;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;

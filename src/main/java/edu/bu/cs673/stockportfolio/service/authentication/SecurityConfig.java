@@ -31,11 +31,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         // Cross site scripting protection https://www.baeldung.com/spring-prevent-xss
-        http.
-                headers()
-                .xssProtection()
-                .and()
-                .contentSecurityPolicy("script-src 'self'");
+//        http.
+//                headers()
+//                .xssProtection()
+//                .and()
+//                .contentSecurityPolicy("script-src 'self' " +
+//                        "code.jquery.com cdnjs.cloudflare.com maxcdn.bootstrapcdn.com");
 
         // Allow unauthenticated users to access the signup endpoint.
         // Allow authenticated users access to all endpoints
