@@ -5,3 +5,8 @@ body {
 [role="main"] {
   padding-top: 48px; /* Space for fixed navbar */
 }
+
+.chart-container {
+  width: 800px;
+  height: 800px;
+}
