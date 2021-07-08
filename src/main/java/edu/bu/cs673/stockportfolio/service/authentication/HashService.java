@@ -1,7 +1,7 @@
 package edu.bu.cs673.stockportfolio.service.authentication;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.fissore.slf4j.FluentLogger;
+import org.fissore.slf4j.FluentLoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKeyFactory;
@@ -18,7 +18,7 @@ import java.util.Base64;
  *********************************************************************************************************************/
 @Component
 public class HashService {
-    private final Logger logger = LoggerFactory.getLogger(HashService.class);
+    private final FluentLogger log = FluentLoggerFactory.getLogger(HashService.class);
 
     public String getHashedValue(String data, String salt) {
         byte[] hashedValue = null;
@@ -29,7 +29,7 @@ public class HashService {
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             hashedValue = factory.generateSecret(keySpec).getEncoded();
         } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-            logger.error(e.getMessage());
+            log.error().log(e.getMessage());
         }
 
         return Base64.getEncoder().encodeToString((hashedValue));

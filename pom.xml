@@ -77,6 +77,20 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
+        <!-- START logging dependencies -->
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+        <dependency>
+            <groupId>org.fissore</groupId>
+            <artifactId>slf4j-fluent</artifactId>
+            <version>0.13.3</version>
+        </dependency>
+        <!-- END logging dependencies -->
+
     </dependencies>
     <dependencyManagement>
         <dependencies>
