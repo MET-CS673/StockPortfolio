@@ -8,4 +8,4 @@
 
 # System Design
 
-UML Diagram:
+UML Diagrams:
