@@ -78,6 +78,9 @@
                 <div class="chart-container">
                     <canvas id="myChart"></canvas>
                 </div>
+
+                <div id="amchart-container" class="amchart-container">
+                </div>
             </main>
         </div>
     </div>
@@ -98,7 +101,9 @@
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+    <script src="//cdn.amcharts.com/lib/4/core.js"></script>
+    <script src="//cdn.amcharts.com/lib/4/charts.js"></script>
+
     <!--------------------------------------------------------------------------------------
     The below two scripts are necessary for getting Model data but still leveraging external
     scripts. Thymeleaf tags do not work in external javascript files so this is the necessary
@@ -106,6 +111,7 @@
     --------------------------------------------------------------------------------------->
     <script th:inline="javascript">
         /*<![CDATA[*/
+        var mydata = [[${ data }]];
         var keys = [[${ data.keySet() }]];
         var values = [[${ data.values() }]];
         /*]]>*/

@@ -7,6 +7,11 @@ body {
 }
 
 .chart-container {
-  width: 800px;
-  height: 800px;
+  width: 400px;
+  height: 400px;
+}
+
+.amchart-container {
+  width: 100%;
+  height: 400px;
 }
