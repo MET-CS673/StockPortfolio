@@ -1,5 +1,10 @@
 document.addEventListener("DOMContentLoaded", ready);
 
+function myPlot(keys, values) {
+
+    
+}
+
 function ready() {
 
     console.log(JSON.stringify(mydata));
