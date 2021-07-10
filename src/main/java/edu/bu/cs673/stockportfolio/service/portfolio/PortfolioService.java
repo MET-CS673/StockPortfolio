@@ -20,7 +20,6 @@ import java.util.*;
 
 /**********************************************************************************************************************
  * Implements business logic for Portfolio requests.
- *
  *********************************************************************************************************************/
 @Service
 @Transactional
@@ -44,10 +43,7 @@ public class PortfolioService {
 
             Map<String, List<String>> csvRecords = doInternalParse(records);
 
-            /*
-            Package all symbols across the entire portfolio and send one
-            batch request to IEX cloud to reduce network network traffic
-             */
+            // Package all symbols in the portfolio and send a batch request to IEX Cloud to reduce network traffic
             List<String> allSymbols = new ArrayList<>();
             csvRecords.forEach((account, symbols) -> {
                 allSymbols.add(String.join(",", symbols));  //
@@ -82,13 +78,11 @@ public class PortfolioService {
                 .parse(fileReader);
     }
 
+    // Read portfolio data from a CSV file and store the account number as a key and the symbols as a modifiable list
     private Map<String, List<String>> doInternalParse(Iterable<CSVRecord> records) {
         Map<String, List<String>> accountLines = new HashMap<>();
-
-        // The map and arrayList link symbols to the accounts that own them
         for (CSVRecord record : records) {
-
-            // Extract the records from the csv file by searching for static headers
+            // Extract the records from the csv file by using the column headers
             String account = record.get(HEADERS[0]);
             String symbol = record.get(HEADERS[1]);
 
@@ -108,36 +102,55 @@ public class PortfolioService {
         List<String> createdAccounts = new ArrayList<>();
         List<Account> accounts = new ArrayList<>();
 
+        // Update or create an account with quotes provided by IEX Cloud
         csvRecords.forEach((accountNumber, symbols) -> {
-            if (createdAccounts.contains(accountNumber)) {     // Append quotes if the account already exists
-                accounts.forEach(account -> {                  // Get the correct account to append quotes to
-                    if (account.getAccountNumber().equals(accountNumber)) {
-                        symbols.forEach(symbol ->              // An account can contain multiple symbols
-                                allQuotes.forEach(quote -> {   // A batch response of all symbols across all accounts
-                                    if (quote.getSymbol().contains(symbol)) {  // Match quotes to accounts that own them
-                                        account.getQuotes().add(quote);
-                                    }
-                                })
-                        );
-                    }
-                });
-            } else {                                   // Create the account if it doesn't exist
-                Account account = new Account(portfolio, accountNumber);
-                List<Quote> accountSpecificQuotes = new ArrayList<>();
-                symbols.forEach(symbol ->
-                            allQuotes.forEach(quote -> {
-                                if (quote.getSymbol().contains(symbol)) {
-                                    accountSpecificQuotes.add(quote);
-                                }
-                            })
-                    );
-                account.setQuotes(accountSpecificQuotes);
+            if (createdAccounts.contains(accountNumber)) {
+                Optional<Account> account = doAccountFilter(accounts, accountNumber);
+                account.ifPresent(accountToBeUpdated -> doSymbolFilter(symbols, allQuotes, accountToBeUpdated));
+            } else {
+                Account account = doCreateAccount(symbols, allQuotes, portfolio, accountNumber);
+                createdAccounts.add(account.getAccountNumber());
                 accounts.add(account);
-                createdAccounts.add(accountNumber);
             }
         });
 
         return accounts;
+    }
+
+    // Find the current account within the portfolio
+    private Optional<Account> doAccountFilter(List<Account> accounts, String accountNumber) {
+        return accounts
+                .stream()
+                .filter(account -> account.getAccountNumber().equals(accountNumber))
+                .findFirst();
+    }
+
+    // Find all symbols purchased within an account and then add the quote provided by IEX Cloud
+    private void doSymbolFilter(List<String> symbols, List<Quote> allQuotes, Account accountToBeUpdated) {
+        symbols.forEach(symbol ->                              // An account can contain multiple symbols
+                allQuotes.forEach(quote -> {                   // A batch response of all symbols across all accounts
+                    if (quote.getSymbol().contains(symbol)) {  // Match quotes to accounts that own them
+                        accountToBeUpdated.getQuotes().add(quote);
+                    }
+                })
+        );
+    }
+
+    // Instantiate an account and add quotes for all the symbols owned by the account
+    private Account doCreateAccount(List<String> symbols, List<Quote> allQuotes,
+                                    Portfolio portfolio, String accountNumber) {
+        Account account = new Account(portfolio, accountNumber);
+        List<Quote> accountSpecificQuotes = new ArrayList<>();
+        symbols.forEach(symbol ->
+                allQuotes.forEach(quote -> {
+                    if (quote.getSymbol().contains(symbol)) {
+                        accountSpecificQuotes.add(quote);
+                    }
+                })
+        );
+
+        account.setQuotes(accountSpecificQuotes);
+        return account;
     }
 
     private Portfolio createPortfolio(User user) {
