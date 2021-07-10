@@ -38,8 +38,8 @@ public class PortfolioService {
         Portfolio savedPortfolio = null;
 
         try {
-            BufferedReader fileReader = createBufferedReader(multipartFile);
-            Iterable<CSVRecord> records = createCSVRecords(fileReader);
+            BufferedReader fileReader = doCreateBufferedReader(multipartFile);
+            Iterable<CSVRecord> records = doCreateCSVRecords(fileReader);
 
             Map<String, List<String>> csvRecords = doInternalParse(records);
 
@@ -53,10 +53,10 @@ public class PortfolioService {
             List<Quote> quotes = marketDataServiceImpl.doGetQuotes(allSymbols);
 
             // Create the portfolio and flush the transaction to generate a portfolio id
-            Portfolio portfolio = createPortfolio(currentUser);
+            Portfolio portfolio = doCreatePortfolio(currentUser);
             savedPortfolio = portfolioRepository.save(portfolio);
 
-            List<Account> accounts = createAccounts(savedPortfolio, csvRecords, quotes);
+            List<Account> accounts = doCreateAccounts(savedPortfolio, csvRecords, quotes);
 
             // Maintain referential integrity between a portfolio and accounts
             savedPortfolio.setAccounts(accounts);
@@ -67,11 +67,11 @@ public class PortfolioService {
         return savedPortfolio != null && savedPortfolio.getId() > 0;
     }
 
-    private BufferedReader createBufferedReader(MultipartFile multipartFile) throws IOException {
+    private BufferedReader doCreateBufferedReader(MultipartFile multipartFile) throws IOException {
         return new BufferedReader(new InputStreamReader(multipartFile.getInputStream(), StandardCharsets.UTF_8));
     }
 
-    private Iterable<CSVRecord> createCSVRecords(BufferedReader fileReader) throws IOException {
+    private Iterable<CSVRecord> doCreateCSVRecords(BufferedReader fileReader) throws IOException {
         return CSVFormat.DEFAULT
                 .withHeader(HEADERS)
                 .withFirstRecordAsHeader()
@@ -97,8 +97,8 @@ public class PortfolioService {
     }
 
     // Add a quote to an account only when a symbol has been purchased within the specified account number
-    private List<Account> createAccounts(Portfolio portfolio,
-                                         Map<String, List<String>> csvRecords, List<Quote> allQuotes) {
+    private List<Account> doCreateAccounts(Portfolio portfolio,
+                                           Map<String, List<String>> csvRecords, List<Quote> allQuotes) {
         List<String> createdAccounts = new ArrayList<>();
         List<Account> accounts = new ArrayList<>();
 
@@ -153,7 +153,7 @@ public class PortfolioService {
         return account;
     }
 
-    private Portfolio createPortfolio(User user) {
+    private Portfolio doCreatePortfolio(User user) {
         return new Portfolio(user);
     }
 
