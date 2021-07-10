@@ -20,13 +20,7 @@ public class Account {
     @JoinColumn(name = "portfolio_id")
     private Portfolio portfolio;
 
-//    @ManyToMany(cascade = CascadeType.ALL)
-//    @JoinTable(
-//            name = "account_line",
-//            joinColumns = {@JoinColumn(name = "account_id")},
-//            inverseJoinColumns = {@JoinColumn(name = "security_id")}
-//    )
-//    private List<Security> securities;
+    private String accountNumber;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
@@ -36,26 +30,25 @@ public class Account {
     )
     private List<Quote> quotes;
 
-    private String accountType;
-
-    private String platform;
-
     public Account() {
     }
 
-    public Account(Portfolio portfolio, List<Quote> quotes, String accountType, String platform) {
+    public Account(Portfolio portfolio, String accountNumber) {
         this.portfolio = portfolio;
-        this.quotes = quotes;
-        this.accountType = accountType;
-        this.platform = platform;
+        this.accountNumber = accountNumber;
     }
 
-    public Account(Long id, Portfolio portfolio, List<Quote> quotes, String accountType, String platform) {
+    public Account(Portfolio portfolio, String accountNumber, List<Quote> quotes) {
+        this.portfolio = portfolio;
+        this.accountNumber = accountNumber;
+        this.quotes = quotes;
+    }
+
+    public Account(Long id, Portfolio portfolio, String accountNumber, List<Quote> quotes) {
         this.id = id;
         this.portfolio = portfolio;
+        this.accountNumber = accountNumber;
         this.quotes = quotes;
-        this.accountType = accountType;
-        this.platform = platform;
     }
 
     public Long getId() {
@@ -74,20 +67,12 @@ public class Account {
         this.portfolio = portfolio;
     }
 
-    public String getAccountType() {
-        return accountType;
+    public String getAccountNumber() {
+        return accountNumber;
     }
 
-    public void setAccountType(String accountType) {
-        this.accountType = accountType;
-    }
-
-    public String getPlatform() {
-        return platform;
-    }
-
-    public void setPlatform(String platform) {
-        this.platform = platform;
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
     }
 
     public List<Quote> getQuotes() {

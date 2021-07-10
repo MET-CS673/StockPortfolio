@@ -28,9 +28,6 @@ public class HomeController {
     public String getHomePage(Authentication authentication, Model model) {
         User user = userService.findUserByName(authentication.getName());
 
-        // TODO: 6/21/21 delete this. used for api testing
-        marketDataServiceImpl.processIexCloudRequests();
-
         // TODO: 6/19/21 add user data to model
         
         return "home";

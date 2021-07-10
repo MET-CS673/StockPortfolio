@@ -91,6 +91,16 @@
         </dependency>
         <!-- END logging dependencies -->
 
+        <!-- START csv dependency -->
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>1.8</version>
+        </dependency>
+        <!-- END csv dependency -->
+
+
     </dependencies>
     <dependencyManagement>
         <dependencies>

@@ -43,18 +43,15 @@ public class PortfolioController {
         if (multipartFile.isEmpty()) {
             return responseService.uploadFailure(true, model, portfolioService);
         } else {
-            Portfolio portfolio = new Portfolio(currentUser);
-            boolean result = validationService.validatePortfolioOwner(portfolio, currentUser, model, "insert");
-            if (result) {
-                try {
-                    result = portfolioService.save(portfolio);
-                } catch (InvalidFileNameException e) {
-                    result = false;
-                    model.addAttribute("message", e.getMessage());
-                }
+            boolean result = false;
+            try {
+                result = portfolioService.save(multipartFile, currentUser);
+            } catch (InvalidFileNameException e) {
+                result = false;
+                model.addAttribute("message", e.getMessage());
             }
 
-            // TODO: 7/7/21
+            // TODO: 7/10/21 package response for all account lines 
             return "test";
             //return responseService.uploadSuccess(result, model, currentUser, portfolioService);
         }
