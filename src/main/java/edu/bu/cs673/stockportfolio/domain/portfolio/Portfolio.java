@@ -9,12 +9,11 @@ import java.util.List;
 
 /**********************************************************************************************************************
  * Data object representing a users Portfolio. An Portfolio is a collection of accounts.
- *
  *********************************************************************************************************************/
 @Entity
 public class Portfolio {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne(cascade = CascadeType.ALL)
