@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import edu.bu.cs673.stockportfolio.domain.account.Account;
+import edu.bu.cs673.stockportfolio.domain.account.AccountLine;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**********************************************************************************************************************
@@ -23,7 +25,7 @@ import java.util.List;
 public class Quote {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @JsonProperty("symbol")
@@ -35,13 +37,8 @@ public class Quote {
     @JsonProperty("marketCap")
     private Long marketCap;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "account_line",
-            joinColumns = {@JoinColumn(name = "quote_id")},
-            inverseJoinColumns = {@JoinColumn(name = "account_id")}
-    )
-    private List<Account> accounts;
+    @OneToMany(mappedBy = "quote", cascade = CascadeType.ALL)
+    private List<AccountLine> accountLines = new ArrayList<>();
 
     /**
      * No args constructor for use in serialization.
@@ -54,12 +51,14 @@ public class Quote {
      * @param symbol The ticker symbol associated with this quote.
      * @param latestPrice Either the realtime price if the market is open. Otherwise, the closing price.
      * @param marketCap The market capitalization of the company represented by the symbol.
+     * @param accountLines A collection of all the different owned lots within an account.
      */
-    public Quote(String symbol, BigDecimal latestPrice, Long marketCap) {
+    public Quote(String symbol, BigDecimal latestPrice, Long marketCap, List<AccountLine> accountLines) {
         super();
         this.symbol = symbol;
         this.latestPrice = latestPrice;
         this.marketCap = marketCap;
+        this.accountLines = accountLines;
     }
 
     public Long getId() {
@@ -100,12 +99,12 @@ public class Quote {
         this.marketCap = marketCap;
     }
 
-    public List<Account> getAccounts() {
-        return accounts;
+    public List<AccountLine> getAccountLines() {
+        return accountLines;
     }
 
-    public void setAccounts(List<Account> accounts) {
-        this.accounts = accounts;
+    public void setAccountLines(List<AccountLine> accounts) {
+        this.accountLines = accounts;
     }
 
 }
