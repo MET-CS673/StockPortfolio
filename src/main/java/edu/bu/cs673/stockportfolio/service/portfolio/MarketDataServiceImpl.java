@@ -32,7 +32,7 @@ public class MarketDataServiceImpl implements MarketDataService {
     }
 
     @Override
-    public List<Quote> doGetQuotes(List<String> symbols) {
+    public List<Quote> doGetQuotes(Set<String> symbols) {
 
         // Convert the Set of Strings to a String for batch IEX request
         String symbolFilter = String.join(",", symbols);

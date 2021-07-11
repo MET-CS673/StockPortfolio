@@ -41,12 +41,12 @@ public class PortfolioService {
             BufferedReader fileReader = doCreateBufferedReader(multipartFile);
             Iterable<CSVRecord> records = doCreateCSVRecords(fileReader);
 
-            Map<String, List<String>> csvRecords = doInternalParse(records);
+            Map<String, Map<String, List<Integer>>> csvRecords = doInternalParse(records);
 
             // Package all symbols in the portfolio and send a batch request to IEX Cloud to reduce network traffic
-            List<String> allSymbols = new ArrayList<>();
-            csvRecords.forEach((account, symbols) -> {
-                allSymbols.add(String.join(",", symbols));  //
+            Set<String> allSymbols = new HashSet<>();
+            csvRecords.forEach((account, line)-> {
+                allSymbols.add(String.join(",", line.keySet()));  //
             });
 
             // Send market data batch request to IEX Cloud
@@ -79,17 +79,24 @@ public class PortfolioService {
     }
 
     // Read portfolio data from a CSV file and store the account number as a key and the symbols as a modifiable list
-    private Map<String, List<String>> doInternalParse(Iterable<CSVRecord> records) {
-        Map<String, List<String>> accountLines = new HashMap<>();
+    private Map<String, Map<String, List<Integer>>> doInternalParse(Iterable<CSVRecord> records) {
+
+        // Data structure organization = Map<accountNumber, Map<symbol, List<quantity>)
+        Map<String, Map<String, List<Integer>>> accountLines = new HashMap<>();
         for (CSVRecord record : records) {
+
             // Extract the records from the csv file by using the column headers
             String account = record.get(HEADERS[0]);
             String symbol = record.get(HEADERS[1]);
+            int quantity = Integer.parseInt(record.get(HEADERS[2]));
 
             if (accountLines.containsKey(account)) {
-                accountLines.get(account).add(symbol);
+                Map<String, List<Integer>> line = accountLines.get(account);
+                if (line.containsKey(symbol)) {
+                    line.get(symbol).add(quantity);
+                }
             } else {
-                accountLines.put(account, new ArrayList<>(List.of(symbol)));
+                accountLines.put(account, new HashMap<>(Map.of(symbol, new ArrayList<>(List.of(quantity)))));
             }
         }
 
@@ -98,17 +105,18 @@ public class PortfolioService {
 
     // Add a quote to an account only when a symbol has been purchased within the specified account number
     private List<Account> doCreateAccounts(Portfolio portfolio,
-                                           Map<String, List<String>> csvRecords, List<Quote> allQuotes) {
+                                           Map<String, Map<String, List<Integer>>> csvRecords,
+                                           List<Quote> allQuotes) {
         List<String> createdAccounts = new ArrayList<>();
         List<Account> accounts = new ArrayList<>();
 
         // Update or create an account with quotes provided by IEX Cloud
-        csvRecords.forEach((accountNumber, symbols) -> {
+        csvRecords.forEach((accountNumber, map) -> {
             if (createdAccounts.contains(accountNumber)) {
                 Optional<Account> account = doAccountFilter(accounts, accountNumber);
-                account.ifPresent(accountToBeUpdated -> doSymbolFilter(symbols, allQuotes, accountToBeUpdated));
+                account.ifPresent(accountToBeUpdated -> doSymbolFilter(map.keySet(), allQuotes, accountToBeUpdated));
             } else {
-                Account account = doCreateAccount(symbols, allQuotes, portfolio, accountNumber);
+                Account account = doCreateAccount(map.keySet(), allQuotes, portfolio, accountNumber);
                 createdAccounts.add(account.getAccountNumber());
                 accounts.add(account);
             }
@@ -126,7 +134,7 @@ public class PortfolioService {
     }
 
     // Find all symbols purchased within an account and then add the quote provided by IEX Cloud
-    private void doSymbolFilter(List<String> symbols, List<Quote> allQuotes, Account accountToBeUpdated) {
+    private void doSymbolFilter(Set<String> symbols, List<Quote> allQuotes, Account accountToBeUpdated) {
         symbols.forEach(symbol ->                              // An account can contain multiple symbols
                 allQuotes.forEach(quote -> {                   // A batch response of all symbols across all accounts
                     if (quote.getSymbol().contains(symbol)) {  // Match quotes to accounts that own them
@@ -137,7 +145,7 @@ public class PortfolioService {
     }
 
     // Instantiate an account and add quotes for all the symbols owned by the account
-    private Account doCreateAccount(List<String> symbols, List<Quote> allQuotes,
+    private Account doCreateAccount(Set<String> symbols, List<Quote> allQuotes,
                                     Portfolio portfolio, String accountNumber) {
         Account account = new Account(portfolio, accountNumber);
         List<Quote> accountSpecificQuotes = new ArrayList<>();

@@ -19,7 +19,7 @@ public interface MarketDataService {
 //        doGetSector();
 //    }
 
-    List<Quote> doGetQuotes(List<String> symbols);
+    List<Quote> doGetQuotes(Set<String> symbols);
 
     void doGetSector();
 }
