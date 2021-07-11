@@ -1,6 +1,7 @@
 package edu.bu.cs673.stockportfolio.service.portfolio;
 
 import edu.bu.cs673.stockportfolio.domain.account.Account;
+import edu.bu.cs673.stockportfolio.domain.account.AccountLine;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.Quote;
 import edu.bu.cs673.stockportfolio.domain.portfolio.Portfolio;
 import edu.bu.cs673.stockportfolio.domain.portfolio.PortfolioRepository;
@@ -56,9 +57,10 @@ public class PortfolioService {
             Portfolio portfolio = doCreatePortfolio(currentUser);
             savedPortfolio = portfolioRepository.save(portfolio);
 
-            List<Account> accounts = doCreateAccounts(savedPortfolio, csvRecords, quotes);
+            List<Account> accounts = doCreateAccounts(csvRecords, savedPortfolio, quotes);
 
-            // Maintain referential integrity between a portfolio and accounts
+            // Maintain referential integrity between the user, portfolio, and accounts
+            currentUser.setPortfolio(portfolio);
             savedPortfolio.setAccounts(accounts);
         } catch (IOException e) {
             log.error().log("Portfolio persistence error for User=" + currentUser, e.getMessage());
@@ -96,7 +98,11 @@ public class PortfolioService {
                     line.get(symbol).add(quantity);
                 }
             } else {
-                accountLines.put(account, new HashMap<>(Map.of(symbol, new ArrayList<>(List.of(quantity)))));
+                accountLines.put(
+                        account,
+                        new HashMap<>(Map.of(
+                                symbol,
+                                new ArrayList<>(List.of(quantity)))));
             }
         }
 
@@ -104,20 +110,23 @@ public class PortfolioService {
     }
 
     // Add a quote to an account only when a symbol has been purchased within the specified account number
-    private List<Account> doCreateAccounts(Portfolio portfolio,
-                                           Map<String, Map<String, List<Integer>>> csvRecords,
-                                           List<Quote> allQuotes) {
-        List<String> createdAccounts = new ArrayList<>();
+    private List<Account> doCreateAccounts(Map<String, Map<String, List<Integer>>> csvRecords,
+                                           Portfolio portfolio, List<Quote> allQuotes) {
+        List<String> initializedAccountNumbers = new ArrayList<>();
         List<Account> accounts = new ArrayList<>();
 
         // Update or create an account with quotes provided by IEX Cloud
         csvRecords.forEach((accountNumber, map) -> {
-            if (createdAccounts.contains(accountNumber)) {
+            if (initializedAccountNumbers.contains(accountNumber)) {
                 Optional<Account> account = doAccountFilter(accounts, accountNumber);
-                account.ifPresent(accountToBeUpdated -> doSymbolFilter(map.keySet(), allQuotes, accountToBeUpdated));
+                account.ifPresent(accountToBeUpdated -> doCreateAccountLine(
+                        map,
+                        allQuotes,
+                        accountToBeUpdated)
+                );
             } else {
-                Account account = doCreateAccount(map.keySet(), allQuotes, portfolio, accountNumber);
-                createdAccounts.add(account.getAccountNumber());
+                Account account = doCreateAccount(map, allQuotes, portfolio, accountNumber);
+                initializedAccountNumbers.add(account.getAccountNumber());
                 accounts.add(account);
             }
         });
@@ -133,32 +142,42 @@ public class PortfolioService {
                 .findFirst();
     }
 
-    // Find all symbols purchased within an account and then add the quote provided by IEX Cloud
-    private void doSymbolFilter(Set<String> symbols, List<Quote> allQuotes, Account accountToBeUpdated) {
-        symbols.forEach(symbol ->                              // An account can contain multiple symbols
-                allQuotes.forEach(quote -> {                   // A batch response of all symbols across all accounts
-                    if (quote.getSymbol().contains(symbol)) {  // Match quotes to accounts that own them
-                        accountToBeUpdated.getQuotes().add(quote);
-                    }
-                })
-        );
+    // Find all symbols and quantities purchased within an account, add the quote from IEX Cloud, and create an lot
+    private void doCreateAccountLine(Map<String, List<Integer>> accountLines,
+                                     List<Quote> allQuotes, Account accountToBeUpdated) {
+        accountLines.forEach((symbol, quantities) -> {
+            Quote quote = doQuoteFilter(allQuotes, symbol);          // IEX Cloud quotes and symbol needing a quote
+            quantities.forEach(quantity -> { accountToBeUpdated      // Each symbol can have multiple lots
+                    .getAccountLines()
+                    .add(new AccountLine(
+                            accountToBeUpdated,
+                            quote,
+                            quantity
+                    ));
+            });
+        });
     }
 
-    // Instantiate an account and add quotes for all the symbols owned by the account
-    private Account doCreateAccount(Set<String> symbols, List<Quote> allQuotes,
-                                    Portfolio portfolio, String accountNumber) {
-        Account account = new Account(portfolio, accountNumber);
-        List<Quote> accountSpecificQuotes = new ArrayList<>();
-        symbols.forEach(symbol ->
-                allQuotes.forEach(quote -> {
-                    if (quote.getSymbol().contains(symbol)) {
-                        accountSpecificQuotes.add(quote);
-                    }
-                })
-        );
+    // Match quotes to the owned symbols. If a matched, a quote is returned and subsequently added to the account line
+    private Quote doQuoteFilter(List<Quote> allQuotes, String symbol) {
+        for (Quote quote : allQuotes) {
+            if (quote.getSymbol().contains(symbol)) {
+                return quote;
+            }
+        }
 
-        account.setQuotes(accountSpecificQuotes);
-        return account;
+        // This should never occur, but an empty quote is returned to prevent null pointer exceptions.
+        return new Quote();
+    }
+
+    // Instantiate a new account
+    private Account doCreateAccount(Map<String, List<Integer>> accountLines, List<Quote> allQuotes,
+                                    Portfolio portfolio, String accountNumber) {
+        Account newAccount = new Account(portfolio, accountNumber);
+        doCreateAccountLine(accountLines, allQuotes, newAccount);
+
+        //newAccount.setAccountLines(accountSpecificQuotes);
+        return newAccount;
     }
 
     private Portfolio doCreatePortfolio(User user) {
