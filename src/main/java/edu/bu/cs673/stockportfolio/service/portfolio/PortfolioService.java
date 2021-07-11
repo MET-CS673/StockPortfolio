@@ -6,6 +6,7 @@ import edu.bu.cs673.stockportfolio.domain.investment.quote.Quote;
 import edu.bu.cs673.stockportfolio.domain.portfolio.Portfolio;
 import edu.bu.cs673.stockportfolio.domain.portfolio.PortfolioRepository;
 import edu.bu.cs673.stockportfolio.domain.user.User;
+import edu.bu.cs673.stockportfolio.service.account.AccountNotFoundException;
 import edu.bu.cs673.stockportfolio.service.authentication.HashService;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -35,33 +36,41 @@ public class PortfolioService {
         this.marketDataServiceImpl = marketDataServiceImpl;
     }
 
+    /**
+     * Either creates or updates a portfolio, based on prior existence of the portfolio
+     * @param multipartFile A representation of an uploaded csv file, which can be either new or existing
+     * @param currentUser The current user and owner of the portfolio
+     * @return The new or updated employee stored in the repository
+     */
     public boolean save(MultipartFile multipartFile, User currentUser) {
         Portfolio savedPortfolio = null;
 
         try {
             BufferedReader fileReader = doCreateBufferedReader(multipartFile);
             Iterable<CSVRecord> records = doCreateCSVRecords(fileReader);
-
-            Map<String, Map<String, List<Integer>>> csvRecords = doInternalParse(records);
+            Map<String, Map<String, List<Integer>>> portfolioData = doInternalParse(records);
 
             // Package all symbols in the portfolio and send a batch request to IEX Cloud to reduce network traffic
-            Set<String> allSymbols = new HashSet<>();
-            csvRecords.forEach((account, line)-> {
-                allSymbols.add(String.join(",", line.keySet()));  //
-            });
+            Set<String> allSymbols = doGetAllSymbols(portfolioData);
 
             // Send market data batch request to IEX Cloud
             List<Quote> quotes = marketDataServiceImpl.doGetQuotes(allSymbols);
 
-            // Create the portfolio and flush the transaction to generate a portfolio id
-            Portfolio portfolio = doCreatePortfolio(currentUser);
-            savedPortfolio = portfolioRepository.save(portfolio);
+            Long currentPortfolioId = currentUser.getPortfolio().getId();
+            if (currentPortfolioId != null) {
+                savedPortfolio = doUpdatePortfolio(currentPortfolioId, portfolioData, quotes);
+            } else {
+                // Create the portfolio and flush the transaction to generate a portfolio id
+                Portfolio portfolio = doCreatePortfolio(currentUser);
+                savedPortfolio = portfolioRepository.save(portfolio);
 
-            List<Account> accounts = doCreateAccounts(csvRecords, savedPortfolio, quotes);
+                // Add accounts to the portfolio
+                List<Account> accounts = doCreateAccounts(portfolioData, savedPortfolio, quotes);
 
-            // Maintain referential integrity between the user, portfolio, and accounts
-            currentUser.setPortfolio(portfolio);
-            savedPortfolio.setAccounts(accounts);
+                // Maintain referential integrity between the user, portfolio, and accounts
+                currentUser.setPortfolio(portfolio);
+                savedPortfolio.setAccounts(accounts);
+            }
         } catch (IOException e) {
             log.error().log("Portfolio persistence error for User=" + currentUser, e.getMessage());
         }
@@ -70,7 +79,9 @@ public class PortfolioService {
     }
 
     private BufferedReader doCreateBufferedReader(MultipartFile multipartFile) throws IOException {
-        return new BufferedReader(new InputStreamReader(multipartFile.getInputStream(), StandardCharsets.UTF_8));
+        return new BufferedReader(new InputStreamReader(
+                multipartFile.getInputStream(),
+                StandardCharsets.UTF_8));
     }
 
     private Iterable<CSVRecord> doCreateCSVRecords(BufferedReader fileReader) throws IOException {
@@ -80,7 +91,7 @@ public class PortfolioService {
                 .parse(fileReader);
     }
 
-    // Read portfolio data from a CSV file and store the account number as a key and the symbols as a modifiable list
+    // Read portfolio data from CSV records. Store account number, symbols, and quantities as account lines
     private Map<String, Map<String, List<Integer>>> doInternalParse(Iterable<CSVRecord> records) {
 
         // Data structure organization = Map<accountNumber, Map<symbol, List<quantity>)
@@ -109,29 +120,31 @@ public class PortfolioService {
         return accountLines;
     }
 
-    // Add a quote to an account only when a symbol has been purchased within the specified account number
-    private List<Account> doCreateAccounts(Map<String, Map<String, List<Integer>>> csvRecords,
-                                           Portfolio portfolio, List<Quote> allQuotes) {
-        List<String> initializedAccountNumbers = new ArrayList<>();
-        List<Account> accounts = new ArrayList<>();
-
-        // Update or create an account with quotes provided by IEX Cloud
-        csvRecords.forEach((accountNumber, map) -> {
-            if (initializedAccountNumbers.contains(accountNumber)) {
-                Optional<Account> account = doAccountFilter(accounts, accountNumber);
-                account.ifPresent(accountToBeUpdated -> doCreateAccountLine(
-                        map,
-                        allQuotes,
-                        accountToBeUpdated)
-                );
-            } else {
-                Account account = doCreateAccount(map, allQuotes, portfolio, accountNumber);
-                initializedAccountNumbers.add(account.getAccountNumber());
-                accounts.add(account);
-            }
+    private Set<String> doGetAllSymbols(Map<String, Map<String, List<Integer>>> portfolioData) {
+        Set<String> allSymbols = new HashSet<>();
+        portfolioData.forEach((account, line)-> {
+            allSymbols.add(String.join(",", line.keySet()));
         });
 
-        return accounts;
+        return allSymbols;
+    }
+
+    // Update an existing portfolio with new portfolio data, including all accounts and account lines
+    private Portfolio doUpdatePortfolio(Long portfolioId, Map<String, Map<String, List<Integer>>> portfolioData,
+                                        List<Quote> allQuotes) {
+        return portfolioRepository.findById(portfolioId)
+                .map(portfolioToBeUpdated -> {
+                    List<Account> accounts = portfolioToBeUpdated.getAccounts();
+                    portfolioData.forEach((accountNumber, map) -> {
+                        Optional<Account> account = doAccountFilter(accounts, accountNumber);
+                        account.ifPresent(accountToBeUpdated -> doUpdateAccountLine(
+                                map,
+                                allQuotes,
+                                accountToBeUpdated
+                        ));
+                    });
+                    return portfolioToBeUpdated;
+                }).orElseThrow(AccountNotFoundException::new);
     }
 
     // Find the current account within the portfolio
@@ -140,6 +153,13 @@ public class PortfolioService {
                 .stream()
                 .filter(account -> account.getAccountNumber().equals(accountNumber))
                 .findFirst();
+    }
+
+    // Clear existing account lines and add the updated account lines
+    private void doUpdateAccountLine(Map<String, List<Integer>> accountLines,
+                                              List<Quote> allQuotes, Account accountToBeUpdated) {
+        accountToBeUpdated.getAccountLines().clear();
+        doCreateAccountLine(accountLines, allQuotes, accountToBeUpdated);
     }
 
     // Find all symbols and quantities purchased within an account, add the quote from IEX Cloud, and create an lot
@@ -170,6 +190,35 @@ public class PortfolioService {
         return new Quote();
     }
 
+    private Portfolio doCreatePortfolio(User user) {
+        return new Portfolio(user);
+    }
+
+    // Add a quote to an account only when a symbol has been purchased within the specified account number
+    private List<Account> doCreateAccounts(Map<String, Map<String, List<Integer>>> portfolioData,
+                                           Portfolio portfolio, List<Quote> allQuotes) {
+        List<String> initializedAccountNumbers = new ArrayList<>();
+        List<Account> accounts = new ArrayList<>();
+
+        // Update or create an account with quotes provided by IEX Cloud
+        portfolioData.forEach((accountNumber, map) -> {
+            if (initializedAccountNumbers.contains(accountNumber)) {
+                Optional<Account> account = doAccountFilter(accounts, accountNumber);
+                account.ifPresent(accountToBeUpdated -> doCreateAccountLine(
+                        map,
+                        allQuotes,
+                        accountToBeUpdated)
+                );
+            } else {
+                Account account = doCreateAccount(map, allQuotes, portfolio, accountNumber);
+                initializedAccountNumbers.add(account.getAccountNumber());
+                accounts.add(account);
+            }
+        });
+
+        return accounts;
+    }
+
     // Instantiate a new account
     private Account doCreateAccount(Map<String, List<Integer>> accountLines, List<Quote> allQuotes,
                                     Portfolio portfolio, String accountNumber) {
@@ -178,10 +227,6 @@ public class PortfolioService {
 
         //newAccount.setAccountLines(accountSpecificQuotes);
         return newAccount;
-    }
-
-    private Portfolio doCreatePortfolio(User user) {
-        return new Portfolio(user);
     }
 
     public Portfolio findPortfolio(Portfolio portfolio) {
