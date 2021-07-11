@@ -87,7 +87,7 @@
 
               <div class="col-sm-12">
                 <input type="file" class="form-control-file" id="csvUpload" name="csvUpload" accept=".csv">
-              </div>
+              </div><br>
               <div class="col-sm-12">
                 <button id="fileUploadButton" type="submit" class="btn btn-sm btn-outline-secondary">Import
                   Account
@@ -96,7 +96,114 @@
             </form>
           </div>
         </div>
+        <!--Imported Files-->
 
+        <h2>Imported Files</h2>
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                        <tr>
+                            <th>File</th>
+                            <th>Overwrite</th>
+                            <th>Delete</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Fidelity.csv</td>
+                            <th><button type="button" onclick="accountoverwrite()" class="btn btn-primary">Overwrite Account</button>
+                                <script>
+                                    function accountoverwrite() {
+
+                                        if (confirm('Are you sure you want to overwrite this account?')) {
+                                            // Overwrite it!
+                                            console.log('Account overwritten');
+                                        } else {
+                                            // Do nothing!
+                                            console.log('Cancelled');
+                                        }
+                                    }
+                                </script>
+                            </th>
+                            <th><button type="button" onclick="accountdelete()" class="btn btn-danger">Delete Account</button>
+                                <script>
+                                    function accountdelete() {
+
+                                        if (confirm('Are you sure you want to delete this account?')) {
+                                            // Delete it!
+                                            console.log('Account deleted');
+                                        } else {
+                                            // Do nothing!
+                                            console.log('Delete cancelled');
+                                        }
+                                    }
+                                </script>
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>Robinhood.csv</td>
+                            <th><button type="button" onclick="accountoverwrite()" class="btn btn-primary">Overwrite Account</button>
+                                <script>
+                                    function accountoverwrite() {
+
+                                        if (confirm('Are you sure you want to overwrite this account?')) {
+                                            // Overwrite it
+                                            console.log('Account overwritten');
+                                        } else {
+                                            // Do nothing!
+                                            console.log('Cancelled');
+                                        }
+                                    }
+                                </script>
+                            </th>
+                            <th><button type="button" onclick="accountdelete()" class="btn btn-danger">Delete Account</button>
+                                <script>
+                                    function accountdelete() {
+
+                                        if (confirm('Are you sure you want to delete this account?')) {
+                                            // Delete it!
+                                            console.log('Account deleted');
+                                        } else {
+                                            // Do nothing!
+                                            console.log('Delete cancelled');
+                                        }
+                                    }
+                                </script>
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>MerrilLynch.csv</td>
+                            <th><button type="button" onclick="accountoverwrite()" class="btn btn-primary">Overwrite Account</button>
+                                <script>
+                                    function accountoverwrite() {
+
+                                        if (confirm('Are you sure you want to overwrite this account?')) {
+                                            // Overwrite it
+                                            console.log('Account overwritten');
+                                        } else {
+                                            // Do nothing!
+                                            console.log('Cancelled');
+                                        }
+                                    }
+                                </script>
+                            </th>
+                            <th><button type="button" onclick="accountdelete()" class="btn btn-danger">Delete Account</button>
+                                <script>
+                                    function accountdelete() {
+
+                                        if (confirm('Are you sure you want to delete this account?')) {
+                                            // Delete it!
+                                            console.log('Account deleted');
+                                        } else {
+                                            // Do nothing!
+                                            console.log('Delete cancelled');
+                                        }
+                                    }
+                                </script>
+                            </th>
+                        </tr>
+                        </tbody>
+                    </table>
         <h2>Portfolio</h2>
         <div class="table-responsive">
           <table class="table table-striped table-sm">
