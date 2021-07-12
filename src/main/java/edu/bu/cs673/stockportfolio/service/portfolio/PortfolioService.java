@@ -2,6 +2,7 @@ package edu.bu.cs673.stockportfolio.service.portfolio;
 
 import edu.bu.cs673.stockportfolio.domain.account.Account;
 import edu.bu.cs673.stockportfolio.domain.account.AccountLine;
+import edu.bu.cs673.stockportfolio.domain.account.AccountLineRepository;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.Quote;
 import edu.bu.cs673.stockportfolio.domain.portfolio.Portfolio;
 import edu.bu.cs673.stockportfolio.domain.portfolio.PortfolioRepository;
@@ -29,11 +30,14 @@ public class PortfolioService {
     private static final String[] HEADERS = {"Account", "Symbol", "Quantity"};
     private final PortfolioRepository portfolioRepository;
     private final MarketDataServiceImpl marketDataServiceImpl;
+    private final AccountLineRepository accountLineRepository;
     private final FluentLogger log = FluentLoggerFactory.getLogger(HashService.class);
 
-    public PortfolioService(PortfolioRepository portfolioRepository, MarketDataServiceImpl marketDataServiceImpl) {
+    public PortfolioService(PortfolioRepository portfolioRepository, MarketDataServiceImpl marketDataServiceImpl,
+                            AccountLineRepository accountLineRepository) {
         this.portfolioRepository = portfolioRepository;
         this.marketDataServiceImpl = marketDataServiceImpl;
+        this.accountLineRepository = accountLineRepository;
     }
 
     /**
@@ -56,9 +60,9 @@ public class PortfolioService {
             // Send market data batch request to IEX Cloud
             List<Quote> quotes = marketDataServiceImpl.doGetQuotes(allSymbols);
 
-            Long currentPortfolioId = currentUser.getPortfolio().getId();
-            if (currentPortfolioId != null) {
-                savedPortfolio = doUpdatePortfolio(currentPortfolioId, portfolioData, quotes);
+            Portfolio currentPortfolio = currentUser.getPortfolio();
+            if (currentPortfolio != null) {
+                savedPortfolio = doUpdatePortfolio(currentPortfolio.getId(), portfolioData, quotes);
             } else {
                 // Create the portfolio and flush the transaction to generate a portfolio id
                 Portfolio portfolio = doCreatePortfolio(currentUser);
@@ -158,7 +162,8 @@ public class PortfolioService {
     // Clear existing account lines and add the updated account lines
     private void doUpdateAccountLine(Map<String, List<Integer>> accountLines,
                                               List<Quote> allQuotes, Account accountToBeUpdated) {
-        accountToBeUpdated.getAccountLines().clear();
+        accountLineRepository.deleteAllByAccount_Id(accountToBeUpdated.getId());
+        //accountToBeUpdated.getAccountLines().clear();
         doCreateAccountLine(accountLines, allQuotes, accountToBeUpdated);
     }
 
