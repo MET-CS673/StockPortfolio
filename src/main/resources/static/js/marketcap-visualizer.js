@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", plotData);
 
 function plotData() {
 
-    var dataByMarketCap = [mySmallCapData, myLargeCapData]
+    var dataByMarketCap = [mySmallCapData, myMidCapData, myLargeCapData]
 
     // Themes begin
     am4core.useTheme(am4themes_animated);
@@ -15,17 +15,23 @@ function plotData() {
 
     var chart = container.createChild(am4charts.PieChart);
 
+    const sumValues = obj => Object.values(obj).reduce((a, b) => a + b);
+
     chart.data = [{
         "Market Cap": "Small Cap",
-        "Value": 500,
+        "Value": sumValues(mySmallCapData),
+        "subData": []
+    }, {
+        "Market Cap": "Mid Cap",
+        "Value": sumValues(myMidCapData),
         "subData": []
     }, {
         "Market Cap": "Large Cap",
-        "Value": 1000,
+        "Value": sumValues(myLargeCapData),
         "subData": []
     }];
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < dataByMarketCap.length; i++) {
 
         let mydata = dataByMarketCap[i];
         for (var key in mydata) {
@@ -46,6 +52,8 @@ function plotData() {
     var pieSeries = chart.series.push(new am4charts.PieSeries());
     pieSeries.dataFields.value = "Value";
     pieSeries.dataFields.category = "Market Cap";
+    pieSeries.slices.template.stroke = am4core.color("#fff");
+    pieSeries.slices.template.strokeOpacity = 1;
     pieSeries.slices.template.states.getKey("active").properties.shiftRadius = 0;
 
     pieSeries.slices.template.events.on("hit", function (event) {
@@ -56,10 +64,14 @@ function plotData() {
     chart2.width = am4core.percent(30);
     chart2.radius = am4core.percent(80);
 
+    chart2.legend = new am4charts.Legend();
+
     // Add and configure Series
     var pieSeries2 = chart2.series.push(new am4charts.PieSeries());
     pieSeries2.dataFields.value = "value";
     pieSeries2.dataFields.category = "ticker";
+    pieSeries2.slices.template.stroke = am4core.color("#fff");
+    pieSeries2.slices.template.strokeOpacity = 1;
     pieSeries2.slices.template.states.getKey("active").properties.shiftRadius = 0;
 
     pieSeries2.labels.template.disabled = true;

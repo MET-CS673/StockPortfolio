@@ -23,6 +23,12 @@ public class MarketCapController {
         largeCapData.put("GOOG", 5000);
         model.addAttribute("largeCapData", largeCapData);
 
+        Map<String, Integer> midCapData = new LinkedHashMap<String, Integer>();
+        midCapData.put("CLOV", 500);
+        midCapData.put("AMBA", 500);
+        midCapData.put("SFIX", 2000);
+        model.addAttribute("midCapData", midCapData);
+
         Map<String, Integer> smallCapData = new LinkedHashMap<String, Integer>();
         smallCapData.put("GME", 800);
         smallCapData.put("SAVA", 1200);
