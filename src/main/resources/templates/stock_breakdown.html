@@ -96,7 +96,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="//cdn.amcharts.com/lib/4/core.js"></script>
     <script src="//cdn.amcharts.com/lib/4/charts.js"></script>
     <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
@@ -109,8 +108,6 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
         var mydata = [[${ data }]];
-        var keys = [[${ data.keySet() }]];
-        var values = [[${ data.values() }]];
         /*]]>*/
     </script>
     <script src="/js/stock-visualizer.js"></script>
