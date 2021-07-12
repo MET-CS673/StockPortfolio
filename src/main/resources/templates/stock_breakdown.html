@@ -75,10 +75,6 @@
                     <h1 class="h2">Stock Breakdown</h1>
                 </div>
 
-                <div class="chart-container">
-                    <canvas id="myChart"></canvas>
-                </div>
-
                 <div id="amchart-container" class="amchart-container">
                 </div>
             </main>
@@ -103,6 +99,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="//cdn.amcharts.com/lib/4/core.js"></script>
     <script src="//cdn.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
 
     <!--------------------------------------------------------------------------------------
     The below two scripts are necessary for getting Model data but still leveraging external
@@ -116,7 +113,7 @@
         var values = [[${ data.values() }]];
         /*]]>*/
     </script>
-    <script src="/js/piechart-breakdown.js"></script>
+    <script src="/js/stock-visualizer.js"></script>
 
 </body>
 
