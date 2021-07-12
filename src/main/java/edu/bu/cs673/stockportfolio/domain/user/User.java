@@ -18,7 +18,7 @@ import javax.persistence.*;
         + " LENGTH(TRIM(password)) > 10")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Nationalized
