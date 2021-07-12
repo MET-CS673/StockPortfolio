@@ -4,6 +4,7 @@ import edu.bu.cs673.stockportfolio.domain.portfolio.Portfolio;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.Quote;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**********************************************************************************************************************
@@ -13,49 +14,37 @@ import java.util.List;
 @Entity
 public class Account {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "portfolio_id")
     private Portfolio portfolio;
 
-//    @ManyToMany(cascade = CascadeType.ALL)
-//    @JoinTable(
-//            name = "account_line",
-//            joinColumns = {@JoinColumn(name = "account_id")},
-//            inverseJoinColumns = {@JoinColumn(name = "security_id")}
-//    )
-//    private List<Security> securities;
+    private String accountNumber;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "account_line",
-            joinColumns = {@JoinColumn(name = "account_id")},
-            inverseJoinColumns = {@JoinColumn(name = "quote_id")}
-    )
-    private List<Quote> quotes;
-
-    private String accountType;
-
-    private String platform;
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    private List<AccountLine> accountLines = new ArrayList<>();
 
     public Account() {
     }
 
-    public Account(Portfolio portfolio, List<Quote> quotes, String accountType, String platform) {
+    public Account(Portfolio portfolio, String accountNumber) {
         this.portfolio = portfolio;
-        this.quotes = quotes;
-        this.accountType = accountType;
-        this.platform = platform;
+        this.accountNumber = accountNumber;
     }
 
-    public Account(Long id, Portfolio portfolio, List<Quote> quotes, String accountType, String platform) {
+    public Account(Portfolio portfolio, String accountNumber, List<AccountLine> accountLines) {
+        this.portfolio = portfolio;
+        this.accountNumber = accountNumber;
+        this.accountLines = accountLines;
+    }
+
+    public Account(Long id, Portfolio portfolio, String accountNumber, List<AccountLine> accountLines) {
         this.id = id;
         this.portfolio = portfolio;
-        this.quotes = quotes;
-        this.accountType = accountType;
-        this.platform = platform;
+        this.accountNumber = accountNumber;
+        this.accountLines = accountLines;
     }
 
     public Long getId() {
@@ -74,27 +63,19 @@ public class Account {
         this.portfolio = portfolio;
     }
 
-    public String getAccountType() {
-        return accountType;
+    public String getAccountNumber() {
+        return accountNumber;
     }
 
-    public void setAccountType(String accountType) {
-        this.accountType = accountType;
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
     }
 
-    public String getPlatform() {
-        return platform;
+    public List<AccountLine> getAccountLines() {
+        return accountLines;
     }
 
-    public void setPlatform(String platform) {
-        this.platform = platform;
-    }
-
-    public List<Quote> getQuotes() {
-        return quotes;
-    }
-
-    public void setQuotes(List<Quote> quotes) {
-        this.quotes = quotes;
+    public void setAccountLines(List<AccountLine> quotes) {
+        this.accountLines = accountLines;
     }
 }

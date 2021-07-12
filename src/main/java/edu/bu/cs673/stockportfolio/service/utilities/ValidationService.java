@@ -22,7 +22,7 @@ public class ValidationService {
 
         if (portfolio == null) {
             message = "Portfolio not found.";
-        } else if (portfolio.getId() != user.getPortfolio().getId().longValue()) {
+        } else if (portfolio.getUser() != user) {
             message = "Error. Only the portfolio or account owner can perform an " + crud + ".";
         }
 

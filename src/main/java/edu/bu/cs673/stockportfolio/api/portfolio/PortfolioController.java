@@ -34,29 +34,28 @@ public class PortfolioController {
         this.responseService = responseService;
     }
 
-//    @PostMapping
-//    public String uploadPortfolio(Authentication authentication,
-//                                  @RequestParam("portfolioUpload")MultipartFile multipartFile, Model model) {
-//        User currentUser = getCurrentUser(authentication);
-//
-//        // Handle empty file upload attempts
-//        if (multipartFile.isEmpty()) {
-//            return responseService.uploadFailure(true, model, portfolioService);
-//        } else {
-//            Portfolio portfolio = new Portfolio(currentUser, multipartFile.)
-//            boolean result = validationService.validatePortfolioOwner(portfolio, currentUser, model, "insert");
-//            if (result) {
-//                try {
-//                    result = portfolioService.save(portfolio);
-//                } catch (InvalidFileNameException e) {
-//                    result = false;
-//                    model.addAttribute("message", e.getMessage());
-//                }
-//            }
-//
-//            return responseService.uploadSuccess(result, model, currentUser, portfolioService);
-//        }
-//    }
+    @PostMapping
+    public String uploadPortfolio(Authentication authentication,
+                                  @RequestParam("csvUpload")MultipartFile multipartFile, Model model) {
+        User currentUser = getCurrentUser(authentication);
+
+        // Handle empty file upload attempts
+        if (multipartFile.isEmpty()) {
+            return responseService.uploadFailure(true, model, portfolioService);
+        } else {
+            boolean result = false;
+            try {
+                result = portfolioService.save(multipartFile, currentUser);
+            } catch (InvalidFileNameException e) {
+                result = false;
+                model.addAttribute("message", e.getMessage());
+            }
+
+            // TODO: 7/10/21 package response for all account lines 
+            return "test";
+            //return responseService.uploadSuccess(result, model, currentUser, portfolioService);
+        }
+    }
 
 //    @GetMapping("/delete")
 //    public String deletePortfolio(Authentication authentication, @ModelAttribute Portfolio portfolio, Model model) {

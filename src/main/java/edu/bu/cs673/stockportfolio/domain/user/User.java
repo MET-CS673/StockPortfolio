@@ -8,9 +8,8 @@ import org.hibernate.annotations.Nationalized;
 import javax.persistence.*;
 
 /**********************************************************************************************************************
- * Data object representing a user of our software product. Each user can have a portfolio that gets analyzed by the
- * system.
- *
+ * The User object represents a user of our software product. Each User can have a Portfolio with many Accounts. Each
+ * Account can have many AccountLines. An AccountLine represents a symbol and quantity for an active investment.
  *********************************************************************************************************************/
 @Entity
 @Check(constraints = "LENGTH(TRIM(username)) > 0 &&"
@@ -19,7 +18,7 @@ import javax.persistence.*;
         + " LENGTH(TRIM(password)) > 10")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Nationalized

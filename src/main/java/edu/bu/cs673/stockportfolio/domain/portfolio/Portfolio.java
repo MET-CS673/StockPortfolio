@@ -2,6 +2,7 @@ package edu.bu.cs673.stockportfolio.domain.portfolio;
 
 import edu.bu.cs673.stockportfolio.domain.account.Account;
 import edu.bu.cs673.stockportfolio.domain.user.User;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -9,12 +10,11 @@ import java.util.List;
 
 /**********************************************************************************************************************
  * Data object representing a users Portfolio. An Portfolio is a collection of accounts.
- *
  *********************************************************************************************************************/
 @Entity
 public class Portfolio {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @OneToOne(cascade = CascadeType.ALL)
