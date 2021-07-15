@@ -243,4 +243,8 @@ public class PortfolioService {
 
         return portfolioRepository.findById(portfolio.getId()).isEmpty();
     }
+
+    public Portfolio getPortfolioBy(Long id) {
+        return portfolioRepository.findById(id).orElseThrow(PortfolioNotFoundException::new);
+    }
 }
