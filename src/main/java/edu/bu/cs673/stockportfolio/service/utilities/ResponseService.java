@@ -24,7 +24,14 @@ public class ResponseService {
         Long id = user.getPortfolio().getId();
         Portfolio portfolio = service.getPortfolioBy(id);
         List<Account> accounts = portfolio.getAccounts();
+        List<List<String>> response = packageResponse(accounts);
 
+        model.addAttribute("portfolio", response);
+
+        return uploadSuccess(result, model);
+    }
+
+    public List<List<String>> packageResponse(List<Account> accounts) {
         List<List<String>> response = new ArrayList<>();
 
         accounts.forEach(account -> {
@@ -39,9 +46,7 @@ public class ResponseService {
             });
         });
 
-        model.addAttribute(service.getClass().getSimpleName(), response);
-
-        return uploadSuccess(result, model, service.getClass().getSimpleName().toLowerCase(Locale.ROOT));
+        return response;
     }
 
     private String doGetCompanyName(AccountLine accountLine) {
@@ -91,7 +96,7 @@ public class ResponseService {
         return numberFormatter.format(quantity);
     }
 
-    private String uploadSuccess(boolean result, Model model, String serviceType) {
+    private String uploadSuccess(boolean result, Model model) {
         model.addAttribute("success", result);
         model.addAttribute("nav", "/home");
 
@@ -101,10 +106,7 @@ public class ResponseService {
     public String uploadFailure(boolean result, Model model, PortfolioService service) {
         model.addAttribute("uploadFailed", result);
         model.addAttribute("applicationEdgeCaseErrorMessage", true);
-        model.addAttribute("nav", "/home#nav-" + service
-                .getClass()
-                .getSimpleName()
-                .toLowerCase(Locale.ROOT));
+        model.addAttribute("nav", "/home");
 
         return "result";
     }

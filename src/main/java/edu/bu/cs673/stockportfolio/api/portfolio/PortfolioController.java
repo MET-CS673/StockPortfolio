@@ -1,6 +1,5 @@
 package edu.bu.cs673.stockportfolio.api.portfolio;
 
-import edu.bu.cs673.stockportfolio.domain.portfolio.Portfolio;
 import edu.bu.cs673.stockportfolio.domain.user.User;
 import edu.bu.cs673.stockportfolio.service.portfolio.PortfolioService;
 import edu.bu.cs673.stockportfolio.service.user.UserService;
@@ -51,7 +50,6 @@ public class PortfolioController {
                 model.addAttribute("message", e.getMessage());
             }
 
-            // TODO: 7/10/21 package response for all account lines
             return responseService.uploadSuccess(result, model, currentUser, portfolioService);
         }
     }

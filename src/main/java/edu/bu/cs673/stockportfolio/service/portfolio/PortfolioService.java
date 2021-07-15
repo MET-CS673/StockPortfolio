@@ -230,7 +230,6 @@ public class PortfolioService {
         Account newAccount = new Account(portfolio, accountNumber);
         doCreateAccountLine(accountLines, allQuotes, newAccount);
 
-        //newAccount.setAccountLines(accountSpecificQuotes);
         return newAccount;
     }
 
@@ -245,6 +244,6 @@ public class PortfolioService {
     }
 
     public Portfolio getPortfolioBy(Long id) {
-        return portfolioRepository.findById(id).orElseThrow(PortfolioNotFoundException::new);
+        return portfolioRepository.findById(id).orElse(new Portfolio());
     }
 }
