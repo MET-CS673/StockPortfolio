@@ -28,6 +28,9 @@ public class Quote {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @JsonProperty("companyName")
+    private String companyName;
+
     @JsonProperty("symbol")
     private String symbol;
 
@@ -48,13 +51,16 @@ public class Quote {
 
     /**
      * A parameterized constructor for use in creating a quote.
+     * @param companyName The registered name of the company.
      * @param symbol The ticker symbol associated with this quote.
      * @param latestPrice Either the realtime price if the market is open. Otherwise, the closing price.
      * @param marketCap The market capitalization of the company represented by the symbol.
      * @param accountLines A collection of all the different owned lots within an account.
      */
-    public Quote(String symbol, BigDecimal latestPrice, Long marketCap, List<AccountLine> accountLines) {
+    public Quote(String companyName, String symbol, BigDecimal latestPrice,
+                 Long marketCap, List<AccountLine> accountLines) {
         super();
+        this.companyName = companyName;
         this.symbol = symbol;
         this.latestPrice = latestPrice;
         this.marketCap = marketCap;
@@ -67,6 +73,16 @@ public class Quote {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @JsonProperty("companyName")
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    @JsonProperty("companyName")
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     @JsonProperty("symbol")

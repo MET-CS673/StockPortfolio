@@ -39,9 +39,10 @@ public class MarketDataServiceImpl implements MarketDataService {
         String endpointPath = "stock/market/batch";
         String queryParams = String.format(
                 "?symbols=%s&types=quote&filter=" +
-                "symbol," +
-                "latestPrice," +
-                "marketCap",
+                        "companyName," +
+                        "symbol," +
+                        "latestPrice," +
+                        "marketCap",
                 symbolFilter);
 
         QuoteRoot quoteRoot = restTemplate.getForObject(

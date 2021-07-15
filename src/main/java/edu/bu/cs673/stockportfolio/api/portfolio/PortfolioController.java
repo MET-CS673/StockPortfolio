@@ -51,9 +51,8 @@ public class PortfolioController {
                 model.addAttribute("message", e.getMessage());
             }
 
-            // TODO: 7/10/21 package response for all account lines 
-            return "test";
-            //return responseService.uploadSuccess(result, model, currentUser, portfolioService);
+            // TODO: 7/10/21 package response for all account lines
+            return responseService.uploadSuccess(result, model, currentUser, portfolioService);
         }
     }
 
