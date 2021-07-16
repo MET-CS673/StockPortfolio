@@ -2,11 +2,10 @@ document.addEventListener("DOMContentLoaded", plotData);
 
 function plotData() {
 
-    var dataByMarketCap = [mySmallCapData, myMidCapData, myLargeCapData]
+    var dataByMarketCap = [myMicroCapData, mySmallCapData, myMidCapData, myLargeCapData, myMegaCapData]
+    var stringByMarketCap = ["Micro Cap", "Small Cap", "Mid Cap", "Large Cap", "Mega Cap"]
 
-    // Themes begin
     am4core.useTheme(am4themes_animated);
-    // Themes end
 
     var container = am4core.create("amchart-container", am4core.Container);
     container.width = am4core.percent(100);
@@ -14,24 +13,24 @@ function plotData() {
     container.layout = "horizontal";
 
     var chart = container.createChild(am4charts.PieChart);
+    chart.data = []
 
-    const sumValues = obj => Object.values(obj).reduce((a, b) => a + b);
-
-    chart.data = [{
-        "Market Cap": "Small Cap",
-        "Value": sumValues(mySmallCapData),
-        "subData": []
-    }, {
-        "Market Cap": "Mid Cap",
-        "Value": sumValues(myMidCapData),
-        "subData": []
-    }, {
-        "Market Cap": "Large Cap",
-        "Value": sumValues(myLargeCapData),
-        "subData": []
-    }];
+    const sumValues = obj => Object.values(obj).reduce((a, b) => a + b, 0);
 
     for (let i = 0; i < dataByMarketCap.length; i++) {
+
+        marketCapObj = {
+            "Market Cap": stringByMarketCap[i],
+            "Value": sumValues(dataByMarketCap[i]),
+            "subData" : []
+        }
+
+        // If there's no stocks in the market cap, don't
+        // display
+        if(marketCapObj["Value"] == 0) {
+            
+            continue;
+        }
 
         let mydata = dataByMarketCap[i];
         for (var key in mydata) {
@@ -41,9 +40,11 @@ function plotData() {
                     "ticker": key,
                     "value": mydata[key]
                 }
-                chart.data[i].subData.push(newObj);
+                marketCapObj["subData"].push(newObj);
             }
         }
+
+        chart.data.push(marketCapObj)
     }
 
     console.log(chart.data)
