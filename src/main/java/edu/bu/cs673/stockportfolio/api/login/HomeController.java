@@ -36,10 +36,17 @@ public class HomeController {
     @GetMapping
     public String getHomePage(Authentication authentication, Model model) {
         User user = getUser(authentication);
-        Portfolio portfolio = portfolioService.getPortfolioBy(user.getPortfolio().getId());
-
         model.addAttribute("user", user);
-        if (portfolio.getId() != null) {
+
+        Portfolio portfolio = null;
+        if (user.getPortfolio() != null) {
+
+            portfolio = portfolioService.getPortfolioBy(user.getPortfolio().getId());
+        } else {
+            model.addAttribute("portfolio", new ArrayList<>());
+        }
+
+        if (portfolio != null) {
             List<Account> accounts = portfolio.getAccounts();
             model.addAttribute("portfolio", responseService.packageResponse(accounts));
         } else {

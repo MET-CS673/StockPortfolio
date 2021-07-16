@@ -94,91 +94,40 @@
                 </button>
               </div>
             </form>
-
-            <h2>Portfolio</h2>
-            <!-- Iterate through the portfolio response object and display it in a table view -->
-            <div th:if="${portfolio.size() > 0}" class="table-responsive">
-              <table class="table table-striped table-sm" id="portfolioTable">
-                <thead>
-                <tr>
-                  <th style="width: 40%" scope="col">Company Name</th>
-                  <th style="width: 15%" scope="col">Ticker Symbol</th>
-                  <th style="width: 15%" scope="col">Quantity</th>
-                  <th style="width: 15%" scope="col">Price</th>
-                  <th style="width: 15%" scope="col">Market Value</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="accountLine : ${portfolio}">
-<!--                  <td>-->
-<!--                    <a th:href="${'/portfolio/delete?accountLineId=' + accountLine.accountLineId}" class="btn btn-danger">Delete</a>-->
-<!--                  </td>-->
-                  <th th:text="${accountLine.get(0)}" scope="row">Goldman Sachs</th>
-                  <th th:text="${accountLine.get(1)}" scope="row">GS</th>
-                  <th th:text="${accountLine.get(2)}" scope="row">3</th>
-                  <th th:text="${accountLine.get(3)}" scope="row">$300.00</th>
-                  <th th:text="${accountLine.get(4)}" scope="row">$900.00</th>
-                </tr>
-                </tbody>
-              </table>
-            </div>
-
           </div>
         </div>
+        <h2>Portfolio</h2>
+        <!-- Iterate through the portfolio response object and display it in a table view -->
+        <div th:if="${portfolio.size() > 0}" class="table-responsive">
+          <table class="table table-striped table-sm" id="portfolioTable">
+            <thead>
+              <tr>
+                <th style="width: 40%" scope="col">Company Name</th>
+                <th style="width: 15%" scope="col">Ticker Symbol</th>
+                <th style="width: 15%" scope="col">Quantity</th>
+                <th style="width: 15%" scope="col">Price</th>
+                <th style="width: 15%" scope="col">Market Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="accountLine : ${portfolio}">
+                <!--                  <td>-->
+                <!--                    <a th:href="${'/portfolio/delete?accountLineId=' + accountLine.accountLineId}" class="btn btn-danger">Delete</a>-->
+                <!--                  </td>-->
+                <th th:text="${accountLine.get(0)}" scope="row">Goldman Sachs</th>
+                <th th:text="${accountLine.get(1)}" scope="row">GS</th>
+                <th th:text="${accountLine.get(2)}" scope="row">3</th>
+                <th th:text="${accountLine.get(3)}" scope="row">$300.00</th>
+                <th th:text="${accountLine.get(4)}" scope="row">$900.00</th>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-<!--        <h2>Portfolio</h2>-->
-<!--        <div class="table-responsive">-->
-<!--          <table class="table table-striped table-sm">-->
-<!--            <thead>-->
-<!--              <tr>-->
-<!--                <th>Company Name</th>-->
-<!--                <th>Ticker Symbol</th>-->
-<!--                <th>Quantity</th>-->
-<!--                <th>Price</th>-->
-<!--                <th>Total Amount</th>-->
-<!--              </tr>-->
-<!--            </thead>-->
-<!--            <tbody>-->
-<!--              <tr>-->
-<!--                <td>Facebook</td>-->
-<!--                <td>FB</td>-->
-<!--                <td>4</td>-->
-<!--                <td>$347.71</td>-->
-<!--                <td>$1389.64</td>-->
-<!--              </tr>-->
-<!--              <tr>-->
-<!--                <td>Apple</td>-->
-<!--                <td>AAPL</td>-->
-<!--                <td>10</td>-->
-<!--                <td>$124.50</td>-->
-<!--                <td>$1245.00</td>-->
-<!--              </tr>-->
-<!--              <tr>-->
-<!--                <td>Amazon</td>-->
-<!--                <td>AMZN</td>-->
-<!--                <td>1</td>-->
-<!--                <td>$3424.21</td>-->
-<!--                <td>$3424.21</td>-->
-<!--              </tr>-->
-<!--              <tr>-->
-<!--                <td>Netflix</td>-->
-<!--                <td>NFLX</td>-->
-<!--                <td>2</td>-->
-<!--                <td>$528.01</td>-->
-<!--                <td>$1056.02</td>-->
-<!--              </tr>-->
-<!--              <tr>-->
-<!--                <td>Google</td>-->
-<!--                <td>GOOG</td>-->
-<!--                <td>1</td>-->
-<!--                <td>$2441.31</td>-->
-<!--                <td>$2441.31</td>-->
-<!--              </tr>-->
-<!--            </tbody>-->
-<!--          </table>-->
-<!--        </div>-->
-      </main>
     </div>
+  </div>
+  </main>
+  </div>
   </div>
 
   <footer>
