@@ -12,8 +12,10 @@ import org.springframework.ui.Model;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**********************************************************************************************************************
  * Package responses before returning them to the client.
@@ -47,6 +49,41 @@ public class ResponseService {
         });
 
         return response;
+    }
+
+    public Map<String, Float> aggregateSumBySymbol(List<Account> accounts) {
+
+        Map<String, Float> data = new LinkedHashMap<String, Float>();
+        
+        String symbol;
+        Float totalValue;
+        for (Account account : accounts) {
+
+            List<AccountLine> accountLines = account.getAccountLines();
+            for (AccountLine accountLine : accountLines) {
+
+                symbol = accountLine.getQuote().getSymbol();
+
+                // If we've already seen this symbol, add the total value
+                // from this account line to the existing total value.
+                // Otherwise, the total value for this stock is simply
+                // the value from this account line
+                if (data.containsKey(symbol)) {
+
+                    totalValue = data.get(symbol) 
+                    + accountLine.getQuote().getLatestPrice()
+                    .multiply(BigDecimal.valueOf(accountLine.getQuantity())).floatValue();
+                } else {
+
+                    totalValue = accountLine.getQuote().getLatestPrice()
+                    .multiply(BigDecimal.valueOf(accountLine.getQuantity())).floatValue();
+                }
+
+                data.put(symbol, totalValue);
+            }
+        }
+
+        return data;
     }
 
     private String doGetCompanyName(AccountLine accountLine) {
