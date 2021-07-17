@@ -28,7 +28,7 @@
           </div>
 
           <form th:action="@{/logout}" method="post">
-            <input type="submit" class="btn btn-default btn-sm" value="Log out" />
+            <input type="submit" th:id="logout-btn" class="btn btn-default btn-sm" value="Log out" />
           </form>
         </div>
       </li>
@@ -44,17 +44,17 @@
               <a class="nav-link active"> Home </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" th:href="@{/stock_breakdown}">
+              <a class="nav-link" th:id="nav-stock-breakdown" th:href="@{/stock_breakdown}">
                 Stock Breakdown
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" th:href="@{/sector_breakdown}">
+              <a class="nav-link" th:id="nav-sector-breakdown" th:href="@{/sector_breakdown}">
                 Sector Breakdown
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" th:href="@{/mc_breakdown}">
+              <a class="nav-link" th:id="nav-marketCap-breakdown" th:href="@{/mc_breakdown}">
                 Market Cap Breakdown
               </a>
             </li>
