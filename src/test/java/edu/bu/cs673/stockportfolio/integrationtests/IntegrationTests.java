@@ -70,4 +70,49 @@ class IntegrationTests extends WaitPage {
         String currentUrl = driver.getCurrentUrl();
         Assertions.assertNotEquals(baseURL + "/home", currentUrl);
     }
+
+    @Test
+    @DisplayName("Test portfolio upload.")
+    public void testPortfolioUpload() {
+        String filePath = "/Users/mlewis/Downloads/TestPortfolio.csv";
+        String testTickerOne = "GS";
+        String testTickerTwo = "FB";
+        String testCompanyNameOne = "Goldman Sachs Group, Inc.";
+        String testCompanyNameTwo = "Facebook Inc - Class A";
+
+        driver.get(baseURL + "/signup");
+        signupPage.signup("money@spd.com", "John", "10DigitPassword!");
+
+        driver.get(baseURL + "/login");
+        loginPage.login(driver, "John", "10DigitPassword!");
+
+        // Go to homepage and upload file
+        driver.get(baseURL + "/home");
+        homePage.clickUploadPortfolio(driver, filePath);
+        homePage.clickUploadPortfolioButton(driver);
+
+        boolean result = resultPage.isSuccessMessageDisplayed(driver);
+        resultPage.clickNavLink(driver);
+
+        driver.get(baseURL + "/home");
+        String actualTickerOne = homePage.find(driver, testTickerOne);
+        String actualTickerTwo = homePage.find(driver, testTickerTwo);
+        String actualCompanyNameOne = homePage.find(driver, testCompanyNameOne);
+        String actualCompanyNameTwo = homePage.find(driver, testCompanyNameTwo);
+
+        assertAll("Upload portfolio",
+                () -> assertTrue(result, "Portfolio upload failed."),
+                () -> assertEquals(testTickerOne, actualTickerOne, "GS symbol is incorrect."),
+                () -> assertEquals(testTickerTwo, actualTickerTwo, "FB symbol is incorrect."),
+                () -> assertEquals(testCompanyNameOne, actualCompanyNameOne, "Company name is incorrect."),
+                () -> assertEquals(testCompanyNameTwo, actualCompanyNameTwo, "Company name is incorrect."));
+    }
+
+    @AfterEach
+    public void afterEach() {
+        if (driver != null) {
+            driver.quit();
+        }
+        driver = null;
+    }
 }

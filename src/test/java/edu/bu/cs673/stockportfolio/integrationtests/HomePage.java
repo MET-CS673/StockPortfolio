@@ -22,7 +22,7 @@ import java.util.List;
  *********************************************************************************************************************/
 public class HomePage extends WaitPage {
 
-    private static final String UPLOAD_PORTFOLIO = "file-upload";
+    private static final String UPLOAD_PORTFOLIO = "csvUpload";
     @FindBy(id = UPLOAD_PORTFOLIO)
     private WebElement addPortfolio;
 
@@ -54,8 +54,8 @@ public class HomePage extends WaitPage {
         PageFactory.initElements(driver, this);
     }
 
-    public void clickUploadPortfolio(WebDriver driver) {
-        waitForElement(driver, UPLOAD_PORTFOLIO).sendKeys(Keys.ENTER);
+    public void clickUploadPortfolio(WebDriver driver, String filepath) {
+        waitForElement(driver, UPLOAD_PORTFOLIO).sendKeys(filepath);
     }
 
     public void clickUploadPortfolioButton(WebDriver driver) {
