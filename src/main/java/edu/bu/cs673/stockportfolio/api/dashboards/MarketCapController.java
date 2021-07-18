@@ -1,41 +1,69 @@
 package edu.bu.cs673.stockportfolio.api.dashboards;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import edu.bu.cs673.stockportfolio.domain.account.Account;
+import edu.bu.cs673.stockportfolio.domain.portfolio.Portfolio;
+import edu.bu.cs673.stockportfolio.domain.user.User;
+import edu.bu.cs673.stockportfolio.service.portfolio.PortfolioService;
+import edu.bu.cs673.stockportfolio.service.user.UserService;
+import edu.bu.cs673.stockportfolio.service.utilities.MarketCapType;
+import edu.bu.cs673.stockportfolio.service.utilities.ResponseService;
+
 @Controller
 @RequestMapping("/mc_breakdown")
 public class MarketCapController {
+    private final PortfolioService portfolioService;
+    private final ResponseService responseService;
+    private final UserService userService;
+
+    public MarketCapController(PortfolioService portfolioService, ResponseService responseService, UserService userService) {
+
+        this.portfolioService = portfolioService;
+        this.responseService = responseService;
+        this.userService = userService;
+    }
 
     @GetMapping
-    public String marketCapBreakdownView(Model model) {
+    public String marketCapBreakdownView(Authentication authentication, Model model) {
+        
+        User user = getUser(authentication);
+        Portfolio portfolio = null;
+        Map<String, Float> data = new LinkedHashMap<String, Float>();
 
-        Map<String, Integer> largeCapData = new LinkedHashMap<String, Integer>();
-        largeCapData.put("FB", 500);
-        largeCapData.put("AAPL", 1000);
-        largeCapData.put("AMZN", 2000);
-        largeCapData.put("NFLX", 500);
-        largeCapData.put("GOOG", 5000);
-        model.addAttribute("largeCapData", largeCapData);
+        Collection<String> stocksInMarketCap;
+        if (user.getPortfolio() != null) {
 
-        Map<String, Integer> midCapData = new LinkedHashMap<String, Integer>();
-        midCapData.put("CLOV", 500);
-        midCapData.put("AMBA", 500);
-        midCapData.put("SFIX", 2000);
-        model.addAttribute("midCapData", midCapData);
+            portfolio = portfolioService.getPortfolioBy(user.getPortfolio().getId());
+            List<Account> accounts = portfolio.getAccounts();
 
-        Map<String, Integer> smallCapData = new LinkedHashMap<String, Integer>();
-        smallCapData.put("GME", 800);
-        smallCapData.put("SAVA", 1200);
-        smallCapData.put("PACB", 200);
-        smallCapData.put("BLDR", 500);
-        model.addAttribute("smallCapData", smallCapData);
+            for ( MarketCapType marketCapType : MarketCapType.values() ) {
+
+                data = responseService.aggregateSumBySymbol(accounts, marketCapType);
+                stocksInMarketCap = data.keySet();
+                System.out.println("\n\nMarket Cap: " + marketCapType.toString());
+                for ( String stock : stocksInMarketCap ) {
+                    System.out.println(stock);
+                }
+                model.addAttribute(marketCapType.toString(), data);
+            }
+        }
 
         return "mc_breakdown";
+    }
+
+    // TODO: Put into the services layer.
+    private User getUser(Authentication authentication) {
+
+        return userService.findUserByName(authentication.getName());
     }
 }

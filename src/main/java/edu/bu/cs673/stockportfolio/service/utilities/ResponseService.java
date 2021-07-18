@@ -70,6 +70,53 @@ public class ResponseService {
                 // the value from this account line
                 if (data.containsKey(symbol)) {
 
+                    // TODO - Refactor this equation into a separate function
+                    totalValue = data.get(symbol) 
+                    + accountLine.getQuote().getLatestPrice()
+                    .multiply(BigDecimal.valueOf(accountLine.getQuantity())).floatValue();
+                } else {
+
+                    totalValue = accountLine.getQuote().getLatestPrice()
+                    .multiply(BigDecimal.valueOf(accountLine.getQuantity())).floatValue();
+                }
+
+                data.put(symbol, totalValue);
+            }
+        }
+
+        return data;
+    }
+
+    // Return a map of Symbols to their Aggregated total value across all accounts within
+    // the input marketCapType
+    public Map<String, Float> aggregateSumBySymbol(List<Account> accounts, MarketCapType marketCapType) {
+
+        Map<String, Float> data = new LinkedHashMap<String, Float>();
+        
+        String symbol;
+        long marketCap;
+        Float totalValue;
+        for (Account account : accounts) {
+
+            List<AccountLine> accountLines = account.getAccountLines();
+            for (AccountLine accountLine : accountLines) {
+
+                symbol = accountLine.getQuote().getSymbol();
+                
+                // If this quotes market cap is outside of the range for this
+                // MarketCapType, don't include it in the return data
+                marketCap = accountLine.getQuote().getMarketCap();
+                if ( marketCap < marketCapType.getMinimum() || marketCap >= marketCapType.getMaximum() ) {
+                    continue;
+                }
+
+                // If we've already seen this symbol, add the total value
+                // from this account line to the existing total value.
+                // Otherwise, the total value for this stock is simply
+                // the value from this account line
+                if (data.containsKey(symbol)) {
+
+                    // TODO - Refactor this equation into a separate function
                     totalValue = data.get(symbol) 
                     + accountLine.getQuote().getLatestPrice()
                     .multiply(BigDecimal.valueOf(accountLine.getQuantity())).floatValue();
