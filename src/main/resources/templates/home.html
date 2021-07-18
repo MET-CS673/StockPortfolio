@@ -98,108 +98,74 @@
         </div>
         <!--Imported Files-->
 
-        <h2>Imported Files</h2>
+        <h2>Modify Account</h2>
                 <div class="table-responsive">
                     <table class="table table-striped table-sm">
                         <thead>
                         <tr>
-                            <th>File</th>
                             <th>Overwrite</th>
                             <th>Delete</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr>
-                            <td>Fidelity.csv</td>
-                            <th><button type="button" onclick="accountoverwrite()" class="btn btn-primary">Overwrite Account</button>
-                                <script>
-                                    function accountoverwrite() {
+                          <th>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter-1">
+                              Overwrite Account
+                            </button>
 
-                                        if (confirm('Are you sure you want to overwrite this account?')) {
-                                            // Overwrite it!
-                                            console.log('Account overwritten');
-                                        } else {
-                                            // Do nothing!
-                                            console.log('Cancelled');
-                                        }
-                                    }
-                                </script>
-                            </th>
-                            <th><button type="button" onclick="accountdelete()" class="btn btn-danger">Delete Account</button>
-                                <script>
-                                    function accountdelete() {
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModalCenter-1" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">Overwrite</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    Would you like to overwrite this account?
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <form class="form-overwrite" action="#" th:action="@{/overwriteAccount}" method="POST">
+                                      <button type="submit" class="btn btn-primary">Overwrite</button>
+                                    </form>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </th>
+                          <th>
+                            <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModalCenter">
+                                  Delete Account
+                                </button>
 
-                                        if (confirm('Are you sure you want to delete this account?')) {
-                                            // Delete it!
-                                            console.log('Account deleted');
-                                        } else {
-                                            // Do nothing!
-                                            console.log('Delete cancelled');
-                                        }
-                                    }
-                                </script>
-                            </th>
-                        </tr>
-                        <tr>
-                            <td>Robinhood.csv</td>
-                            <th><button type="button" onclick="accountoverwrite()" class="btn btn-primary">Overwrite Account</button>
-                                <script>
-                                    function accountoverwrite() {
-
-                                        if (confirm('Are you sure you want to overwrite this account?')) {
-                                            // Overwrite it
-                                            console.log('Account overwritten');
-                                        } else {
-                                            // Do nothing!
-                                            console.log('Cancelled');
-                                        }
-                                    }
-                                </script>
-                            </th>
-                            <th><button type="button" onclick="accountdelete()" class="btn btn-danger">Delete Account</button>
-                                <script>
-                                    function accountdelete() {
-
-                                        if (confirm('Are you sure you want to delete this account?')) {
-                                            // Delete it!
-                                            console.log('Account deleted');
-                                        } else {
-                                            // Do nothing!
-                                            console.log('Delete cancelled');
-                                        }
-                                    }
-                                </script>
-                            </th>
-                        </tr>
-                        <tr>
-                            <td>MerrilLynch.csv</td>
-                            <th><button type="button" onclick="accountoverwrite()" class="btn btn-primary">Overwrite Account</button>
-                                <script>
-                                    function accountoverwrite() {
-
-                                        if (confirm('Are you sure you want to overwrite this account?')) {
-                                            // Overwrite it
-                                            console.log('Account overwritten');
-                                        } else {
-                                            // Do nothing!
-                                            console.log('Cancelled');
-                                        }
-                                    }
-                                </script>
-                            </th>
-                            <th><button type="button" onclick="accountdelete()" class="btn btn-danger">Delete Account</button>
-                                <script>
-                                    function accountdelete() {
-
-                                        if (confirm('Are you sure you want to delete this account?')) {
-                                            // Delete it!
-                                            console.log('Account deleted');
-                                        } else {
-                                            // Do nothing!
-                                            console.log('Delete cancelled');
-                                        }
-                                    }
-                                </script>
+                                <!-- Modal -->
+                                <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                  <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLongTitle">Delete</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                        Would you like to delete this account?
+                                      </div>
+                                      <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <form class="form-delete" action="#" th:action="@{/deleteAccount}" method="POST">
+                                          <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
                             </th>
                         </tr>
                         </tbody>
@@ -262,6 +228,7 @@
   <footer>
     <p>Created by Team SPD in MET CS 673 Summer 2021</p>
   </footer>
+
 
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
