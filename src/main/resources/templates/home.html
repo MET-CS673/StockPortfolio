@@ -86,7 +86,7 @@
             <form id="file-upload" action="#" enctype="multipart/form-data" th:action="@{/portfolio}" th:method="POST">
 
               <div class="col-sm-12">
-                <input type="file" class="form-control-file" id="csvUpload" name="csvUpload" accept=".csv">
+                <input type="file" class="form-control-file" th:id="${csvUploadId}" name="csvUpload" accept=".csv">
               </div><br>
               <div class="col-sm-12">
                 <button id="fileUploadButton" type="submit" class="btn btn-sm btn-outline-secondary">Import
@@ -129,7 +129,7 @@
                                   </div>
                                   <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <form class="form-overwrite" action="#" th:action="@{/overwriteAccount}" method="POST">
+                                    <form class="form-overwrite" action="#" th:action="@{'/overwriteAccount/' + ${csvUploadId}}" method="POST">
                                       <button type="submit" class="btn btn-primary">Overwrite</button>
                                     </form>
                                   </div>
@@ -157,7 +157,7 @@
                                       </div>
                                       <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <form class="form-delete" action="#" th:action="@{/deleteAccount}" method="POST">
+                                        <form class="form-delete" action="#" th:action="@{'/deleteAccount/' + ${csvUploadId}}" method="POST">
                                           <button type="submit" class="btn btn-danger">Delete</button>
                                         </form>
                                       </div>
