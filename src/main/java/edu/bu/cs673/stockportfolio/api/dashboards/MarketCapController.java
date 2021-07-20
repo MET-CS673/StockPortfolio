@@ -61,7 +61,6 @@ public class MarketCapController {
         return "mc_breakdown";
     }
 
-    // TODO: Put into the services layer.
     private User getUser(Authentication authentication) {
 
         return userService.findUserByName(authentication.getName());
