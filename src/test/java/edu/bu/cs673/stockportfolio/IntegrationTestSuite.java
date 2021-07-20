@@ -6,10 +6,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(JUnitPlatform.class)
 @SelectPackages({
-        "edu.bu.cs673.stockportfolio.integrationtests",
-        "edu.bu.cs673.stockportfolio.integrationtests.security",
-        "edu.bu.cs673.stockportfolio.integrationtests.signup",
-        "edu.bu.cs673.stockportfolio.integrationtests.homepage"
+        "edu.bu.cs673.stockportfolio.integrationtests"
 })
 public class IntegrationTestSuite {
     // This class remains empty, it is used only as a holder for the above annotations
