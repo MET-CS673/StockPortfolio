@@ -1,5 +1,6 @@
-package edu.bu.cs673.stockportfolio.integrationtests;
+package edu.bu.cs673.stockportfolio.integrationtests.login;
 
+import edu.bu.cs673.stockportfolio.integrationtests.utilityPages.WaitPage;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

@@ -1,4 +1,4 @@
-package edu.bu.cs673.stockportfolio.integrationtests;
+package edu.bu.cs673.stockportfolio.integrationtests.signup;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

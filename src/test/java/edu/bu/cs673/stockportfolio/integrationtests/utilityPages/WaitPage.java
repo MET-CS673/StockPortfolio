@@ -1,4 +1,4 @@
-package edu.bu.cs673.stockportfolio.integrationtests;
+package edu.bu.cs673.stockportfolio.integrationtests.utilityPages;
 
 import org.fissore.slf4j.FluentLogger;
 import org.fissore.slf4j.FluentLoggerFactory;
