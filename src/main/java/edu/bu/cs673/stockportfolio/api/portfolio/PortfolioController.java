@@ -40,7 +40,7 @@ public class PortfolioController {
 
         // Handle empty file upload attempts
         if (multipartFile.isEmpty()) {
-            return responseService.uploadFailure(true, model, portfolioService);
+            return responseService.uploadFailure(true, model);
         } else {
             boolean result = false;
             try {

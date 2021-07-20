@@ -48,7 +48,7 @@ public class HomeController {
 
         if (portfolio != null) {
             List<Account> accounts = portfolio.getAccounts();
-            model.addAttribute("portfolio", responseService.packageResponse(accounts));
+            model.addAttribute("portfolio", responseService.createPortfolioTable(accounts));
         } else {
             model.addAttribute("portfolio", new ArrayList<>());
         }
