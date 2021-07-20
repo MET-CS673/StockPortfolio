@@ -1,5 +1,9 @@
-package edu.bu.cs673.stockportfolio.integrationtests;
+package edu.bu.cs673.stockportfolio.integrationtests.homepage;
 
+import edu.bu.cs673.stockportfolio.integrationtests.homepage.HomePage;
+import edu.bu.cs673.stockportfolio.integrationtests.login.LoginPage;
+import edu.bu.cs673.stockportfolio.integrationtests.utilityPages.ResultPage;
+import edu.bu.cs673.stockportfolio.integrationtests.signup.SignupPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
@@ -10,10 +14,10 @@ import org.springframework.boot.web.server.LocalServerPort;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**********************************************************************************************************************
- * Test user story: "As a user, I can signup and login to upload, download, and view files".
+ * Test user story: "As a user, I can signup, login, and upload my portfolio."
  *********************************************************************************************************************/
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class IntegrationTests extends WaitPage {
+public class UploadPortfolioTest {
 
     @LocalServerPort
     private int port;
@@ -38,37 +42,6 @@ class IntegrationTests extends WaitPage {
         loginPage = new LoginPage(driver);
         homePage = new HomePage(driver);
         resultPage = new ResultPage(driver);
-    }
-
-    @Test
-    @DisplayName("Test restricted access for unauthorized user.")
-    public void unauthorizedAccess() {
-        driver.get(baseURL + "/signup");
-        assertEquals("Sign Up", driver.getTitle());
-
-        driver.get(baseURL + "/login");
-        assertEquals("Login", driver.getTitle());
-
-        driver.get(baseURL + "/home");
-        assertEquals("Login", driver.getTitle());
-    }
-
-    @Test
-    @DisplayName("Test signup, login, and logout.")
-    public void testSignUpLoginAndLogout() {
-
-        driver.get(baseURL + "/signup");
-        signupPage.signup("money@spd.com", "John", "10DigitPassword!");
-
-        driver.get(baseURL + "/login");
-        loginPage.login(driver, "John", "10DigitPassword!");
-
-        driver.get(baseURL + "/home");
-        homePage.logout(driver);
-
-        driver.get(baseURL + "/home");
-        String currentUrl = driver.getCurrentUrl();
-        Assertions.assertNotEquals(baseURL + "/home", currentUrl);
     }
 
     @Test
