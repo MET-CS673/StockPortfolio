@@ -26,14 +26,19 @@ public class ResponseService {
         Long id = user.getPortfolio().getId();
         Portfolio portfolio = service.getPortfolioBy(id);
         List<Account> accounts = portfolio.getAccounts();
-        List<List<String>> response = packageResponse(accounts);
+        List<List<String>> response = createPortfolioTable(accounts);
 
         model.addAttribute("portfolio", response);
 
         return uploadSuccess(result, model);
     }
 
-    public List<List<String>> packageResponse(List<Account> accounts) {
+    /**
+     * Creates a data structure capable of presenting Portfolio data in a table view
+     * @param accounts A list of all accounts within a Portfolio
+     * @return Portfolio data that will be presented to the user on the home endpoint
+     */
+    public List<List<String>> createPortfolioTable(List<Account> accounts) {
         List<List<String>> response = new ArrayList<>();
 
         accounts.forEach(account -> {
@@ -51,98 +56,8 @@ public class ResponseService {
         return response;
     }
 
-    public Map<String, Float> aggregateSumBySymbol(List<Account> accounts) {
-
-        Map<String, Float> data = new LinkedHashMap<String, Float>();
-        
-        String symbol;
-        Float totalValue;
-        for (Account account : accounts) {
-
-            List<AccountLine> accountLines = account.getAccountLines();
-            for (AccountLine accountLine : accountLines) {
-
-                symbol = accountLine.getQuote().getSymbol();
-
-                // If we've already seen this symbol, add the total value
-                // from this account line to the existing total value.
-                // Otherwise, the total value for this stock is simply
-                // the value from this account line
-                if (data.containsKey(symbol)) {
-
-                    // TODO - Refactor this equation into a separate function
-                    totalValue = data.get(symbol) 
-                    + accountLine.getQuote().getLatestPrice()
-                    .multiply(BigDecimal.valueOf(accountLine.getQuantity())).floatValue();
-                } else {
-
-                    totalValue = accountLine.getQuote().getLatestPrice()
-                    .multiply(BigDecimal.valueOf(accountLine.getQuantity())).floatValue();
-                }
-
-                data.put(symbol, totalValue);
-            }
-        }
-
-        return data;
-    }
-
-    // Return a map of Symbols to their Aggregated total value across all accounts within
-    // the input marketCapType
-    public Map<String, Float> aggregateSumBySymbol(List<Account> accounts, MarketCapType marketCapType) {
-
-        Map<String, Float> data = new LinkedHashMap<String, Float>();
-        
-        String symbol;
-        long marketCap;
-        Float totalValue;
-        for (Account account : accounts) {
-
-            List<AccountLine> accountLines = account.getAccountLines();
-            for (AccountLine accountLine : accountLines) {
-
-                symbol = accountLine.getQuote().getSymbol();
-                
-                // If this quotes market cap is outside of the range for this
-                // MarketCapType, don't include it in the return data
-                marketCap = accountLine.getQuote().getMarketCap();
-                if ( marketCap < marketCapType.getMinimum() || marketCap >= marketCapType.getMaximum() ) {
-                    continue;
-                }
-
-                // If we've already seen this symbol, add the total value
-                // from this account line to the existing total value.
-                // Otherwise, the total value for this stock is simply
-                // the value from this account line
-                if (data.containsKey(symbol)) {
-
-                    // TODO - Refactor this equation into a separate function
-                    totalValue = data.get(symbol) 
-                    + accountLine.getQuote().getLatestPrice()
-                    .multiply(BigDecimal.valueOf(accountLine.getQuantity())).floatValue();
-                } else {
-
-                    totalValue = accountLine.getQuote().getLatestPrice()
-                    .multiply(BigDecimal.valueOf(accountLine.getQuantity())).floatValue();
-                }
-
-                data.put(symbol, totalValue);
-            }
-        }
-
-        return data;
-    }
-
     private String doGetCompanyName(AccountLine accountLine) {
         return accountLine.getQuote().getCompanyName();
-    }
-
-    private Account doGetAccount(AccountLine accountLine) {
-        return accountLine.getAccount();
-    }
-
-    private String doGetAccountNumber(Account account) {
-        return account.getAccountNumber();
     }
 
     private Quote doGetQuote(AccountLine accountLine) {
@@ -187,7 +102,79 @@ public class ResponseService {
         return "result";
     }
 
-    public String uploadFailure(boolean result, Model model, PortfolioService service) {
+    public Map<String, Float> aggregateSumBySymbol(List<Account> accounts) {
+        Map<String, Float> data = new LinkedHashMap<String, Float>();
+
+        String symbol;
+        for (Account account : accounts) {
+
+            List<AccountLine> accountLines = account.getAccountLines();
+            for (AccountLine accountLine : accountLines) {
+                symbol = accountLine.getQuote().getSymbol();
+                calculateMarketCaps(data, symbol, accountLine);
+            }
+        }
+
+        return data;
+    }
+
+    /**
+     * Calculates the total proportion of each investment relative to the total portfolio
+     * @param accounts A list of all accounts within a Portfolio
+     * @param marketCapType A list of market caps and their associated bands as defined by Bloomberg
+     * @return The proportion of each investment and the investments market cap type for each investment within a
+     * Portfolio. The data will be presented to the user on the mc_breakdown endpoint
+     */
+    public Map<String, Float> aggregateSumBySymbol(List<Account> accounts, MarketCapType marketCapType) {
+        Map<String, Float> data = new LinkedHashMap<String, Float>();
+
+        String symbol;
+        long marketCap;
+        for (Account account : accounts) {
+
+            List<AccountLine> accountLines = account.getAccountLines();
+            for (AccountLine accountLine : accountLines) {
+                symbol = accountLine.getQuote().getSymbol();
+
+                // Don't add this quotes market cap if it's outside of the range for this MarketCapType
+                marketCap = accountLine.getQuote().getMarketCap();
+                if (marketCap < marketCapType.getMinimum() || marketCap >= marketCapType.getMaximum()) {
+                    continue;
+                }
+
+                calculateMarketCaps(data, symbol, accountLine);
+            }
+        }
+
+        return data;
+    }
+
+    private void calculateMarketCaps(Map<String, Float> data, String symbol, AccountLine accountLine) {
+        float totalValue;
+
+        // If we've already seen this symbol, add the total value from this account line to the existing total value.
+        // Otherwise, the total value for this stock is simply the value from this account line
+        if (data.containsKey(symbol)) {
+            totalValue = multiplyBigDecimals(data, symbol, accountLine);
+        } else {
+            totalValue = multiplyBigDecimals(accountLine);
+        }
+
+        data.put(symbol, totalValue);
+    }
+
+    private float multiplyBigDecimals(Map<String, Float> data, String symbol, AccountLine accountLine) {
+        float currentValue = data.get(symbol);
+        return currentValue + multiplyBigDecimals(accountLine);
+    }
+
+    private float multiplyBigDecimals(AccountLine accountLine) {
+        Quote quote = doGetQuote(accountLine);
+        BigDecimal latestPrice = doGetPrice(quote);
+        return latestPrice.multiply(BigDecimal.valueOf(accountLine.getQuantity())).floatValue();
+    }
+
+    public String uploadFailure(boolean result, Model model) {
         model.addAttribute("uploadFailed", result);
         model.addAttribute("applicationEdgeCaseErrorMessage", true);
         model.addAttribute("nav", "/home");
