@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**********************************************************************************************************************
- * This controller handles signup requests. It depends on the UserService to check if the username provided already
- * exists. If not, delegates account creation to the UserService.
+ * This controller handles signup requests. It depends on the UserService to check if the username 
+ * provided already exists. If not, delegates account creation to the UserService.
  *
  *********************************************************************************************************************/
 @Controller
@@ -21,15 +21,36 @@ public class SignupController {
 
     private final UserService userService;
 
+    /**
+     * Class contructor that handles requests for signing up
+     * 
+     * @param userService       creates an account if the username does not exist
+     */
     public SignupController(UserService userService) {
         this.userService = userService;
     }
 
+    /**
+     * Allows a user to signup
+     * 
+     * @return      handles request by user to create an account
+     */
     @GetMapping()
     public String signupView() {
         return "signup";
     }
 
+    /**
+     * Checks to see whether username already exists.
+     * 
+     * Creates an account if username does not exist and valid information has been entered.
+     * 
+     * @param user                      Refers to the user  
+     * @param model                     Contains information regarding successful or unsuccesful signup
+     * @param redirectAttributes        Lets user know if an account has been created and redirects to login 
+     *                                  if successful
+     * @return                          Redirects to login if succesful and raises an error if unsuccessful
+     */
     @PostMapping
     public String signup(@ModelAttribute User user, Model model, RedirectAttributes redirectAttributes) {
         String signupError = null;
