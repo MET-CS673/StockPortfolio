@@ -11,6 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/login")
 public class LoginController {
 
+    /**
+     * Allows a user to login if verified
+     * 
+     * @return login if the user has been verified
+     */
     @GetMapping
     public String loginView() {
         return "login";
