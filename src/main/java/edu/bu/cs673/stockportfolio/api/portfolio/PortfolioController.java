@@ -25,6 +25,14 @@ public class PortfolioController {
     private final ValidationService validationService;
     private final ResponseService responseService;
 
+    /**
+     * Class contructor that handles the user's request to insert or delete files
+     * 
+     * @param userService           ensures that the correct authenticated user is making the request
+     * @param portfolioService      the portfolio imported by the user
+     * @param validationService     ensures that the user is authorized to make the request
+     * @param responseService       packages the responses from portfolioService
+     */
     public PortfolioController(UserService userService, PortfolioService portfolioService,
                                ValidationService validationService, ResponseService responseService) {
         this.userService = userService;
@@ -33,6 +41,14 @@ public class PortfolioController {
         this.responseService = responseService;
     }
 
+    /**
+     * Allows authorized user to upload the file
+     * 
+     * @param authentication    checks if the user is authenticated
+     * @param multipartFile     the file uploaded by the user
+     * @param model             contains the data from portfolioService and responseService
+     * @return                  uploads file if portfolio is not empty. Raises exception for empty files
+     */
     @PostMapping
     public String uploadPortfolio(Authentication authentication,
                                   @RequestParam("csvUpload")MultipartFile multipartFile, Model model) {
@@ -68,6 +84,12 @@ public class PortfolioController {
 //        return responseService.uploadSuccess(result, model, currentUser, portfolioService);
 //    }
 
+    /**
+     * Checks if the correct user is authenticated and has access to their individual account
+     * 
+     * @param authentication    checks the credentials of the user
+     * @return                  True if the authenticated user is registered
+     */
     private User getCurrentUser(Authentication authentication) {
         return userService.findUserByName(authentication.getName());
     }
