@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**********************************************************************************************************************
- * Implements business logic for Portfolio requests.
+ * Implements business logic for Portfolio requests, including uploading, modifying, and deleting portfolio data.
  *********************************************************************************************************************/
 @Service
 @Transactional
@@ -41,7 +41,8 @@ public class PortfolioService {
     }
 
     /**
-     * Either creates or updates a portfolio, based on prior existence of the portfolio
+     * Either creates a portfolio or appends new data in a non-destructive way, based on prior existence of the
+     * portfolio
      * @param multipartFile A representation of an uploaded csv file, which can be either new or existing
      * @param currentUser The current user and owner of the portfolio
      * @return The new or updated employee stored in the repository
@@ -62,7 +63,7 @@ public class PortfolioService {
 
             Portfolio currentPortfolio = currentUser.getPortfolio();
             if (currentPortfolio != null) {
-                savedPortfolio = doUpdatePortfolio(currentPortfolio.getId(), portfolioData, quotes);
+                savedPortfolio = doAppendPortfolioData(currentPortfolio.getId(), portfolioData, quotes);
             } else {
                 // Create the portfolio and flush the transaction to generate a portfolio id
                 Portfolio portfolio = doCreatePortfolio(currentUser);
@@ -133,19 +134,25 @@ public class PortfolioService {
         return allSymbols;
     }
 
-    // Update an existing portfolio with new portfolio data, including all accounts and account lines
-    private Portfolio doUpdatePortfolio(Long portfolioId, Map<String, Map<String, List<Integer>>> portfolioData,
-                                        List<Quote> allQuotes) {
+    // Append new portfolio data to an existing portfolio in a non-destructive way
+    private Portfolio doAppendPortfolioData(Long portfolioId, Map<String, Map<String, List<Integer>>> portfolioData,
+                                            List<Quote> allQuotes) {
         return portfolioRepository.findById(portfolioId)
                 .map(portfolioToBeUpdated -> {
+
+                    // Identify all existing accounts in a portfolio
                     List<Account> accounts = portfolioToBeUpdated.getAccounts();
                     portfolioData.forEach((accountNumber, map) -> {
                         Optional<Account> account = doAccountFilter(accounts, accountNumber);
-                        account.ifPresent(accountToBeUpdated -> doUpdateAccountLine(
-                                map,
-                                allQuotes,
-                                accountToBeUpdated
-                        ));
+
+                        // New accounts and account lines get appended to the existing persisted portfolio. This is a
+                        // non-destructive operation.
+                        if (account.isEmpty()) {
+                            Account newAccount = doCreateAccount(map, allQuotes, portfolioToBeUpdated, accountNumber);
+
+                            // Maintain referential integrity between existing portfolio and new account
+                            portfolioToBeUpdated.addAccount(newAccount);
+                        }
                     });
                     return portfolioToBeUpdated;
                 }).orElseThrow(AccountNotFoundException::new);
@@ -163,7 +170,6 @@ public class PortfolioService {
     private void doUpdateAccountLine(Map<String, List<Integer>> accountLines,
                                               List<Quote> allQuotes, Account accountToBeUpdated) {
         accountLineRepository.deleteAllByAccount_Id(accountToBeUpdated.getId());
-        //accountToBeUpdated.getAccountLines().clear();
         doCreateAccountLine(accountLines, allQuotes, accountToBeUpdated);
     }
 
@@ -183,7 +189,7 @@ public class PortfolioService {
         });
     }
 
-    // Match quotes to the owned symbols. If a matched, a quote is returned and subsequently added to the account line
+    // Match quotes to the owned symbols. If matched, a quote is returned and subsequently added to the account line
     private Quote doQuoteFilter(List<Quote> allQuotes, String symbol) {
         for (Quote quote : allQuotes) {
             if (quote.getSymbol().contains(symbol)) {
