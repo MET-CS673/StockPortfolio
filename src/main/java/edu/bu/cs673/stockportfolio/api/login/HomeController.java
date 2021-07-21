@@ -26,6 +26,14 @@ public class HomeController {
     private final PortfolioService portfolioService;
     private final ResponseService responseService;
 
+    /**
+     * 
+     * Class contructor that handles the view of the homepage
+     * 
+     * @param userService           ensures that the correct authenticated user is making the request
+     * @param portfolioService      the portfolio imported by the user
+     * @param responseService       packages the responses from portfolioService
+     */
     public HomeController(UserService userService, PortfolioService portfolioService,
                           ResponseService responseService) {
         this.userService = userService;
@@ -33,6 +41,15 @@ public class HomeController {
         this.responseService = responseService;
     }
 
+    /**
+     * Provides a view of homepage. 
+     * 
+     * The homepage is populated if the user has imported a portfolio.
+     * 
+     * @param authentication    checks if the user is authenticated
+     * @param model             contains the data from portfolioService and responseService
+     * @return                  the homepage viewed by user
+     */
     @GetMapping
     public String getHomePage(Authentication authentication, Model model) {
         User user = getUser(authentication);
@@ -56,6 +73,12 @@ public class HomeController {
         return "home";
     }
 
+    /**
+     * Checks if the correct user is authenticated and has access to their individual account
+     * 
+     * @param authentication    checks the credentials of the user
+     * @return                  True if the authenticated user is registered
+     */
     private User getUser(Authentication authentication) {
         return userService.findUserByName(authentication.getName());
     }
