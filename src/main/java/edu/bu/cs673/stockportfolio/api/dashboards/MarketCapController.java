@@ -19,12 +19,29 @@ import edu.bu.cs673.stockportfolio.service.user.UserService;
 import edu.bu.cs673.stockportfolio.service.utilities.MarketCapType;
 import edu.bu.cs673.stockportfolio.service.utilities.ResponseService;
 
+
+/**
+ * 
+ * The controller for Market Cap Breakdown.
+ * 
+ * Depends on PortfolioService, ResponseService and UserService.
+ * 
+ */
 @Controller
 @RequestMapping("/mc_breakdown")
 public class MarketCapController {
     private final PortfolioService portfolioService;
     private final ResponseService responseService;
     private final UserService userService;
+
+    /**
+     * 
+     * Class constructor that handles the view of the market cap breakdown
+     * 
+     * @param portfolioService  the portfolio imported by the user
+     * @param responseService   packages the responses from portfolioService
+     * @param userService       ensures that the correct authenticated user is making the request
+     */
 
     public MarketCapController(PortfolioService portfolioService, ResponseService responseService, UserService userService) {
 
@@ -33,6 +50,14 @@ public class MarketCapController {
         this.userService = userService;
     }
 
+    /**
+     * 
+     * Provides a view of the market cap breakdown.
+     * 
+     * @param authentication    checks if the user is authenticated
+     * @param model             contains the data from portfolioService and responseService
+     * @return                  the market cap breakdown viewed by user
+     */
     @GetMapping
     public String marketCapBreakdownView(Authentication authentication, Model model) {
         
@@ -61,6 +86,13 @@ public class MarketCapController {
         return "mc_breakdown";
     }
 
+
+    /**
+     * Checks if the correct user is authenticated and has access to their individual account
+     * 
+     * @param authentication    checks the credentials of the user
+     * @return                  True if the authenticated user is registered
+     */
     private User getUser(Authentication authentication) {
 
         return userService.findUserByName(authentication.getName());
