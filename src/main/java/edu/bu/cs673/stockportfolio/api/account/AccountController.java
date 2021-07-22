@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AccountController {
 
     /**
-     * Allows a user to view their account
+     * Handles the request to view the user's account
      * 
      * @return  a user's account
      */
