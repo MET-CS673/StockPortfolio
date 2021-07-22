@@ -36,11 +36,11 @@ public class MarketCapController {
 
     /**
      * 
-     * Class constructor that handles the view of the market cap breakdown
+     * Class constructor that initializes the dependencies of market cap breakdown
      * 
-     * @param portfolioService  the portfolio imported by the user
-     * @param responseService   packages the responses from portfolioService
-     * @param userService       ensures that the correct authenticated user is making the request
+     * @param portfolioService  Portfolio requests
+     * @param responseService   Packages the responses from portfolioService
+     * @param userService       User requests
      */
 
     public MarketCapController(PortfolioService portfolioService, ResponseService responseService, UserService userService) {
@@ -52,11 +52,11 @@ public class MarketCapController {
 
     /**
      * 
-     * Provides a view of the market cap breakdown.
+     * Handles the request to view the market cap breakdown.
      * 
-     * @param authentication    checks if the user is authenticated
-     * @param model             contains the data from portfolioService and responseService
-     * @return                  the market cap breakdown viewed by user
+     * @param authentication    Spring authentication object
+     * @param model             Contains the data from portfolioService and responseService
+     * @return                  The market cap breakdown 
      */
     @GetMapping
     public String marketCapBreakdownView(Authentication authentication, Model model) {
@@ -88,10 +88,10 @@ public class MarketCapController {
 
 
     /**
-     * Checks if the correct user is authenticated and has access to their individual account
+     * Gets the user's username 
      * 
-     * @param authentication    checks the credentials of the user
-     * @return                  True if the authenticated user is registered
+     * @param authentication    Spring authentication object
+     * @return                  The user's name
      */
     private User getUser(Authentication authentication) {
 
