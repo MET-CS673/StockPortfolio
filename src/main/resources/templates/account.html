@@ -139,17 +139,17 @@
               confirmPwd = $("#confirmNewPassword").val()
 
               if (newPwd !== confirmPwd){
-                $("#errorMsg").text("New password is not equal to Confirm new password!")
+                $("#errorMsg").text("Confirm password dosen't match! Please check and try again.")
                 $("#errorMsg").removeClass("d-none");
                 return
               }
               if (newPwd.length<10 ){
-                $("#errorMsg").text("New password should be at least than 10 characters!(Now only "+newPwd.length+" characters.)")
+                $("#errorMsg").text("Your password should be at least than 10 characters long!(Now only "+newPwd.length+" characters.) Please try again.")
                 $("#errorMsg").removeClass("d-none");
                 return
               }
               if (oldPwd == newPwd){
-                $("#errorMsg").text("New password should not equal to Old password")
+                $("#errorMsg").text("New password should not equal to Old password. Please try again.")
                 $("#errorMsg").removeClass("d-none");
                 return
               }
@@ -177,7 +177,7 @@
                 }
               } else {
                 // Do nothing!
-                console.log('Password change cancelled');
+                console.log('Password change cancelled.');
               }
             }
           </script>
