@@ -3,9 +3,13 @@ package edu.bu.cs673.stockportfolio.api.login;
 import edu.bu.cs673.stockportfolio.domain.account.Account;
 import edu.bu.cs673.stockportfolio.domain.portfolio.Portfolio;
 import edu.bu.cs673.stockportfolio.domain.user.User;
+import edu.bu.cs673.stockportfolio.service.authentication.HashService;
+import edu.bu.cs673.stockportfolio.service.portfolio.PortfolioNotFoundException;
 import edu.bu.cs673.stockportfolio.service.portfolio.PortfolioService;
 import edu.bu.cs673.stockportfolio.service.user.UserService;
 import edu.bu.cs673.stockportfolio.service.utilities.ResponseService;
+import org.fissore.slf4j.FluentLogger;
+import org.fissore.slf4j.FluentLoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +29,7 @@ public class HomeController {
     private final UserService userService;
     private final PortfolioService portfolioService;
     private final ResponseService responseService;
+    private final FluentLogger log = FluentLoggerFactory.getLogger(HomeController.class);
 
     public HomeController(UserService userService, PortfolioService portfolioService,
                           ResponseService responseService) {
@@ -40,16 +45,21 @@ public class HomeController {
 
         Portfolio portfolio = null;
         if (user.getPortfolio() != null) {
-
-            portfolio = portfolioService.getPortfolioBy(user.getPortfolio().getId());
-        } else {
-            model.addAttribute("portfolio", new ArrayList<>());
+            try {
+                portfolio = portfolioService.getPortfolioBy(user.getPortfolio().getId());
+            } catch (PortfolioNotFoundException e) {
+                // Fail gracefully by logging error and returning an arrayList to mimic an empty portfolio
+                log.error().log("Portfolio not found.");
+                model.addAttribute("portfolio", new ArrayList<>());
+            }
         }
 
         if (portfolio != null) {
             List<Account> accounts = portfolio.getAccounts();
             model.addAttribute("portfolio", responseService.createPortfolioTable(accounts));
-        } else {
+        }
+
+        if (portfolio == null) {
             model.addAttribute("portfolio", new ArrayList<>());
         }
         

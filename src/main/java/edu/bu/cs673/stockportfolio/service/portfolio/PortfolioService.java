@@ -248,21 +248,17 @@ public class PortfolioService {
      * Deletes the Portfolio associated with the given id by detaching it from the User.
      * @note The transaction is flushed after the method returns.
      * @param id The id of the portfolio being deleted.
-     * @return The Portfolio being deleted; Otherwise null.
      */
-    public Portfolio deletePortfolioBy(Long id) {
+    public void deletePortfolioBy(Long id) {
         Optional<Portfolio> optionalPortfolio = portfolioRepository.findById(id);
 
-        Portfolio currentPortfolio = null;
         if (optionalPortfolio.isPresent()) {
-            currentPortfolio = optionalPortfolio.get();
+            Portfolio currentPortfolio = optionalPortfolio.get();
             currentPortfolio.getUser().setPortfolio(null);
         }
-
-        return currentPortfolio;
     }
 
     public Portfolio getPortfolioBy(Long id) {
-        return portfolioRepository.findById(id).orElse(new Portfolio());
+        return portfolioRepository.findById(id).orElseThrow(PortfolioNotFoundException::new);
     }
 }
