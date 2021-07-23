@@ -1,7 +1,6 @@
 package edu.bu.cs673.stockportfolio.domain.account;
 
 import edu.bu.cs673.stockportfolio.domain.portfolio.Portfolio;
-import edu.bu.cs673.stockportfolio.domain.investment.quote.Quote;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -9,7 +8,6 @@ import java.util.List;
 
 /**********************************************************************************************************************
  * Data object representing a users Account. An account holds investment products such as stocks.
- *
  *********************************************************************************************************************/
 @Entity
 public class Account {
@@ -17,13 +15,13 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "portfolio_id")
     private Portfolio portfolio;
 
     private String accountNumber;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AccountLine> accountLines = new ArrayList<>();
 
     public Account() {
