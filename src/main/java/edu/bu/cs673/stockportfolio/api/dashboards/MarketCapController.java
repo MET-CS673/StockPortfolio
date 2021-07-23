@@ -1,10 +1,10 @@
 package edu.bu.cs673.stockportfolio.api.dashboards;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import edu.bu.cs673.stockportfolio.service.portfolio.PortfolioNotFoundException;
+import org.fissore.slf4j.FluentLogger;
+import org.fissore.slf4j.FluentLoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,8 +25,10 @@ public class MarketCapController {
     private final PortfolioService portfolioService;
     private final ResponseService responseService;
     private final UserService userService;
+    private final FluentLogger log = FluentLoggerFactory.getLogger(MarketCapController.class);
 
-    public MarketCapController(PortfolioService portfolioService, ResponseService responseService, UserService userService) {
+    public MarketCapController(PortfolioService portfolioService,
+                               ResponseService responseService, UserService userService) {
 
         this.portfolioService = portfolioService;
         this.responseService = responseService;
@@ -35,26 +37,23 @@ public class MarketCapController {
 
     @GetMapping
     public String marketCapBreakdownView(Authentication authentication, Model model) {
-        
         User user = getUser(authentication);
-        Portfolio portfolio = null;
-        Map<String, Float> data = new LinkedHashMap<String, Float>();
+        Portfolio portfolio;
+        Map<String, Float> data;
 
-        Collection<String> stocksInMarketCap;
         if (user.getPortfolio() != null) {
 
-            portfolio = portfolioService.getPortfolioBy(user.getPortfolio().getId());
-            List<Account> accounts = portfolio.getAccounts();
+            try {
+                portfolio = portfolioService.getPortfolioBy(user.getPortfolio().getId());
+                List<Account> accounts = portfolio.getAccounts();
 
-            for ( MarketCapType marketCapType : MarketCapType.values() ) {
-
-                data = responseService.aggregateSumBySymbol(accounts, marketCapType);
-                stocksInMarketCap = data.keySet();
-                System.out.println("\n\nMarket Cap: " + marketCapType.toString());
-                for ( String stock : stocksInMarketCap ) {
-                    System.out.println(stock);
+                for ( MarketCapType marketCapType : MarketCapType.values() ) {
+                    data = responseService.aggregateSumBySymbol(accounts, marketCapType);
+                    model.addAttribute(marketCapType.toString(), data);
                 }
-                model.addAttribute(marketCapType.toString(), data);
+            } catch (PortfolioNotFoundException e) {
+                // Fail gracefully by logging error, while allowing control flow to return an empty html page.
+                log.error().log("Portfolio not found.");
             }
         }
 
@@ -62,7 +61,6 @@ public class MarketCapController {
     }
 
     private User getUser(Authentication authentication) {
-
         return userService.findUserByName(authentication.getName());
     }
 }
