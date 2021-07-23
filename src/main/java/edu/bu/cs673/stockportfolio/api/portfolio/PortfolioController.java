@@ -51,6 +51,8 @@ public class PortfolioController {
             try {
                 result = portfolioService.save(multipartFile, currentUser);
             } catch (InvalidFileNameException e) {
+                log.error().log("Portfolio file name is invalid. Check for NUL character or malicious activity. "
+                        + e.getMessage());
                 result = false;
                 model.addAttribute("message", e.getMessage());
             }
