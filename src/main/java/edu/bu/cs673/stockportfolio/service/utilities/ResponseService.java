@@ -102,6 +102,12 @@ public class ResponseService {
         return "result";
     }
 
+    public String deleteSuccess(boolean result, Model model) {
+        List<List<String>> response = new ArrayList<>(List.of());
+        model.addAttribute("portfolio", response);
+        return uploadSuccess(result, model);
+    }
+
     public Map<String, Float> aggregateSumBySymbol(List<Account> accounts) {
         Map<String, Float> data = new LinkedHashMap<String, Float>();
 
@@ -176,7 +182,14 @@ public class ResponseService {
 
     public String uploadFailure(boolean result, Model model) {
         model.addAttribute("uploadFailed", result);
-        model.addAttribute("applicationEdgeCaseErrorMessage", true);
+        model.addAttribute("applicationEdgeCaseErrorMessage", result);
+        model.addAttribute("nav", "/home");
+
+        return "result";
+    }
+
+    public String deletePortfolioError(boolean result, Model model) {
+        model.addAttribute("deletePortfolioError", result);
         model.addAttribute("nav", "/home");
 
         return "result";

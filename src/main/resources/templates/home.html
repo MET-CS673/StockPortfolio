@@ -89,9 +89,13 @@
                 <input type="file" class="form-control-file" id="csvUpload" name="csvUpload" accept=".csv">
               </div>
               <div class="col-sm-12">
-                <button id="fileUploadButton" type="submit" class="btn btn-sm btn-outline-secondary">Import
-                  Account
+                <button id="fileUploadButton" type="submit" class="btn btn-sm btn-outline-secondary">Import Portfolio
                 </button>
+              </div>
+            </form>
+            <form id="delete-portfolio" action="#" th:action="@{/portfolio/delete}" th:method="POST">
+              <div class="col-sm-12">
+                <button id="delete-portfolio-btn" type="submit" class="btn-danger btn-sm">Delete Portfolio</button>
               </div>
             </form>
           </div>

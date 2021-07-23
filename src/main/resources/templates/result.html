@@ -18,6 +18,7 @@
                 <h1 class="display-5">Error</h1>
                 <span th:if="${uploadFailed}">Please select a file to upload. Click <a id="nav-link" th:href="${nav}">here</a> to continue.</span>
                 <span th:if="${fileSizeExceeded}">File size exceeded. Limit is 10MB. Click <a id="nav-link" th:href="${nav}">here</a> to continue.</span>
+                <span th:if="${deletePortfolioError}">The Portfolio was not deleted. Click <a id="nav-link" th:href="${nav}">here</a> to continue.</span>
             </div>
         </div>
     </body>

@@ -35,7 +35,8 @@ public class User {
     @NotNull
     private String email;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user" ,cascade = CascadeType.ALL)
+    // mappedBy creates a foreign key
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Portfolio portfolio;
 
     public User() {

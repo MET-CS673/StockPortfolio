@@ -3,6 +3,7 @@ package edu.bu.cs673.stockportfolio.service.portfolio;
 import edu.bu.cs673.stockportfolio.domain.account.Account;
 import edu.bu.cs673.stockportfolio.domain.account.AccountLine;
 import edu.bu.cs673.stockportfolio.domain.account.AccountLineRepository;
+import edu.bu.cs673.stockportfolio.domain.account.AccountRepository;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.Quote;
 import edu.bu.cs673.stockportfolio.domain.portfolio.Portfolio;
 import edu.bu.cs673.stockportfolio.domain.portfolio.PortfolioRepository;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -31,13 +34,15 @@ public class PortfolioService {
     private final PortfolioRepository portfolioRepository;
     private final MarketDataServiceImpl marketDataServiceImpl;
     private final AccountLineRepository accountLineRepository;
+    private final AccountRepository accountRepository;
     private final FluentLogger log = FluentLoggerFactory.getLogger(HashService.class);
 
     public PortfolioService(PortfolioRepository portfolioRepository, MarketDataServiceImpl marketDataServiceImpl,
-                            AccountLineRepository accountLineRepository) {
+                            AccountLineRepository accountLineRepository, AccountRepository accountRepository) {
         this.portfolioRepository = portfolioRepository;
         this.marketDataServiceImpl = marketDataServiceImpl;
         this.accountLineRepository = accountLineRepository;
+        this.accountRepository = accountRepository;
     }
 
     /**
@@ -167,8 +172,8 @@ public class PortfolioService {
     }
 
     // Clear existing account lines and add the updated account lines
-    private void doUpdateAccountLine(Map<String, List<Integer>> accountLines,
-                                              List<Quote> allQuotes, Account accountToBeUpdated) {
+    private void doUpdateAccountLine(Account accountToBeUpdated, Map<String, List<Integer>> accountLines,
+                                              List<Quote> allQuotes) {
         accountLineRepository.deleteAllByAccount_Id(accountToBeUpdated.getId());
         doCreateAccountLine(accountLines, allQuotes, accountToBeUpdated);
     }
@@ -239,14 +244,22 @@ public class PortfolioService {
         return newAccount;
     }
 
-    public Portfolio findPortfolio(Portfolio portfolio) {
-        return portfolioRepository.findById(portfolio.getId()).orElseThrow(PortfolioNotFoundException::new);
-    }
+    /**
+     * Deletes the Portfolio associated with the given id by detaching it from the User.
+     * @note The transaction is flushed after the method returns.
+     * @param id The id of the portfolio being deleted.
+     * @return The Portfolio being deleted; Otherwise null.
+     */
+    public Portfolio deletePortfolioBy(Long id) {
+        Optional<Portfolio> optionalPortfolio = portfolioRepository.findById(id);
 
-    public boolean delete(Portfolio portfolio) {
-        portfolioRepository.delete(portfolio);
+        Portfolio currentPortfolio = null;
+        if (optionalPortfolio.isPresent()) {
+            currentPortfolio = optionalPortfolio.get();
+            currentPortfolio.getUser().setPortfolio(null);
+        }
 
-        return portfolioRepository.findById(portfolio.getId()).isEmpty();
+        return currentPortfolio;
     }
 
     public Portfolio getPortfolioBy(Long id) {

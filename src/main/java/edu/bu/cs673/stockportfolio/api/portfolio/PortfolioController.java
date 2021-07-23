@@ -1,5 +1,6 @@
 package edu.bu.cs673.stockportfolio.api.portfolio;
 
+import edu.bu.cs673.stockportfolio.domain.portfolio.Portfolio;
 import edu.bu.cs673.stockportfolio.domain.user.User;
 import edu.bu.cs673.stockportfolio.service.portfolio.PortfolioService;
 import edu.bu.cs673.stockportfolio.service.user.UserService;
@@ -54,19 +55,25 @@ public class PortfolioController {
         }
     }
 
-//    @GetMapping("/delete")
-//    public String deletePortfolio(Authentication authentication, @ModelAttribute Portfolio portfolio, Model model) {
-//        portfolio = portfolioService.findPortfolio(portfolio);
-//        User currentUser = getCurrentUser(authentication);
-//
-//        boolean result = validationService.validatePortfolioOwner(portfolio, currentUser, model, "delete");
-//
-//        if (result) {
-//            result = portfolioService.delete(portfolio);
-//        }
-//
-//        return responseService.uploadSuccess(result, model, currentUser, portfolioService);
-//    }
+    @PostMapping("/delete")
+    public String deletePortfolio(Authentication authentication, Model model) {
+        User currentUser = getCurrentUser(authentication);
+        Portfolio currentPortfolio = currentUser.getPortfolio();
+
+        boolean result = validationService.validatePortfolioOwner(currentPortfolio, currentUser, model, "delete");
+
+        if (result) {
+            Long id = currentPortfolio.getId();
+            portfolioService.deletePortfolioBy(id);
+
+            currentPortfolio = portfolioService.deletePortfolioBy(id);
+            if (currentPortfolio == null) {
+                return responseService.deleteSuccess(true, model);
+            }
+        }
+
+        return responseService.deletePortfolioError(true, model);
+    }
 
     private User getCurrentUser(Authentication authentication) {
         return userService.findUserByName(authentication.getName());
