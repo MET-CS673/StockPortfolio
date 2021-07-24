@@ -31,15 +31,13 @@ public class PortfolioService {
     private final PortfolioRepository portfolioRepository;
     private final MarketDataServiceImpl marketDataServiceImpl;
     private final AccountLineRepository accountLineRepository;
-    private final AccountRepository accountRepository;
-    private final FluentLogger log = FluentLoggerFactory.getLogger(HashService.class);
+    private final FluentLogger log = FluentLoggerFactory.getLogger(PortfolioService.class);
 
     public PortfolioService(PortfolioRepository portfolioRepository, MarketDataServiceImpl marketDataServiceImpl,
-                            AccountLineRepository accountLineRepository, AccountRepository accountRepository) {
+                            AccountLineRepository accountLineRepository) {
         this.portfolioRepository = portfolioRepository;
         this.marketDataServiceImpl = marketDataServiceImpl;
         this.accountLineRepository = accountLineRepository;
-        this.accountRepository = accountRepository;
     }
 
     /**
@@ -50,41 +48,49 @@ public class PortfolioService {
      * @return The new or updated employee stored in the repository
      */
     public boolean save(MultipartFile multipartFile, User currentUser) {
-        Portfolio savedPortfolio = null;
 
+        Iterable<CSVRecord> records = null;
         try {
             BufferedReader fileReader = doCreateBufferedReader(multipartFile);
-            Iterable<CSVRecord> records = doCreateCSVRecords(fileReader);
-            Map<String, Map<String, Integer>> portfolioData = doInternalParse(records);
-
-            // Package all symbols in the portfolio and send a batch request to IEX Cloud to reduce network traffic
-            Set<String> allSymbols = doGetAllSymbols(portfolioData);
-
-            // Send market data batch request to IEX Cloud
-            List<Quote> quotes = marketDataServiceImpl.doGetQuotes(allSymbols);
-
-            Portfolio currentPortfolio = currentUser.getPortfolio();
-            if (currentPortfolio != null) {
-                try {
-                    savedPortfolio = doUpdatePortfolio(currentPortfolio.getId(), portfolioData, quotes);
-                } catch (PortfolioNotFoundException e) {
-                    // Fail gracefully by logging error and allow the program to continue executing
-                    log.error().log("Portfolio not found. " + e.getMessage());
-                }
-            } else {
-                // Create the portfolio and flush the transaction to generate a portfolio id
-                Portfolio portfolio = doCreatePortfolio(currentUser);
-                savedPortfolio = portfolioRepository.save(portfolio);
-
-                // Add accounts to the portfolio
-                List<Account> accounts = doCreateAccounts(portfolioData, savedPortfolio, quotes);
-
-                // Maintain referential integrity between the user, portfolio, and accounts
-                currentUser.setPortfolio(portfolio);
-                savedPortfolio.setAccounts(accounts);
-            }
+            records = doCreateCSVRecords(fileReader);
         } catch (IOException e) {
             log.error().log("File upload error for User: " + currentUser + ". ", e.getMessage());
+        }
+
+        Map<String, Map<String, Integer>> portfolioData = null;
+        List<Quote> quotes = null;
+        if (records != null) {
+            portfolioData = doInternalParse(records);
+
+            // Collect all symbols in the portfolio and send them as a a batch request to IEX Cloud
+            Set<String> allSymbols = doGetAllSymbols(portfolioData);
+            quotes = marketDataServiceImpl.doGetQuotes(allSymbols);
+        }
+
+        Portfolio savedPortfolio = null;
+        Portfolio currentPortfolio = currentUser.getPortfolio();
+        if (portfolioData != null && currentPortfolio != null) {
+            // doInternalParse succeeded and the current user already has a Portfolio stored in the database
+            try {
+                savedPortfolio = doUpdatePortfolio(currentPortfolio.getId(), portfolioData, quotes);
+            } catch (PortfolioNotFoundException e) {
+                // Fail gracefully by logging error and allow the program to continue executing
+                log.error().log("Portfolio not found. " + e.getMessage());
+            }
+        }
+
+        // The current user doesn't have a Portfolio stored in the database
+        if (portfolioData != null && currentPortfolio == null) {
+            // Create the portfolio and flush the transaction to generate a portfolio id
+            Portfolio portfolio = doCreatePortfolio(currentUser);
+            savedPortfolio = portfolioRepository.save(portfolio);
+
+            // Add accounts to the portfolio
+            List<Account> accounts = doCreateAccounts(portfolioData, savedPortfolio, quotes);
+
+            // Maintain referential integrity between the user, portfolio, and accounts
+            currentUser.setPortfolio(portfolio);
+            savedPortfolio.setAccounts(accounts);
         }
 
         return savedPortfolio != null && savedPortfolio.getId() > 0;
@@ -119,7 +125,6 @@ public class PortfolioService {
                 Map<String, Integer> line = accountLines.get(account);
                 if (line.containsKey(symbol)) {
                     line.put(symbol, line.get(symbol) + quantity);
-                    //line.get(symbol).add(quantity);
                 }
             } else {
                 accountLines.put(account, new HashMap<>(Map.of(symbol, quantity)));
