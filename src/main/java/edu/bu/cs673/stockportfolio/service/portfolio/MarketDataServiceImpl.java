@@ -5,6 +5,7 @@ import edu.bu.cs673.stockportfolio.domain.investment.quote.QuoteRepository;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.QuoteRoot;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.StockQuote;
 import edu.bu.cs673.stockportfolio.domain.investment.sector.SectorRoot;
+import edu.bu.cs673.stockportfolio.domain.investment.sector.StockSector;
 import edu.bu.cs673.stockportfolio.service.utilities.IexCloudConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -51,6 +52,7 @@ public class MarketDataServiceImpl implements MarketDataService {
         Map<String, StockQuote> stocks = quoteRoot.getStocks();
         List<Quote> quotes = new ArrayList<>();
         stocks.forEach((key, value) -> {
+            value.getQuote().setSector(doGetSector(value.getQuote().getSymbol()));
             quotes.add(value.getQuote());
             quoteRepository.save(value.getQuote());
         });
@@ -59,12 +61,23 @@ public class MarketDataServiceImpl implements MarketDataService {
     }
 
     @Override
-    public void doGetSector() {
-        String symbols = "aapl,fb,tsla";
+    public String doGetSector(String symbol) {
         String endpointPath = "stock/market/batch";
-        String queryParams = String.format("?symbols=%s&types=company&filter=symbol,sector", symbols);
+        String queryParams = String.format("?symbols=%s&types=company&filter=symbol,sector", symbol);
 
         SectorRoot sectorRoot = restTemplate.getForObject(
                 BASE_URL + VERSION + endpointPath + queryParams + TOKEN + apiKey, SectorRoot.class);
+
+        Map<String, StockSector> stocks = sectorRoot.getCompanies();
+        StringBuilder rtn = new StringBuilder();
+        stocks.forEach((key, value) -> {
+            rtn.append(value.getQuote().getSector());
+        });
+
+        if (rtn.equals("")) {
+
+            rtn.append("Other");
+        }
+        return rtn.toString();
     }
 }

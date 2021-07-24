@@ -40,6 +40,9 @@ public class Quote {
     @JsonProperty("marketCap")
     private Long marketCap;
 
+    @JsonProperty("sector")
+    private String sector;
+
     @OneToMany(mappedBy = "quote", cascade = CascadeType.ALL)
     private List<AccountLine> accountLines = new ArrayList<>();
 
@@ -58,13 +61,14 @@ public class Quote {
      * @param accountLines A collection of all the different owned lots within an account.
      */
     public Quote(String companyName, String symbol, BigDecimal latestPrice,
-                 Long marketCap, List<AccountLine> accountLines) {
+                 Long marketCap, List<AccountLine> accountLines, String sector) {
         super();
         this.companyName = companyName;
         this.symbol = symbol;
         this.latestPrice = latestPrice;
         this.marketCap = marketCap;
         this.accountLines = accountLines;
+        this.sector = sector;
     }
 
     public Long getId() {
@@ -113,6 +117,16 @@ public class Quote {
     @JsonProperty("marketCap")
     public void setMarketCap(Long marketCap) {
         this.marketCap = marketCap;
+    }
+
+    @JsonProperty("sector")
+    public String getSector() {
+        return sector;
+    }
+
+    @JsonProperty("sector")
+    public void setSector(String sector) {
+        this.sector = sector;
     }
 
     public List<AccountLine> getAccountLines() {

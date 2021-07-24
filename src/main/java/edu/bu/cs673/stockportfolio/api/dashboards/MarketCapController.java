@@ -40,7 +40,6 @@ public class MarketCapController {
         Portfolio portfolio = null;
         Map<String, Float> data = new LinkedHashMap<String, Float>();
 
-        Collection<String> stocksInMarketCap;
         if (user.getPortfolio() != null) {
 
             portfolio = portfolioService.getPortfolioBy(user.getPortfolio().getId());
@@ -49,11 +48,6 @@ public class MarketCapController {
             for ( MarketCapType marketCapType : MarketCapType.values() ) {
 
                 data = responseService.aggregateSumBySymbol(accounts, marketCapType);
-                stocksInMarketCap = data.keySet();
-                System.out.println("\n\nMarket Cap: " + marketCapType.toString());
-                for ( String stock : stocksInMarketCap ) {
-                    System.out.println(stock);
-                }
                 model.addAttribute(marketCapType.toString(), data);
             }
         }

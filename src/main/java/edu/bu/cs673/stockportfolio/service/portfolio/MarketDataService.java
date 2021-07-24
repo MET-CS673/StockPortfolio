@@ -21,5 +21,5 @@ public interface MarketDataService {
 
     List<Quote> doGetQuotes(Set<String> symbols);
 
-    void doGetSector();
+    String doGetSector(String symbol);
 }
