@@ -141,20 +141,22 @@ public class PortfolioService {
         return allSymbols;
     }
 
-    // Append new portfolio data to an existing portfolio in a non-destructive way
+    // Update or add new portfolio data depending on the existence of the associated account
     private Portfolio doUpdatePortfolio(Long portfolioId, Map<String, Map<String, Integer>> portfolioData,
                                         List<Quote> allQuotes) {
 
         return portfolioRepository.findById(portfolioId)
                 .map(portfolioToBeUpdated -> {
 
-                    // Identify all existing accounts in a portfolio
+                    // Get the list of all existing accounts and use this as a reference to check the newly uploaded
+                    // portfolioData against. If the account exists, it will get updated. Otherwise, new account lines
+                    // will be created.
                     List<Account> accounts = portfolioToBeUpdated.getAccounts();
 
                     portfolioData.forEach((accountNumber, accountLines) -> {
                         Optional<Account> optionalAccount = doAccountFilter(accounts, accountNumber);
 
-                        // Append new accounts and account lines to the existing portfolio.
+                        // Append account lines if the account is new to the portfolio.
                         if (optionalAccount.isEmpty()) {
                             Account newAccount = doCreateAccount(portfolioToBeUpdated, accountNumber);
                             doCreateAccountLines(accountLines, allQuotes, newAccount);
@@ -166,7 +168,7 @@ public class PortfolioService {
                         // If the account exists, overwrite the existing account lines with new portfolio data.
                         // This assumes a user uploads a complete portfolio snapshot. The quantity will be incorrect if
                         // the user uploads individual buys and sells. This approach is taken because brokerages
-                        // (e.g., Schwab) export an entire portfolio and not transaction data.
+                        // (e.g., Schwab, Fidelity, etc.) export an entire portfolio and not transaction data.
                         if (optionalAccount.isPresent()) {
                             Account accountToBeUpdated = optionalAccount.get();
                             doDestroyExistingAccountLines(accountToBeUpdated);
@@ -196,7 +198,7 @@ public class PortfolioService {
                                       Account accountToBeUpdated) {
 
         accountLines.forEach((symbol, quantity) -> {
-            Quote quote = doQuoteFilter(allQuotes, symbol);          // Match symbols to quotes from IEX Cloud
+            Quote quote = doQuoteFilter(allQuotes, symbol);
             accountToBeUpdated.getAccountLines()
                     .add(new AccountLine (
                             accountToBeUpdated,
@@ -206,7 +208,7 @@ public class PortfolioService {
         });
     }
 
-    // Match quotes to the owned symbols. If matched, a quote is returned and subsequently added to the account line
+    // Match a Quote to its symbol. If matched, return an IEX Cloud Quote. Otherwise, return an empty Quote.
     private Quote doQuoteFilter(List<Quote> allQuotes, String symbol) {
         for (Quote quote : allQuotes) {
             if (quote.getSymbol().contains(symbol)) {
@@ -214,11 +216,11 @@ public class PortfolioService {
             }
         }
 
-        // This should never occur, but an empty quote is returned to prevent null pointer exceptions.
+        // If control flow gets here, something went wrong with marketDataServiceImpl.doGetQuotes() in the Save method.
         return new Quote();
     }
 
-    // Clear existing account lines and add the updated account lines
+    // Delete existing account lines.
     private void doDestroyExistingAccountLines(Account accountToBeUpdated) {
         accountLineRepository.deleteAllByAccount_Id(accountToBeUpdated.getId());
     }
@@ -227,13 +229,13 @@ public class PortfolioService {
         return new Portfolio(user);
     }
 
-    // Add a quote to an account only when a symbol has been purchased within the specified account number
+    // Add a Quote to an account only when the Quote's symbol exists within the specified account.
     private List<Account> doCreateAccounts(Map<String, Map<String, Integer>> portfolioData,
                                            Portfolio portfolio, List<Quote> allQuotes) {
         List<String> initializedAccountNumbers = new ArrayList<>();
         List<Account> accounts = new ArrayList<>();
 
-        // Update or create an account with quotes provided by IEX Cloud
+        // Update or create an account with Quotes from IEX Cloud
         portfolioData.forEach((accountNumber, accountLines) -> {
             if (initializedAccountNumbers.contains(accountNumber)) {
                 Optional<Account> account = doAccountFilter(accounts, accountNumber);
@@ -267,6 +269,13 @@ public class PortfolioService {
         }
     }
 
+    /**
+     * Queries the database for the Portfolio associated with the specified id.
+     * @param id An id associated with the Portfolio that needs to be found.
+     * @return The Portfolio represented by the specified id. The Entity Manager will insert this Portfolio into the
+     * persistence context, so any changes will by synchronized to the database when the transaction is committed.
+     * @throws PortfolioNotFoundException The Portfolio associated with the specified id cannot be found.
+     */
     public Portfolio getPortfolioBy(Long id) {
         return portfolioRepository.findById(id).orElseThrow(PortfolioNotFoundException::new);
     }
