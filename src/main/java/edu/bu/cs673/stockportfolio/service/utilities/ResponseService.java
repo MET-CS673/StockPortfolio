@@ -1,11 +1,15 @@
 package edu.bu.cs673.stockportfolio.service.utilities;
 
+import edu.bu.cs673.stockportfolio.api.portfolio.PortfolioController;
 import edu.bu.cs673.stockportfolio.domain.account.Account;
 import edu.bu.cs673.stockportfolio.domain.account.AccountLine;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.Quote;
 import edu.bu.cs673.stockportfolio.domain.portfolio.Portfolio;
 import edu.bu.cs673.stockportfolio.domain.user.User;
+import edu.bu.cs673.stockportfolio.service.portfolio.PortfolioNotFoundException;
 import edu.bu.cs673.stockportfolio.service.portfolio.PortfolioService;
+import org.fissore.slf4j.FluentLogger;
+import org.fissore.slf4j.FluentLoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -22,13 +26,21 @@ import java.util.Map;
  *********************************************************************************************************************/
 @Service
 public class ResponseService {
+    private final FluentLogger log = FluentLoggerFactory.getLogger(ResponseService.class);
+
     public String uploadSuccess(boolean result, Model model, User user, PortfolioService service) {
         Long id = user.getPortfolio().getId();
-        Portfolio portfolio = service.getPortfolioBy(id);
-        List<Account> accounts = portfolio.getAccounts();
-        List<List<String>> response = createPortfolioTable(accounts);
 
-        model.addAttribute("portfolio", response);
+        try {
+            Portfolio portfolio = service.getPortfolioBy(id);
+            List<Account> accounts = portfolio.getAccounts();
+            List<List<String>> response = createPortfolioTable(accounts);
+            model.addAttribute("portfolio", response);
+        } catch (PortfolioNotFoundException e) {
+            // Fail gracefully by logging error and returning an arrayList to mimic an empty portfolio
+            log.error().log("Portfolio not found.");
+            model.addAttribute("portfolio", new ArrayList<>(List.of()));
+        }
 
         return uploadSuccess(result, model);
     }
