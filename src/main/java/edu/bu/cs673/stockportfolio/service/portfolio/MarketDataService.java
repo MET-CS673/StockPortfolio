@@ -17,10 +17,10 @@ public interface MarketDataService {
 //     */
 //    default void processIexCloudRequests() {
 //        doGetQuotes();
-//        doGetSector();
+//        addNewCompanies();
 //    }
 
     List<Quote> doGetQuotes(Set<String> symbols);
 
-    List<Company> doGetCompanies(Set<String> symbols);
+    void addNewCompanies(Set<String> symbols);
 }

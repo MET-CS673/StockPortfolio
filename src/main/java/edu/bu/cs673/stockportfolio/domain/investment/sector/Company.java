@@ -40,7 +40,7 @@ public class Company {
     private String companyName;
 
     @OneToMany(mappedBy="company", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Quote> quotes;
+    private List<Quote> quotes = new ArrayList<Quote>();
 
     /**
      * No args constructor for use in serialization

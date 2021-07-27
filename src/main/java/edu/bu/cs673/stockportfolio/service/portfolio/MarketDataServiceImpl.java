@@ -8,11 +8,13 @@ import edu.bu.cs673.stockportfolio.domain.investment.sector.Company;
 import edu.bu.cs673.stockportfolio.domain.investment.sector.CompanyRepository;
 import edu.bu.cs673.stockportfolio.domain.investment.sector.CompanyRoot;
 import edu.bu.cs673.stockportfolio.domain.investment.sector.StockSector;
+import edu.bu.cs673.stockportfolio.service.company.CompanyService;
 import edu.bu.cs673.stockportfolio.service.utilities.IexCloudConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,14 +28,14 @@ public class MarketDataServiceImpl implements MarketDataService {
     private final RestTemplate restTemplate;
     private final String apiKey;
     private final QuoteRepository quoteRepository;
-    private final CompanyRepository companyRepository;
+    private final CompanyService companyService;
 
     public MarketDataServiceImpl(IexCloudConfig iexCloudConfig, RestTemplate restTemplate,
-                                 QuoteRepository quoteRepository, CompanyRepository companyRepository) {
+                                 QuoteRepository quoteRepository, CompanyService companyService) {
         this.restTemplate = restTemplate;
         this.apiKey = iexCloudConfig.getApiKey();
         this.quoteRepository = quoteRepository;
-        this.companyRepository = companyRepository;
+        this.companyService = companyService;
     }
 
     @Override
@@ -64,7 +66,7 @@ public class MarketDataServiceImpl implements MarketDataService {
     }
 
     @Override
-    public List<Company> doGetCompanies(Set<String> symbols) {
+    public void addNewCompanies(Set<String> symbols) {
         String symbolFilter = String.join(",", symbols);
         String endpointPath = "stock/market/batch";
         String queryParams = String.format("?symbols=%s&types=company&filter=symbol,sector,companyName", symbolFilter);
@@ -73,12 +75,8 @@ public class MarketDataServiceImpl implements MarketDataService {
                 BASE_URL + VERSION + endpointPath + queryParams + TOKEN + apiKey, CompanyRoot.class);
 
         Map<String, StockSector> companyData = companyRoot.getCompanies();
-        List<Company> companies = new ArrayList<>();
         companyData.forEach((key, value) -> {
-            companies.add(value.getCompany());
-            companyRepository.save(value.getCompany());
+            companyService.add(value.getCompany());
         });
-
-        return companies;
     }
 }
