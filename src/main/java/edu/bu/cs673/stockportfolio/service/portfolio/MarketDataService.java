@@ -1,6 +1,7 @@
 package edu.bu.cs673.stockportfolio.service.portfolio;
 
 import edu.bu.cs673.stockportfolio.domain.investment.quote.Quote;
+import edu.bu.cs673.stockportfolio.domain.investment.sector.Company;
 
 import java.util.List;
 import java.util.Set;
@@ -21,5 +22,5 @@ public interface MarketDataService {
 
     List<Quote> doGetQuotes(Set<String> symbols);
 
-    String doGetSector(String symbol);
+    List<Company> doGetCompanies(Set<String> symbols);
 }

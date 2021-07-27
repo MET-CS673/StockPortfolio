@@ -132,7 +132,7 @@ public class ResponseService {
 
             List<AccountLine> accountLines = account.getAccountLines();
             for (AccountLine accountLine : accountLines) {
-                sector = accountLine.getQuote().getSector();
+                sector = accountLine.getQuote().getCompany().getSector();
                 calculateTotalValues(data, sector, accountLine);
             }
         }

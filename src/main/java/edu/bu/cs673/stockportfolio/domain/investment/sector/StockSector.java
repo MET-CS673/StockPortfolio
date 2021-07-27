@@ -20,12 +20,12 @@ public class StockSector {
     }
 
     @JsonProperty("company")
-    public Company getQuote() {
+    public Company getCompany() {
         return company;
     }
 
     @JsonProperty("company")
-    public void setQuote(Company company) {
+    public void setCompany(Company company) {
         this.company = company;
     }
 }

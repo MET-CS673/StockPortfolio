@@ -5,6 +5,7 @@ import edu.bu.cs673.stockportfolio.domain.account.AccountLine;
 import edu.bu.cs673.stockportfolio.domain.account.AccountLineRepository;
 import edu.bu.cs673.stockportfolio.domain.account.AccountRepository;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.Quote;
+import edu.bu.cs673.stockportfolio.domain.investment.sector.Company;
 import edu.bu.cs673.stockportfolio.domain.portfolio.Portfolio;
 import edu.bu.cs673.stockportfolio.domain.portfolio.PortfolioRepository;
 import edu.bu.cs673.stockportfolio.domain.user.User;
@@ -65,6 +66,7 @@ public class PortfolioService {
 
             // Send market data batch request to IEX Cloud
             List<Quote> quotes = marketDataServiceImpl.doGetQuotes(allSymbols);
+            marketDataServiceImpl.doGetCompanies(allSymbols);
 
             Portfolio currentPortfolio = currentUser.getPortfolio();
             if (currentPortfolio != null) {

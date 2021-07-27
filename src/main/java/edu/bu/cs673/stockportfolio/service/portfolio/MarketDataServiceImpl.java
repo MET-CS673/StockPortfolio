@@ -4,7 +4,9 @@ import edu.bu.cs673.stockportfolio.domain.investment.quote.Quote;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.QuoteRepository;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.QuoteRoot;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.StockQuote;
-import edu.bu.cs673.stockportfolio.domain.investment.sector.SectorRoot;
+import edu.bu.cs673.stockportfolio.domain.investment.sector.Company;
+import edu.bu.cs673.stockportfolio.domain.investment.sector.CompanyRepository;
+import edu.bu.cs673.stockportfolio.domain.investment.sector.CompanyRoot;
 import edu.bu.cs673.stockportfolio.domain.investment.sector.StockSector;
 import edu.bu.cs673.stockportfolio.service.utilities.IexCloudConfig;
 import org.springframework.stereotype.Service;
@@ -24,12 +26,14 @@ public class MarketDataServiceImpl implements MarketDataService {
     private final RestTemplate restTemplate;
     private final String apiKey;
     private final QuoteRepository quoteRepository;
+    private final CompanyRepository companyRepository;
 
     public MarketDataServiceImpl(IexCloudConfig iexCloudConfig, RestTemplate restTemplate,
-                                 QuoteRepository quoteRepository) {
+                                 QuoteRepository quoteRepository, CompanyRepository companyRepository) {
         this.restTemplate = restTemplate;
         this.apiKey = iexCloudConfig.getApiKey();
         this.quoteRepository = quoteRepository;
+        this.companyRepository = companyRepository;
     }
 
     @Override
@@ -52,7 +56,6 @@ public class MarketDataServiceImpl implements MarketDataService {
         Map<String, StockQuote> stocks = quoteRoot.getStocks();
         List<Quote> quotes = new ArrayList<>();
         stocks.forEach((key, value) -> {
-            value.getQuote().setSector(doGetSector(value.getQuote().getSymbol()));
             quotes.add(value.getQuote());
             quoteRepository.save(value.getQuote());
         });
@@ -61,23 +64,21 @@ public class MarketDataServiceImpl implements MarketDataService {
     }
 
     @Override
-    public String doGetSector(String symbol) {
+    public List<Company> doGetCompanies(Set<String> symbols) {
+        String symbolFilter = String.join(",", symbols);
         String endpointPath = "stock/market/batch";
-        String queryParams = String.format("?symbols=%s&types=company&filter=symbol,sector", symbol);
+        String queryParams = String.format("?symbols=%s&types=company&filter=symbol,sector,companyName", symbolFilter);
 
-        SectorRoot sectorRoot = restTemplate.getForObject(
-                BASE_URL + VERSION + endpointPath + queryParams + TOKEN + apiKey, SectorRoot.class);
+        CompanyRoot companyRoot = restTemplate.getForObject(
+                BASE_URL + VERSION + endpointPath + queryParams + TOKEN + apiKey, CompanyRoot.class);
 
-        Map<String, StockSector> stocks = sectorRoot.getCompanies();
-        StringBuilder rtn = new StringBuilder();
-        stocks.forEach((key, value) -> {
-            rtn.append(value.getQuote().getSector());
+        Map<String, StockSector> companyData = companyRoot.getCompanies();
+        List<Company> companies = new ArrayList<>();
+        companyData.forEach((key, value) -> {
+            companies.add(value.getCompany());
+            companyRepository.save(value.getCompany());
         });
 
-        if (rtn.equals("")) {
-
-            rtn.append("Other");
-        }
-        return rtn.toString();
+        return companies;
     }
 }
