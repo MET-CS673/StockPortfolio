@@ -136,6 +136,13 @@ public class ResponseService {
         return data;
     }
 
+    /**
+     * Calculates the total value of all quotes of all companies in a given sector
+     * 
+     * @param accounts  A list of all accounts to aggregate over
+     * @return  The proportion of each sector of the entire portfolio. The
+     * data will be presented to the user on the sector_breakdown endpoint
+     */
     public Map<String, Float> aggregateSumBySector(List<Account> accounts) {
         Map<String, Float> data = new LinkedHashMap<String, Float>();
 
