@@ -93,11 +93,6 @@
                 </button>
               </div>
             </form>
-            <form id="delete-portfolio" action="#" th:action="@{/portfolio/delete}" th:method="POST">
-              <div class="col-sm-12">
-                <button id="delete-portfolio-btn" type="submit" class="btn-danger btn-sm">Delete Portfolio</button>
-              </div>
-            </form>
           </div>
         </div>
         <h2>Portfolio</h2>
@@ -127,11 +122,13 @@
             </tbody>
           </table>
         </div>
-
+        <form id="delete-portfolio" action="#" th:action="@{/portfolio/delete}" th:method="POST">
+          <div class="col-sm-12">
+            <button id="delete-portfolio-btn" type="submit" class="btn btn-danger btn-sm">Delete Portfolio</button>
+          </div>
+        </form>
+      </main>
     </div>
-  </div>
-  </main>
-  </div>
   </div>
 
   <footer>
