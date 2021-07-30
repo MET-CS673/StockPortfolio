@@ -64,7 +64,7 @@ public class Quote {
      * @param accountLines A collection of all the different owned lots within an account.
      */
     public Quote(String companyName, String symbol, BigDecimal latestPrice,
-                 Long marketCap, List<AccountLine> accountLines, String sector, Company company) {
+                 Long marketCap, List<AccountLine> accountLines, Company company) {
         super();
         this.companyName = companyName;
         this.symbol = symbol;

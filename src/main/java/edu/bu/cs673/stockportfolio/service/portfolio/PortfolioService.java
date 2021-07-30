@@ -72,7 +72,7 @@ public class PortfolioService {
             Set<String> allSymbols = doGetAllSymbols(portfolioData);
             quotes = marketDataServiceImpl.doGetQuotes(allSymbols);
             marketDataServiceImpl.addNewCompanies(allSymbols);
-            companyService.doQuotesLink(quotes);
+            companyService.doLinkQuotes(quotes);
         }
 
         Portfolio savedPortfolio = null;

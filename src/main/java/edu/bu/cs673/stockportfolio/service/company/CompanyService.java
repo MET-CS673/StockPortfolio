@@ -69,7 +69,7 @@ public class CompanyService {
      * 
      * @param quotes    List of quotes to link.
      */
-    public void doQuotesLink( List<Quote> quotes ) {
+    public void doLinkQuotes( List<Quote> quotes ) {
 
         Company company;
         for (Quote quote : quotes) {

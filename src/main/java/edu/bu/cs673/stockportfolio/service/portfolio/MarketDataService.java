@@ -11,14 +11,6 @@ import java.util.Set;
  * controls the order or execution, but allows subclasses to override which endpoints are targeted.
  *********************************************************************************************************************/
 public interface MarketDataService {
-//
-//    /**
-//     * A Template Method defining the sequence of IEX Cloud API requests.
-//     */
-//    default void processIexCloudRequests() {
-//        doGetQuotes();
-//        addNewCompanies();
-//    }
 
     List<Quote> doGetQuotes(Set<String> symbols);
 
