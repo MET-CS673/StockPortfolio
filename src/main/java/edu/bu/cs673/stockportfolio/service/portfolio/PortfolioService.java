@@ -65,13 +65,18 @@ public class PortfolioService {
 
         Map<String, Map<String, Integer>> portfolioData = null;
         List<Quote> quotes = null;
+        List<Company> companies = null;
         if (records != null) {
             portfolioData = doInternalParse(records);
 
             // Collect all symbols in the portfolio and send them as a a batch request to IEX Cloud
             Set<String> allSymbols = doGetAllSymbols(portfolioData);
             quotes = marketDataServiceImpl.doGetQuotes(allSymbols);
-            marketDataServiceImpl.addNewCompanies(allSymbols);
+
+            // Collect company data for the symbols being imported and make the association
+            // with the quotes
+            companies = marketDataServiceImpl.doGetCompanies(allSymbols);
+            doCreateCompanies(companies);
             companyService.doLinkQuotes(quotes);
         }
 
@@ -201,6 +206,19 @@ public class PortfolioService {
     // Instantiate a new account
     private Account doCreateAccount(Portfolio portfolio, String accountNumber) {
         return new Account(portfolio, accountNumber);
+    }
+
+    /**
+     * Add new companies to the Company Table
+     * 
+     * @param companies List of companies to be added to the database
+     */
+    private void doCreateCompanies(List<Company> companies) {
+        
+        for (Company company : companies) {
+            
+            companyService.add(company);
+        }
     }
 
     // Find all symbols and quantities within an account, add the quote from IEX Cloud and a new account line.

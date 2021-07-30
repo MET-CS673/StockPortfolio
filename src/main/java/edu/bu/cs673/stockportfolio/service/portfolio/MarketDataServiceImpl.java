@@ -66,8 +66,24 @@ public class MarketDataServiceImpl implements MarketDataService {
     }
 
     @Override
-    public void addNewCompanies(Set<String> symbols) {
-        String symbolFilter = String.join(",", symbols);
+    public List<Company> doGetCompanies(Set<String> symbols) {
+
+        // We don't need to retrieve Company data that we already have
+        // so befory making the request, remove existing symbols from
+        // the set.
+        Set<String> newSymbols = new HashSet<String>();
+        for (String symbol : symbols) {
+            
+            if ( !companyService.contains(symbol) ) {
+
+                newSymbols.add(symbol);
+            }
+        }
+
+        // If there are no new companies in this set, return early an empty list
+        if ( newSymbols.isEmpty() ) return new ArrayList<>();
+
+        String symbolFilter = String.join(",", newSymbols);
         String endpointPath = "stock/market/batch";
         String queryParams = String.format("?symbols=%s&types=company&filter=symbol,sector,companyName", symbolFilter);
 
@@ -75,8 +91,11 @@ public class MarketDataServiceImpl implements MarketDataService {
                 BASE_URL + VERSION + endpointPath + queryParams + TOKEN + apiKey, CompanyRoot.class);
 
         Map<String, StockSector> companyData = companyRoot.getCompanies();
+        List<Company> companies = new ArrayList<>();
         companyData.forEach((key, value) -> {
-            companyService.add(value.getCompany());
+            companies.add(value.getCompany());
         });
+        
+        return companies;
     }
 }

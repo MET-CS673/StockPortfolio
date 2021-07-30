@@ -14,5 +14,5 @@ public interface MarketDataService {
 
     List<Quote> doGetQuotes(Set<String> symbols);
 
-    void addNewCompanies(Set<String> symbols);
+    List<Company> doGetCompanies(Set<String> symbols);
 }
