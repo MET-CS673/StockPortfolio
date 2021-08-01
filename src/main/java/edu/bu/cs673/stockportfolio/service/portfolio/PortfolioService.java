@@ -5,7 +5,6 @@ import edu.bu.cs673.stockportfolio.domain.account.AccountLine;
 import edu.bu.cs673.stockportfolio.domain.account.AccountLineRepository;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.Quote;
 import edu.bu.cs673.stockportfolio.domain.investment.sector.Company;
-import edu.bu.cs673.stockportfolio.domain.investment.sector.CompanyRepository;
 import edu.bu.cs673.stockportfolio.domain.portfolio.Portfolio;
 import edu.bu.cs673.stockportfolio.domain.portfolio.PortfolioRepository;
 import edu.bu.cs673.stockportfolio.domain.user.User;
@@ -18,8 +17,6 @@ import org.fissore.slf4j.FluentLoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import ch.qos.logback.core.net.SyslogOutputStream;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

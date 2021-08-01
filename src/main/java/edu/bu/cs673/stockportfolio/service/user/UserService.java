@@ -60,8 +60,10 @@ public class UserService {
         random.nextBytes(salt);
         String encodedSalt = Base64.getEncoder().encodeToString(salt);
         String hashedPassword = hashService.getHashedValue(user.getPassword(), encodedSalt);
-        User savedUser = userRepository.save(
-                new User(user.getUsername(), hashedPassword, encodedSalt, user.getEmail(), user.getPortfolio()));
+
+        user.setPassword(hashedPassword);
+        user.setSalt(encodedSalt);
+        User savedUser = userRepository.save(user);
 
         return savedUser;
     }

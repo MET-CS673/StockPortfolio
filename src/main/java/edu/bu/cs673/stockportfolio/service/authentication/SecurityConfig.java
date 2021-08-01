@@ -38,26 +38,39 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .contentSecurityPolicy("script-src 'self' " +
 //                        "code.jquery.com cdnjs.cloudflare.com maxcdn.bootstrapcdn.com");
 
-        // Allow unauthenticated users to access the signup endpoint.
-        // Allow authenticated users access to all endpoints
         http.authorizeRequests()
+                // Allow unauthenticated users to access the signup endpoint.
                 .antMatchers("/signup", "/css/*", "/js/*", "/images/*").permitAll()
-                .anyRequest().authenticated();
+                // Allow authenticated users access to all endpoints
+                .anyRequest().authenticated()
+                .and()
+                // Permit all requests to the login endpoint.
+                .formLogin().loginPage("/login").permitAll()
+                .and()
+                // Automatically redirect successful logins to the home endpoint.
+                .formLogin().defaultSuccessUrl("/home", true)
+                .and()
+                .logout().permitAll()
+                .and()
+                // Session timeout occurs at 300 seconds (set in properties file). Redirect timed out session to login.
+                .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                    .invalidSessionUrl("/login");
 
         // Permit all requests to the login endpoint.
-        http.formLogin()
-                .loginPage("/login")
-                .permitAll();
+//        http.formLogin()
+//                .loginPage("/login")
+//                .permitAll();
 
         // Automatically redirect successful logins to the home endpoint.
-        http.formLogin()
-                .defaultSuccessUrl("/home", true);
-
-        http.logout().permitAll();
+//        http.formLogin()
+//                .defaultSuccessUrl("/home", true);
+//
+//        http.logout().permitAll();
 
         // Sessions timeout occurs at 300 seconds (set in properties file). This redirects timed out session to login.
-        http.sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                .invalidSessionUrl("/login");
+//        http.sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+//                .invalidSessionUrl("/login");
     }
 }

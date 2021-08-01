@@ -1,4 +1,4 @@
-package edu.bu.cs673.stockportfolio;
+package edu.bu.cs673.stockportfolio.integrationtests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectPackages;
