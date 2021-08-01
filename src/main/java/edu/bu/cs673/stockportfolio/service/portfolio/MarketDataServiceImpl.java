@@ -4,12 +4,17 @@ import edu.bu.cs673.stockportfolio.domain.investment.quote.Quote;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.QuoteRepository;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.QuoteRoot;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.StockQuote;
-import edu.bu.cs673.stockportfolio.domain.investment.sector.SectorRoot;
+import edu.bu.cs673.stockportfolio.domain.investment.sector.Company;
+import edu.bu.cs673.stockportfolio.domain.investment.sector.CompanyRepository;
+import edu.bu.cs673.stockportfolio.domain.investment.sector.CompanyRoot;
+import edu.bu.cs673.stockportfolio.domain.investment.sector.StockSector;
+import edu.bu.cs673.stockportfolio.service.company.CompanyService;
 import edu.bu.cs673.stockportfolio.service.utilities.IexCloudConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,12 +28,14 @@ public class MarketDataServiceImpl implements MarketDataService {
     private final RestTemplate restTemplate;
     private final String apiKey;
     private final QuoteRepository quoteRepository;
+    private final CompanyService companyService;
 
     public MarketDataServiceImpl(IexCloudConfig iexCloudConfig, RestTemplate restTemplate,
-                                 QuoteRepository quoteRepository) {
+                                 QuoteRepository quoteRepository, CompanyService companyService) {
         this.restTemplate = restTemplate;
         this.apiKey = iexCloudConfig.getApiKey();
         this.quoteRepository = quoteRepository;
+        this.companyService = companyService;
     }
 
     @Override
@@ -59,12 +66,36 @@ public class MarketDataServiceImpl implements MarketDataService {
     }
 
     @Override
-    public void doGetSector() {
-        String symbols = "aapl,fb,tsla";
-        String endpointPath = "stock/market/batch";
-        String queryParams = String.format("?symbols=%s&types=company&filter=symbol,sector", symbols);
+    public List<Company> doGetCompanies(Set<String> symbols) {
 
-        SectorRoot sectorRoot = restTemplate.getForObject(
-                BASE_URL + VERSION + endpointPath + queryParams + TOKEN + apiKey, SectorRoot.class);
+        // We don't need to retrieve Company data that we already have
+        // so befory making the request, remove existing symbols from
+        // the set.
+        Set<String> newSymbols = new HashSet<String>();
+        for (String symbol : symbols) {
+            
+            if ( !companyService.contains(symbol) ) {
+
+                newSymbols.add(symbol);
+            }
+        }
+
+        // If there are no new companies in this set, return early an empty list
+        if ( newSymbols.isEmpty() ) return new ArrayList<>();
+
+        String symbolFilter = String.join(",", newSymbols);
+        String endpointPath = "stock/market/batch";
+        String queryParams = String.format("?symbols=%s&types=company&filter=symbol,sector,companyName", symbolFilter);
+
+        CompanyRoot companyRoot = restTemplate.getForObject(
+                BASE_URL + VERSION + endpointPath + queryParams + TOKEN + apiKey, CompanyRoot.class);
+
+        Map<String, StockSector> companyData = companyRoot.getCompanies();
+        List<Company> companies = new ArrayList<>();
+        companyData.forEach((key, value) -> {
+            companies.add(value.getCompany());
+        });
+        
+        return companies;
     }
 }

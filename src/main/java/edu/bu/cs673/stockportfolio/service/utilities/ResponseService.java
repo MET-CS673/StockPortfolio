@@ -129,7 +129,30 @@ public class ResponseService {
             List<AccountLine> accountLines = account.getAccountLines();
             for (AccountLine accountLine : accountLines) {
                 symbol = accountLine.getQuote().getSymbol();
-                calculateMarketCaps(data, symbol, accountLine);
+                calculateTotalValues(data, symbol, accountLine);
+            }
+        }
+
+        return data;
+    }
+
+    /**
+     * Calculates the total value of all quotes of all companies in a given sector
+     * 
+     * @param accounts  A list of all accounts to aggregate over
+     * @return  The proportion of each sector of the entire portfolio. The
+     * data will be presented to the user on the sector_breakdown endpoint
+     */
+    public Map<String, Float> aggregateSumBySector(List<Account> accounts) {
+        Map<String, Float> data = new LinkedHashMap<String, Float>();
+
+        String sector;
+        for (Account account : accounts) {
+
+            List<AccountLine> accountLines = account.getAccountLines();
+            for (AccountLine accountLine : accountLines) {
+                sector = accountLine.getQuote().getCompany().getSector();
+                calculateTotalValues(data, sector, accountLine);
             }
         }
 
@@ -160,33 +183,33 @@ public class ResponseService {
                     continue;
                 }
 
-                calculateMarketCaps(data, symbol, accountLine);
+                calculateTotalValues(data, symbol, accountLine);
             }
         }
 
         return data;
     }
 
-    private void calculateMarketCaps(Map<String, Float> data, String symbol, AccountLine accountLine) {
+    private void calculateTotalValues(Map<String, Float> data, String aggregateTarget, AccountLine accountLine) {
         float totalValue;
 
         // If we've already seen this symbol, add the total value from this account line to the existing total value.
         // Otherwise, the total value for this stock is simply the value from this account line
-        if (data.containsKey(symbol)) {
-            totalValue = multiplyBigDecimals(data, symbol, accountLine);
+        if (data.containsKey(aggregateTarget)) {
+            totalValue = getTotalValue(data, aggregateTarget, accountLine);
         } else {
-            totalValue = multiplyBigDecimals(accountLine);
+            totalValue = getTotalValue(accountLine);
         }
 
-        data.put(symbol, totalValue);
+        data.put(aggregateTarget, totalValue);
     }
 
-    private float multiplyBigDecimals(Map<String, Float> data, String symbol, AccountLine accountLine) {
-        float currentValue = data.get(symbol);
-        return currentValue + multiplyBigDecimals(accountLine);
+    private float getTotalValue(Map<String, Float> data, String aggregateTarget, AccountLine accountLine) {
+        float currentValue = data.get(aggregateTarget);
+        return currentValue + getTotalValue(accountLine);
     }
 
-    private float multiplyBigDecimals(AccountLine accountLine) {
+    private float getTotalValue(AccountLine accountLine) {
         Quote quote = doGetQuote(accountLine);
         BigDecimal latestPrice = doGetPrice(quote);
         return latestPrice.multiply(BigDecimal.valueOf(accountLine.getQuantity())).floatValue();

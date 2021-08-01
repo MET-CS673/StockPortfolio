@@ -4,9 +4,13 @@ import edu.bu.cs673.stockportfolio.domain.account.Account;
 import edu.bu.cs673.stockportfolio.domain.account.AccountLine;
 import edu.bu.cs673.stockportfolio.domain.account.AccountLineRepository;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.Quote;
+import edu.bu.cs673.stockportfolio.domain.investment.sector.Company;
+import edu.bu.cs673.stockportfolio.domain.investment.sector.CompanyRepository;
 import edu.bu.cs673.stockportfolio.domain.portfolio.Portfolio;
 import edu.bu.cs673.stockportfolio.domain.portfolio.PortfolioRepository;
 import edu.bu.cs673.stockportfolio.domain.user.User;
+import edu.bu.cs673.stockportfolio.service.company.CompanyService;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.fissore.slf4j.FluentLogger;
@@ -14,6 +18,8 @@ import org.fissore.slf4j.FluentLoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import ch.qos.logback.core.net.SyslogOutputStream;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -29,13 +35,15 @@ public class PortfolioService {
     private final PortfolioRepository portfolioRepository;
     private final MarketDataServiceImpl marketDataServiceImpl;
     private final AccountLineRepository accountLineRepository;
+    private final CompanyService companyService;
     private final FluentLogger log = FluentLoggerFactory.getLogger(PortfolioService.class);
 
     public PortfolioService(PortfolioRepository portfolioRepository, MarketDataServiceImpl marketDataServiceImpl,
-                            AccountLineRepository accountLineRepository) {
+                            AccountLineRepository accountLineRepository, CompanyService companyService) {
         this.portfolioRepository = portfolioRepository;
         this.marketDataServiceImpl = marketDataServiceImpl;
         this.accountLineRepository = accountLineRepository;
+        this.companyService = companyService;
     }
 
     /**
@@ -57,12 +65,19 @@ public class PortfolioService {
 
         Map<String, Map<String, Integer>> portfolioData = null;
         List<Quote> quotes = null;
+        List<Company> companies = null;
         if (records != null) {
             portfolioData = doInternalParse(records);
 
             // Collect all symbols in the portfolio and send them as a a batch request to IEX Cloud
             Set<String> allSymbols = doGetAllSymbols(portfolioData);
             quotes = marketDataServiceImpl.doGetQuotes(allSymbols);
+
+            // Collect company data for the symbols being imported and make the association
+            // with the quotes
+            companies = marketDataServiceImpl.doGetCompanies(allSymbols);
+            doCreateCompanies(companies);
+            companyService.doLinkQuotes(quotes);
         }
 
         Portfolio savedPortfolio = null;
@@ -191,6 +206,19 @@ public class PortfolioService {
     // Instantiate a new account
     private Account doCreateAccount(Portfolio portfolio, String accountNumber) {
         return new Account(portfolio, accountNumber);
+    }
+
+    /**
+     * Add new companies to the Company Table
+     * 
+     * @param companies List of companies to be added to the database
+     */
+    private void doCreateCompanies(List<Company> companies) {
+        
+        for (Company company : companies) {
+            
+            companyService.add(company);
+        }
     }
 
     // Find all symbols and quantities within an account, add the quote from IEX Cloud and a new account line.

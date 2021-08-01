@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import edu.bu.cs673.stockportfolio.domain.account.Account;
 import edu.bu.cs673.stockportfolio.domain.account.AccountLine;
+import edu.bu.cs673.stockportfolio.domain.investment.sector.Company;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -17,6 +18,7 @@ import java.util.List;
 /*********************************************************************************************************************/
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
+        "companyName",
         "symbol",
         "latestPrice",
         "marketCap"
@@ -43,6 +45,10 @@ public class Quote {
     @OneToMany(mappedBy = "quote", cascade = CascadeType.ALL)
     private List<AccountLine> accountLines = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id")
+    private Company company;
+
     /**
      * No args constructor for use in serialization.
      */
@@ -58,13 +64,22 @@ public class Quote {
      * @param accountLines A collection of all the different owned lots within an account.
      */
     public Quote(String companyName, String symbol, BigDecimal latestPrice,
-                 Long marketCap, List<AccountLine> accountLines) {
+                 Long marketCap, List<AccountLine> accountLines, Company company) {
         super();
         this.companyName = companyName;
         this.symbol = symbol;
         this.latestPrice = latestPrice;
         this.marketCap = marketCap;
         this.accountLines = accountLines;
+        this.company = company;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     public Long getId() {
