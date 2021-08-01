@@ -62,7 +62,7 @@ public class PortfolioService {
 
         Map<String, Map<String, Integer>> portfolioData = null;
         List<Quote> quotes = null;
-        List<Company> companies = null;
+        List<Company> companies;
         if (records != null) {
             portfolioData = doInternalParse(records);
 
