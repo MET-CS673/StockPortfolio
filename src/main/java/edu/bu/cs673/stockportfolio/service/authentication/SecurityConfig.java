@@ -56,21 +56,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                     .invalidSessionUrl("/login");
-
-        // Permit all requests to the login endpoint.
-//        http.formLogin()
-//                .loginPage("/login")
-//                .permitAll();
-
-        // Automatically redirect successful logins to the home endpoint.
-//        http.formLogin()
-//                .defaultSuccessUrl("/home", true);
-//
-//        http.logout().permitAll();
-
-        // Sessions timeout occurs at 300 seconds (set in properties file). This redirects timed out session to login.
-//        http.sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-//                .invalidSessionUrl("/login");
     }
 }
