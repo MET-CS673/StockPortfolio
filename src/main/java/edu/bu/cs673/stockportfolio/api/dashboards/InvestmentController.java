@@ -19,6 +19,10 @@ import edu.bu.cs673.stockportfolio.service.portfolio.PortfolioService;
 import edu.bu.cs673.stockportfolio.service.user.UserService;
 import edu.bu.cs673.stockportfolio.service.utilities.ResponseService;
 
+/**
+*
+*   Controller maps to the url request "/stock_breakdown"
+*/
 @Controller
 @RequestMapping("/stock_breakdown")
 public class InvestmentController {
@@ -27,6 +31,14 @@ public class InvestmentController {
     private final UserService userService;
     private final FluentLogger log = FluentLoggerFactory.getLogger(InvestmentController.class);
 
+    /**
+    *   Class Constructor that initializes the dependencies to PortfolioService,
+    *   ResponseService and UserService
+    *
+    *   @param portfolioService The Portfolio request object
+    *   @param responseService Object to package responses
+    *   @param userService The User request object
+    */
     public InvestmentController(PortfolioService portfolioService,
                                 ResponseService responseService, UserService userService) {
 
@@ -35,6 +47,15 @@ public class InvestmentController {
         this.userService = userService;
     }
 
+    /**
+    *   When HTTP GET request is received for /stock_breakdown, securityBreakdownView()
+    *   is called to handle the request
+    *
+    *   @param authentication Spring authentication object
+    *   @param model Data from responseService added to model
+    *   @return "Stock_breakdown" when /stock_breakdown is requested
+    *
+    */
     @GetMapping
     public String securityBreakdownView(Authentication authentication, Model model) {
         User user = getUser(authentication);
@@ -56,6 +77,13 @@ public class InvestmentController {
         return "stock_breakdown";
     }
 
+    /**
+    *   Get the user's username
+    *
+    *   @param authentication Spring authentication object
+    *   @return The user's username
+    *
+    */
     private User getUser(Authentication authentication) {
 
         return userService.findUserByName(authentication.getName());
