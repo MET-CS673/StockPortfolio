@@ -19,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 /**********************************************************************************************************************
  * The FileUploadController handles client requests to insert and delete files.
  *
+ * Controller maps to the url request "/portfolio"
+ *
  * @note Max file size of 10MB.
  *********************************************************************************************************************/
 @Controller
@@ -30,6 +32,15 @@ public class PortfolioController {
     private final ResponseService responseService;
     private final FluentLogger log = FluentLoggerFactory.getLogger(PortfolioController.class);
 
+    /**
+    *   Class constructor that initializes the dependencies to UserService,
+    *   PortfolioService, ResponseService and ValidationService
+    *
+    *   @param userService The User request object
+    *   @param portfolioService The Portfolio request object
+    *   @param validationService Validation request object
+    *   @param responseService Object to package responses
+    */
     public PortfolioController(UserService userService, PortfolioService portfolioService,
                                ValidationService validationService, ResponseService responseService) {
         this.userService = userService;
@@ -38,6 +49,15 @@ public class PortfolioController {
         this.responseService = responseService;
     }
 
+    /**
+    *   Maps HTTP POST request onto specifc handler method uploadPortfolio.
+    *   Handles request to insert files
+    *
+    *   @param authentication Spring authentication object
+    *   @param multipartFile The csv file being uploaded
+    *   @param model Takes success or error responses and added it to model
+    *   @return responseService packages the response if file upload is successful
+    */
     @PostMapping
     public String uploadPortfolio(Authentication authentication,
                                   @RequestParam("csvUpload")MultipartFile multipartFile, Model model) {
@@ -61,10 +81,24 @@ public class PortfolioController {
         }
     }
 
+    /**
+    *   Get the user's username
+    *
+    *   @param authentication Spring authentication object
+    *   @return The user'a username
+    */
     private User getCurrentUser(Authentication authentication) {
         return userService.findUserByName(authentication.getName());
     }
 
+    /**
+    *   Maps HTTP POST request onto specifc handler method deletePortfolio.
+    *   Handles request to delete files
+    *
+    *   @param authentication Spring authentication object
+    *   @param model Takes success or error responses and added it to model
+    *   @return Package message based on deletion success or error
+    */
     @PostMapping("/delete")
     public String deletePortfolio(Authentication authentication, Model model) {
         User currentUser = getCurrentUser(authentication);
@@ -85,7 +119,14 @@ public class PortfolioController {
         return responseService.deletePortfolioError(true, model);
     }
 
-    // Checks the database to confirm the portfolios existence after the delete request has been committed
+    /**
+    *   Checks the database to confirm the portfolios existence after the delete 
+    *   request has been committed.
+    *
+    *   @param id The id of the portfolio
+    *   @return Boolean to check if the portfolio has successfully been deleted
+    *
+    */
     private boolean isPortfolioDeleted(Long id) {
         try {
             Portfolio currentPortfolio = portfolioService.getPortfolioBy(id);
