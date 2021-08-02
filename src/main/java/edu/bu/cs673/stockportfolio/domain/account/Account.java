@@ -73,7 +73,7 @@ public class Account {
         return accountLines;
     }
 
-    public void setAccountLines(List<AccountLine> quotes) {
+    public void setAccountLines(List<AccountLine> accountLines) {
         this.accountLines = accountLines;
     }
 }
