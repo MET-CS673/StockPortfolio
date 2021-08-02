@@ -19,6 +19,11 @@ import edu.bu.cs673.stockportfolio.service.user.UserService;
 import edu.bu.cs673.stockportfolio.service.utilities.MarketCapType;
 import edu.bu.cs673.stockportfolio.service.utilities.ResponseService;
 
+/**
+*   Controller maps to the url request "/mc_breakdown"
+*
+*
+*/
 @Controller
 @RequestMapping("/mc_breakdown")
 public class MarketCapController {
@@ -27,6 +32,15 @@ public class MarketCapController {
     private final UserService userService;
     private final FluentLogger log = FluentLoggerFactory.getLogger(MarketCapController.class);
 
+    /**
+    *   Class constructor that initializes the dependencies to PortfolioService,
+    *   ResponseService and UserService
+    *   
+    *   @param portfolioService The Portfolio request object
+    *   @param responseService Object to package responses
+    *   @param userService The User request object
+    *
+    */
     public MarketCapController(PortfolioService portfolioService,
                                ResponseService responseService, UserService userService) {
 
@@ -35,6 +49,15 @@ public class MarketCapController {
         this.userService = userService;
     }
 
+    /**
+    *   When HTTP GET request is received for /mc_breakdown, marketCapBreakdownView()
+    *   is called to handle the request
+    *   
+    *   @param authentication Spring authentication object
+    *   @param model Data from responseService added to model
+    *   @return "mc_breakdown" when /mc_breakdown is requested
+    *
+    */
     @GetMapping
     public String marketCapBreakdownView(Authentication authentication, Model model) {
         User user = getUser(authentication);
@@ -60,6 +83,13 @@ public class MarketCapController {
         return "mc_breakdown";
     }
 
+    /**
+    *   Get the user's username
+    *   
+    *   @param authentication Spring authentication object
+    *   @return The user's username
+    *
+    */
     private User getUser(Authentication authentication) {
         return userService.findUserByName(authentication.getName());
     }
