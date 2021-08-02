@@ -21,6 +21,8 @@ import java.util.List;
 
 /**********************************************************************************************************************
  * Handles requests to populate the homepage after a user is logged in.
+ *
+ * Controller maps to the url request "/home"
  *********************************************************************************************************************/
 @Controller
 @RequestMapping("/home")
@@ -31,6 +33,15 @@ public class HomeController {
     private final ResponseService responseService;
     private final FluentLogger log = FluentLoggerFactory.getLogger(HomeController.class);
 
+    /**
+    *   Class constructor that initializes the dependencies to UserService,
+    *   PortfolioService and ResponseService
+
+    *   @param userService The User request object
+    *   @param portfolioService The Portfolio request object
+    *   @param responseService Object to package responses
+    *
+    */
     public HomeController(UserService userService, PortfolioService portfolioService,
                           ResponseService responseService) {
         this.userService = userService;
@@ -38,6 +49,16 @@ public class HomeController {
         this.responseService = responseService;
     }
 
+    /**
+    *   When HTTP GET request is received for /home, getHomePage() is 
+    *   called to handle the request
+    *
+    *   @param authentication Spring authentication object
+    *   @param model Takes the user, and responses from portfolioService and
+    *                responseService and adds it to model
+    *   @return "home" when /home is requested
+    *
+    */
     @GetMapping
     public String getHomePage(Authentication authentication, Model model) {
         User user = getUser(authentication);
@@ -66,6 +87,13 @@ public class HomeController {
         return "home";
     }
 
+    /**
+    *   Get the user's username
+    *
+    *   @param authentication Spring authentication object
+    *   @return The user's username
+    *
+    */
     private User getUser(Authentication authentication) {
         return userService.findUserByName(authentication.getName());
     }
