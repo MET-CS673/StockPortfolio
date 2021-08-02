@@ -18,6 +18,11 @@ import edu.bu.cs673.stockportfolio.service.portfolio.PortfolioService;
 import edu.bu.cs673.stockportfolio.service.user.UserService;
 import edu.bu.cs673.stockportfolio.service.utilities.ResponseService;
 
+/**
+*   Handles the request to view "/sector_breakdown"
+*   Controller maps to the url request "/sector_breakdown"
+*
+*/
 @Controller
 @RequestMapping("/sector_breakdown")
 public class SectorController {
@@ -33,6 +38,15 @@ public class SectorController {
         this.userService = userService;
     }
 
+    /**
+    *   When HTTP GET request is received for /sector_breakdown, 
+    *   sectorBreakdownView() is called to handle the request
+    *   
+    *   @param authentication Spring authentication object
+    *   @param model Data from responseService is added to model
+    *   @return "sector_breakdown" when /sector_breakdown is requested
+    *
+    */
     @GetMapping
     public String sectorBreakdownView(Authentication authentication, Model model) {
         
@@ -52,6 +66,13 @@ public class SectorController {
         return "sector_breakdown";
     }
 
+    /**
+    *   Get the user's username
+    *   
+    *   @param authentication Spring authentication object
+    *   @return "The user's username
+    *
+    */
     private User getUser(Authentication authentication) {
 
         return userService.findUserByName(authentication.getName());
