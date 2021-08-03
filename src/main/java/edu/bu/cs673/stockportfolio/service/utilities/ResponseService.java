@@ -229,4 +229,11 @@ public class ResponseService {
 
         return "result";
     }
+
+    public String deleteAccountError(boolean result, Model model) {
+        model.addAttribute("deleteUserProfileError", result);
+        model.addAttribute("nav", "/user_profile");
+
+        return "result";
+    }
 }
