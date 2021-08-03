@@ -15,6 +15,9 @@
   <link href="/css/dashboard.css" rel="stylesheet">
   <link href="/css/navbar.css" rel="stylesheet">
   <link href="/css/sidebar.css" rel="stylesheet">
+  <link href="/css/profile.css" rel="stylesheet">
+
+  <title>User Profile</title>
 </head>
 
 <body>
@@ -88,10 +91,13 @@
         Wrong password!
       </div>
       <div id="successMsg"  class="alert alert-primary d-none">
-        Password has been changed successfully!
+        Password was changed successfully!
       </div>
-      <div
-              class="
+
+      <form class="form-modifypassword" action="#" th:action="@{/account}" method="POST">
+
+        <div
+                class="
               d-flex
               justify-content-between
               flex-wrap flex-md-nowrap
@@ -101,11 +107,9 @@
               mb-3
               border-bottom
             "
-      >
-        <h1 class="h2">Password Change</h1>
-
-      </div>
-      <form class="form-modifypassword" action="#" th:action="@{/account}" method="POST">
+        >
+          <h3 class="h2">Update Password</h3>
+        </div>
 
         <div class="col-sm-10 col-sm-offset-1">
           <div class="form-group label-floating">
@@ -149,7 +153,7 @@
                 return
               }
               if (oldPwd == newPwd){
-                $("#errorMsg").text("New password should not equal to Old password. Please try again.")
+                $("#errorMsg").text("Your new password cannot match your existing password. Please try again.")
                 $("#errorMsg").removeClass("d-none");
                 return
               }
@@ -159,7 +163,7 @@
                 console.log('Password changed');
                 let res = false;
                 $.post({
-                  url: "/modifyPwd",
+                  url: "/profile/modifyPwd",
                   method: "post",
                   async: false,
                   data: {"oldPwd":oldPwd, "newPwd":confirmPwd},
@@ -184,8 +188,9 @@
         </div>
       </form>
 
-      <div
-              class="
+      <form class="form-delete-account" action="#" method="POST">
+        <div
+                class="
               d-flex
               justify-content-between
               flex-wrap flex-md-nowrap
@@ -195,41 +200,37 @@
               mb-3
               border-bottom
             "
-      >
-        <h1 class="h2">Deactivating SPD user account</h1>
-
-      </div>
-      <form class="form-deactivate"  action="#"  method="POST">
+        >
+        </div>
         <div class="col-sm-10 col-sm-offset-1">
-          <button type="button" onclick="deactivate();" class="btn btn-danger">Deactivate account</button>
+        <button type="button" onclick="deleteAccount();" class="btn btn-danger">Delete account</button>
           <script>
-            function deactivate() {
-              if (confirm('Are you sure you want deactivate your account?')) {
-                console.log('deactived account');
+            function deleteAccount() {
+              if (confirm('Are you sure you want delete your account?')) {
                 let res = false;
                 $.post({
-                  url: "/deactivating",
+                  url: "/profile/delete",
                   method: "post",
                   async: false,
                   headers:{"X-CSRF-TOKEN": $("input[name='_csrf']").val()},
                   success: function(data){
                     res = Boolean(data)
                     if (res) {
-                      window.location.href = "/login"
+                      window.location.href = "/signup"
                     }else{
-                      $("#errorMsg").text("Deactived error!")
+                      $("#errorMsg").text("Error deleting your account!")
                       $("#errorMsg").removeClass("d-none");
 
                     }
                   }
                 });
               } else {
-                // Do nothing!
-                console.log('do nothing');
+                // Do nothing! User does not want to delete account.
               }
             }
           </script>
         </div>
+      </form>
     </main>
   </div>
 </div>
