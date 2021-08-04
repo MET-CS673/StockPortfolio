@@ -143,12 +143,12 @@
               confirmPwd = $("#confirmNewPassword").val()
 
               if (newPwd !== confirmPwd){
-                $("#errorMsg").text("Confirm password dosen't match! Please check and try again.")
+                $("#errorMsg").text("Passwords don't match! Please check and try again.")
                 $("#errorMsg").removeClass("d-none");
                 return
               }
-              if (newPwd.length<10 ){
-                $("#errorMsg").text("Your password should be at least than 10 characters long!(Now only "+newPwd.length+" characters.) Please try again.")
+              if (newPwd.length < 10 ){
+                $("#errorMsg").text("Your password must be 10 or more characters. Please try again.")
                 $("#errorMsg").removeClass("d-none");
                 return
               }
@@ -160,7 +160,6 @@
 
               if (confirm('Are you sure you want change your password?')) {
                 // Change password!
-                console.log('Password changed');
                 let res = false;
                 $.post({
                   url: "/profile/modifyPwd",
@@ -173,15 +172,14 @@
                     res = Boolean(data)
                   }
                 });
-                if (res) successMsg.removeClass("d-none")
-                else {
+                if (res) {
+                  successMsg.removeClass("d-none")
+                } else {
                   $("#errorMsg").text("Wrong password!")
                   $("#errorMsg").removeClass("d-none");
-
                 }
               } else {
                 // Do nothing!
-                console.log('Password change cancelled.');
               }
             }
           </script>
@@ -213,14 +211,13 @@
                   method: "post",
                   async: false,
                   headers:{"X-CSRF-TOKEN": $("input[name='_csrf']").val()},
-                  success: function(data){
+                  success: function(data) {
                     res = Boolean(data)
                     if (res) {
                       window.location.href = "/signup"
-                    }else{
+                    } else {
                       $("#errorMsg").text("Error deleting your account!")
                       $("#errorMsg").removeClass("d-none");
-
                     }
                   }
                 });

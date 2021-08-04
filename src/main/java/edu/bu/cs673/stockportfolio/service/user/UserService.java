@@ -3,6 +3,8 @@ package edu.bu.cs673.stockportfolio.service.user;
 import edu.bu.cs673.stockportfolio.domain.user.User;
 import edu.bu.cs673.stockportfolio.domain.user.UserRepository;
 import edu.bu.cs673.stockportfolio.service.authentication.HashService;
+import org.fissore.slf4j.FluentLogger;
+import org.fissore.slf4j.FluentLoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,7 +13,6 @@ import java.util.Base64;
 
 /**********************************************************************************************************************
  * Implements business logic for User requests.
- *
  *********************************************************************************************************************/
 @Service
 @Transactional
@@ -19,6 +20,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final HashService hashService;
+    private final FluentLogger log = FluentLoggerFactory.getLogger(UserService.class);
 
     public UserService(UserRepository userRepository, HashService hashService) {
         this.userRepository = userRepository;
@@ -55,17 +57,21 @@ public class UserService {
         }
 
         // Create a new user while hashing the provided password.
-        SecureRandom random = new SecureRandom();
-        byte[] salt = new byte[16];
-        random.nextBytes(salt);
-        String encodedSalt = Base64.getEncoder().encodeToString(salt);
+        String encodedSalt = generateSalt();
         String hashedPassword = hashService.getHashedValue(user.getPassword(), encodedSalt);
 
-        user.setPassword(hashedPassword);
         user.setSalt(encodedSalt);
+        user.setPassword(hashedPassword);
         User savedUser = userRepository.save(user);
 
         return savedUser;
+    }
+
+    public String generateSalt() {
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[16];
+        random.nextBytes(salt);
+        return Base64.getEncoder().encodeToString(salt);
     }
 
     public User findUserById(Long id) {
@@ -78,5 +84,61 @@ public class UserService {
 
     public void delete(User user) {
         userRepository.delete(user);
+    }
+
+    public boolean verifyPassword(User user, String oldPassword) {
+        Long id = user.getId();
+
+        User existingUser = null;
+        if (id != null) {
+            existingUser = getExistingUser(id);
+        }
+
+        String hashedPasswordBasedOnUserInput;
+        String hashedPasswordStoredInDatabase;
+        if (existingUser != null) {
+            String encodedSalt = existingUser.getSalt();
+            hashedPasswordBasedOnUserInput = getHashedPassword(encodedSalt, oldPassword);
+            hashedPasswordStoredInDatabase = existingUser.getPassword();
+
+            return hashedPasswordBasedOnUserInput.equals(hashedPasswordStoredInDatabase);
+        }
+
+        return false;
+    }
+
+    private User getExistingUser(Long id) {
+        try {
+            return findUserById(id);
+        } catch (UserNotFoundException e) {
+            log.error().log("User id=" + " not found.");
+            return null;
+        }
+    }
+
+    private String getHashedPassword(String encodedSalt, String password) {
+        return hashService.getHashedValue(password, encodedSalt);
+    }
+
+    public boolean updatePassword(User currentUser, String newPassword) {
+        String encodedSalt = generateSalt();
+        String hashedPassword = getHashedPassword(encodedSalt, newPassword);
+
+        User existingUser;
+        try {
+            Long id = currentUser.getId();
+            existingUser = getExistingUser(id);
+        } catch (UserNotFoundException e) {
+            log.error().log("User id=" + " not found.");
+            return false;
+        }
+
+        if (existingUser != null) {
+            existingUser.setSalt(encodedSalt);
+            existingUser.setPassword(hashedPassword);
+            return true;
+        }
+
+        return false;  // Existing user is null. False lets the controller know to update with UI with an error msg
     }
 }

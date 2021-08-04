@@ -25,7 +25,7 @@ public class UserProfileController {
     private final HashService hashService;
     private final FluentLogger log = FluentLoggerFactory.getLogger(PortfolioService.class);
 
-    public UserProfileController(UserService userService, ResponseService responseService , HashService hashService) {
+    public UserProfileController(UserService userService, ResponseService responseService, HashService hashService) {
         this.userService = userService;
         this.responseService = responseService;
         this.hashService = hashService;
@@ -38,35 +38,54 @@ public class UserProfileController {
 
     @PostMapping("/delete")
     public String deleteUserProfile(Authentication authentication, HttpServletResponse response, Model model) {
-        User user = userService.findUserByName(authentication.getName());
+        User currentUser = getCurrentUser(authentication);
 
-        if (user == null) {
+        if (currentUser == null) {
             return responseService.deletePortfolioError(true, model);
         }
 
         try {
-            userService.delete(user);
+            userService.delete(currentUser);
 
-            if (user.getId() != null) {
-                Cookie cookie = new Cookie("JSESSIONID","");
+            if (currentUser.getId() != null) {
+                Cookie cookie = new Cookie("JSESSIONID", "");
                 cookie.setMaxAge(0);
                 response.addCookie(cookie);
 
                 return "signup";
             }
-        } catch (Exception e){
-            log.error().log("Error deleting account for userId=" + user.getId());
+        } catch (Exception e) {
+            log.error().log("Error deleting account for userId=" + currentUser.getId());
         }
 
         return responseService.deletePortfolioError(true, model);
     }
 
+    @ResponseBody
     @PostMapping("/modifyPwd")
     public String modifyPassword(Authentication authentication,
-                                 @RequestParam(name = "oldPwd", required = true) String oldPwd,
-                                 @RequestParam(name = "newPwd", required = true) String newPwd) {
-        User user = userService.findUserByName(authentication.getName());
+                                 @RequestParam("oldPwd") String oldPassword,
+                                 @RequestParam("newPwd") String newPassword) {
 
-        return "true";
+        User currentUser = getCurrentUser(authentication);
+
+        boolean result = false;
+        if (currentUser != null) {
+            result = userService.verifyPassword(currentUser, oldPassword);
+        }
+
+        if (result) {
+            result = userService.updatePassword(currentUser, newPassword);
+        }
+
+        if (result) {
+            return "true";
+        }
+
+        return "false";  // The oldPassword does not match the password stored in our database
+    }
+
+    private User getCurrentUser(Authentication authentication) {
+        return userService.findUserByName(authentication.getName());
     }
 }
