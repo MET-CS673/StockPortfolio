@@ -215,7 +215,7 @@ public class ResponseService {
         return latestPrice.multiply(BigDecimal.valueOf(accountLine.getQuantity())).floatValue();
     }
 
-    public String uploadFailure(boolean result, Model model) {
+    public String uploadError(boolean result, Model model) {
         model.addAttribute("uploadFailed", result);
         model.addAttribute("applicationEdgeCaseErrorMessage", result);
         model.addAttribute("nav", "/home");
