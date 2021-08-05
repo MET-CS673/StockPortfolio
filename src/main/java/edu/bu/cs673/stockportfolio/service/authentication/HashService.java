@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
@@ -23,7 +25,8 @@ public class HashService {
     public String getHashedValue(String data, String salt) {
         byte[] hashedValue = null;
 
-        KeySpec keySpec = new PBEKeySpec(data.toCharArray(), salt.getBytes(), 5000, 128);
+        KeySpec keySpec = new PBEKeySpec(
+                data.toCharArray(), salt.getBytes(StandardCharsets.UTF_8), 5000, 128);
 
         try {
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
