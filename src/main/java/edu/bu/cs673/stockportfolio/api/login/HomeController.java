@@ -58,10 +58,6 @@ public class HomeController {
             List<Account> accounts = portfolio.getAccounts();
             model.addAttribute("portfolio", responseService.createPortfolioTable(accounts));
         }
-
-        if (portfolio == null) {
-            model.addAttribute("portfolio", new ArrayList<>());
-        }
         
         return "home";
     }

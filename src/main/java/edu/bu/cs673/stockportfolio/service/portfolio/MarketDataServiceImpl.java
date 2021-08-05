@@ -22,9 +22,9 @@ import java.util.Set;
 @Service
 public class MarketDataServiceImpl implements MarketDataService {
 
-    private final String BASE_URL = "https://cloud.iexapis.com/";
-    private final String VERSION = "stable/";
-    private final String TOKEN = "&token=";
+    private static final String BASE_URL = "https://cloud.iexapis.com/";
+    private static final String VERSION = "stable/";
+    private static final String TOKEN = "&token=";
     private final RestTemplate restTemplate;
     private final String apiKey;
     private final QuoteRepository quoteRepository;
@@ -55,12 +55,14 @@ public class MarketDataServiceImpl implements MarketDataService {
         QuoteRoot quoteRoot = restTemplate.getForObject(
                 BASE_URL + VERSION + endpointPath + queryParams + TOKEN + apiKey, QuoteRoot.class);
 
-        Map<String, StockQuote> stocks = quoteRoot.getStocks();
         List<Quote> quotes = new ArrayList<>();
-        stocks.forEach((key, value) -> {
-            quotes.add(value.getQuote());
-            quoteRepository.save(value.getQuote());
-        });
+        if (quoteRoot != null) {
+            Map<String, StockQuote> stocks = quoteRoot.getStocks();
+            stocks.forEach((key, value) -> {
+                quotes.add(value.getQuote());
+                quoteRepository.save(value.getQuote());
+            });
+        }
 
         return quotes;
     }
@@ -68,9 +70,8 @@ public class MarketDataServiceImpl implements MarketDataService {
     @Override
     public List<Company> doGetCompanies(Set<String> symbols) {
 
-        // We don't need to retrieve Company data that we already have
-        // so befory making the request, remove existing symbols from
-        // the set.
+        // We don't need to retrieve Company data that we already have so befory making the request, remove existing
+        // symbols from the set.
         Set<String> newSymbols = new HashSet<String>();
         for (String symbol : symbols) {
             
@@ -90,12 +91,14 @@ public class MarketDataServiceImpl implements MarketDataService {
         CompanyRoot companyRoot = restTemplate.getForObject(
                 BASE_URL + VERSION + endpointPath + queryParams + TOKEN + apiKey, CompanyRoot.class);
 
-        Map<String, StockSector> companyData = companyRoot.getCompanies();
         List<Company> companies = new ArrayList<>();
-        companyData.forEach((key, value) -> {
-            companies.add(value.getCompany());
-        });
-        
+        if (companyRoot != null) {
+            Map<String, StockSector> companyData = companyRoot.getCompanies();
+            companyData.forEach((key, value) -> {
+                companies.add(value.getCompany());
+            });
+        }
+
         return companies;
     }
 }

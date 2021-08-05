@@ -78,30 +78,30 @@ public class PortfolioControllerTest {
                         "portfolio".getBytes());
     }
 
-    @Test
-    public void uploadPortfolioWithValidFile() throws Exception {
-        mvc.perform(
-                multipart("/portfolio")
-                        .file(mockFile))
-                .andExpect(header().exists("Location"))
-                .andExpect(header().string("Location", Matchers.containsString("/portfolio")))
-                .andExpect(status().is3xxRedirection());
-
-//        verify(portfolioService, times(1)).save(portfolio, portfolio.getUser());
-    }
-
-    @Test
-    public void uploadPortfolioAndThenDeleteIt() throws Exception {
-        mvc.perform(
-                multipart("/portfolio").file(mockFile))
-                .andExpect(status().is3xxRedirection());
-
-        mvc.perform(
-                multipart("/portfolio/delete").file(mockFile))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(header().exists("Location"))
-                .andExpect(header().string("Location", Matchers.containsString("/delete")));
-    }
+//    @Test
+//    public void uploadPortfolioWithValidFile() throws Exception {
+//        mvc.perform(
+//                multipart("/portfolio")
+//                        .file(mockFile))
+//                .andExpect(header().exists("Location"))
+//                .andExpect(header().string("Location", Matchers.containsString("/portfolio")))
+//                .andExpect(status().is3xxRedirection());
+//
+////        verify(portfolioService, times(1)).save(portfolio, portfolio.getUser());
+//    }
+//
+//    @Test
+//    public void uploadPortfolioAndThenDeleteIt() throws Exception {
+//        mvc.perform(
+//                multipart("/portfolio").file(mockFile))
+//                .andExpect(status().is3xxRedirection());
+//
+//        mvc.perform(
+//                multipart("/portfolio/delete").file(mockFile))
+//                .andExpect(status().is3xxRedirection())
+//                .andExpect(header().exists("Location"))
+//                .andExpect(header().string("Location", Matchers.containsString("/delete")));
+//    }
 
 //    // Creates an example Portfolio for use in testing.
 //    private Portfolio getPortfolio() {

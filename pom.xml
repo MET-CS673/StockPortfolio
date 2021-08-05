@@ -151,8 +151,61 @@
         </dependencies>
     </dependencyManagement>
 
+<!--    <profiles>-->
+<!--        &lt;!&ndash; Production mode is activated using -Pproduction &ndash;&gt;-->
+<!--        <profile>-->
+<!--            <id>production</id>-->
+<!--            <properties>-->
+<!--                <project>true</project>-->
+<!--&lt;!&ndash;                <vaadin.poductionMode>true</vaadin.poductionMode>&ndash;&gt;-->
+<!--            </properties>-->
+<!--        </profile>-->
+<!--    </profiles>-->
+
     <build>
         <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>
+                                        edu.bu.cs673.stockportfolio.StockportfolioApplication
+                                    </mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- START spotbugs plugin https://spotbugs.readthedocs.io/en/latest/maven.html -->
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.2.0</version>
+                <dependencies>
+                    <!-- overwrite dependency on spotbugs if you want to specify the version of spotbugs -->
+                    <dependency>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs</artifactId>
+                        <version>4.2.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <!-- END spotbugs plugin -->
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

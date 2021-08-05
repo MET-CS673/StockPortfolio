@@ -69,10 +69,14 @@ public class PortfolioController {
     public String deletePortfolio(Authentication authentication, Model model) {
         User currentUser = getCurrentUser(authentication);
         Portfolio currentPortfolio = currentUser.getPortfolio();
-        Long id = currentPortfolio.getId();
+
+        if (currentPortfolio == null) {
+            return "home";
+        }
 
         boolean result = validationService.validatePortfolioOwner(currentPortfolio, currentUser, model, "delete");
 
+        Long id = currentPortfolio.getId();
         if (result) {
             portfolioService.deletePortfolioBy(id);
         }
