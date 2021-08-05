@@ -17,8 +17,8 @@ Stock Breakdown
   will be used.
   
 Sector Breakdown
-* Sector breakdown uses IEX Cloud `sector` attribute to build sector allocation visualizations. The `sector` refers to 
-the sector a security belongs to.
+* Sector breakdown uses IEX Cloud's `sector` attribute to build sector allocation visualizations. The `sector` refers 
+  to the sector a security belongs to.
   
 Market Cap Breakdown
 * Market cap breakdown uses IEX Cloud's `marketCap` attribute to build market cap allocation visualizations for each 
@@ -37,9 +37,9 @@ Spring Cloud:
   contains an HTTP client, and the web-related parts of Spring’s remoting support.
   
 AWS
-* AWS Elastic Beanstalk is an easy-to-use services for deploying and scaling web applications. The service handles all 
+* AWS Elastic Beanstalk is an easy-to-use service for deploying and scaling web applications. The service handles all 
 the deployment needs for this application including provisioning, load balancing, auto-scaling, and health monitoring.
-* AWS RDS is a distributed relational database services designed to simplify the setup, operation, and scaling of a 
+* AWS RDS is a distributed relational database service designed to simplify the setup, operation, and scaling of a 
 relational database. Stock Portfolio Dashboard uses a MySQL database engine.
 
 Data Processing
@@ -47,7 +47,7 @@ Data Processing
 
 IEX Cloud
 * IEX Cloud is a financial data infrastructure platform that connects this application to financial data creators. This 
-application uses the IEX Cloud Batch endpoint for its real-time and historical market data needs.
+application uses the IEX Cloud batch calls for its real-time and historical market data needs.
   
 Thymeleaf
 * Thymeleaf is a Java template engine for processing and creating HTML, JavaScript, and CSS that is integrated with 
@@ -68,7 +68,7 @@ mvn clean compile
 # How to create a binary runnable package
 
 ```bash
-mvn clean compile package
+mvn clean package
 ```
 
 # How to deploy
