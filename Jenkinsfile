@@ -3,6 +3,9 @@ pipeline {
     triggers {
         pollSCM '* * * * *' // 5 stars means poll the scm every minute
     }
+    tools {
+        maven 'Maven 3.6.3'
+    }
     stages {
         stage('Build') {
             steps {
