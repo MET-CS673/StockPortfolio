@@ -3,6 +3,9 @@ pipeline {
     triggers {
         pollSCM '* * * * *' // 5 stars means poll the scm every minute
     }
+    withCredentials([file(credentialsId: 'IEXCloud', variable: 'IexCloudApiKey')]) {
+        // some block
+    }
     tools {
         maven 'Maven 3.6.3'
     }
@@ -11,17 +14,20 @@ pipeline {
             steps {
                 sh 'mvn --version'
                 sh 'echo "Hello World"'
+                sh 'use $IexCloudApiKey'
                 sh 'mvn clean'
                 sh 'mvn compile'
             }
         }
         stage('Test') {
             steps {
+                sh 'use $IexCloudApiKey'
                 sh 'mvn test'
             }
         }
         stage('Deploy') {
             steps {
+                sh 'use $IexCloudApiKey'
                 sh 'mvn package'
             }
         }
