@@ -6,6 +6,9 @@ pipeline {
     withCredentials([file(credentialsId: 'IEXCloud', variable: 'IexCloudApiKey')]) {
         // some block
     }
+    tools {
+        maven 'Maven 3.6.3'
+    }
     stages {
         stage('Build') {
             steps {
