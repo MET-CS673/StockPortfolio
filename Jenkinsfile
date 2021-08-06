@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-        any
-    }
+    agent any
     triggers {
         pollSCM '* * * * *' // 5 stars means poll the scm every minute
     }
