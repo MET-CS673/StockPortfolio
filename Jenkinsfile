@@ -11,13 +11,13 @@ pipeline {
             steps {
                 sh 'mvn --version'
                 sh 'echo "Hello World"'
-                sh 'use $IexCloudApiKey'
                 sh 'mvn clean'
                 sh 'mvn compile'
             }
         }
         stage('Test') {
             steps {
+                echo 'IexCloudApiKey'
                 sh 'use $IexCloudApiKey'
                 sh 'mvn test'
             }
