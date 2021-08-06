@@ -49,6 +49,11 @@ IEX Cloud
 * IEX Cloud is a financial data infrastructure platform that connects this application to financial data creators. This 
 application uses the IEX Cloud batch calls for its real-time and historical market data needs.
   
+This application is deployed on AWS and can be freely used by navigating to the URL. However, developers interested in
+running the program need to establish an IEX Cloud account to make API calls. IEX Cloud offers both free and paid 
+accounts. After establishing an account, navigate to the `console/tokens` endpoint and copy and paste the token into a 
+`secrets.properties` file. The key-value pair should be `IexCloudApiKey=YOUR_IEX_CLOUD_TOKEN`
+  
 Thymeleaf
 * Thymeleaf is a Java template engine for processing and creating HTML, JavaScript, and CSS that is integrated with 
   Spring MVC to serve the View Layer.
