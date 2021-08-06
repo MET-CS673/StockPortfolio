@@ -10,7 +10,18 @@ pipeline {
             steps {
                 sh 'mvn --version'
                 sh 'echo "Hello World"'
-                sh 'mvn clean package'
+                sh 'mvn clean'
+                sh 'mvn compile'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh 'mvn package'
             }
         }
     }
