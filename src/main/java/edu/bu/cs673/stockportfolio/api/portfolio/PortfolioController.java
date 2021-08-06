@@ -18,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**********************************************************************************************************************
  * The FileUploadController handles client requests to insert and delete files.
+ * 
+ * Controller bean responsible for handling "portfolio" requests
  *
  * @note Max file size of 10MB.
  *********************************************************************************************************************/
@@ -30,6 +32,16 @@ public class PortfolioController {
     private final ResponseService responseService;
     private final FluentLogger log = FluentLoggerFactory.getLogger(PortfolioController.class);
 
+    /**
+     * Creates a PortfoliotController. (Autowired by Spring)
+     * Responsible for handling request to show the portfolio.
+     * 
+     * @param userService An autowired implementation of the UserService (provided by the Spring dependency injection)
+     * @param portfolioService An autowired implementation of the PortfolioService (provided by the Spring dependency injection)
+     * @param validationService An autowired implementation of the ValidationService (provided by the Spring dependency injection)
+     * @param responseService An autowired implementation of the ResponseService (provided by the Spring dependency injection)
+     * 
+     */
     public PortfolioController(UserService userService, PortfolioService portfolioService,
                                ValidationService validationService, ResponseService responseService) {
         this.userService = userService;
@@ -38,6 +50,35 @@ public class PortfolioController {
         this.responseService = responseService;
     }
 
+    /**
+     * <h3>POST Request Handler for '/portfolio'</h3>
+     * 
+     * <p>This method will try to upload a csv file containing the user's portfolio.</p>
+     * 
+     * <p>This method will take the authenticated user from the Spring Authentication result.
+     * It will then take the uploaded file (from the request multipart data upload) and try to save
+     * the file using the PortfolioService and the current user. Upon successful save, the
+     * {@link edu.bu.cs673.stockportfolio.service.utilities.ResponseService#uploadSuccess(boolean, Model, User, PortfolioService)
+     *  responseService.uploadSuccess(...)} view will be rendered.</p>
+     * 
+     * <p>If the uploaded file is empty, the 
+     * {@link edu.bu.cs673.stockportfolio.service.utilities.ResponseService#uploadError(boolean, Model)
+     * responseService.uploadError(...)} view will be rendered.</p>
+     * 
+     * <p>If the file name is invalid, an InvalidFileNameException is thrown and the error is
+     * logged. The detailed error message is added to the model attribute "message", and the
+     * {@link edu.bu.cs673.stockportfolio.service.utilities.ResponseService#uploadSuccess(boolean, Model, User, PortfolioService)
+     * responseService.uploadSuccess(...)} view will be rendered.</p>
+     * 
+     * @param authentication The Spring authentication object - used to get the User principal
+     * @param multipartFile The multipart form data being uploaded, sourced from the request parameter 'csvUpload'
+     * @param model Model object to provide data to template
+     * @return The view to show, either responseService.uploadSuccess(...) or responseService.uploadError(...)
+     * @see edu.bu.cs673.stockportfolio.service.utilities.ResponseService#uploadSuccess(boolean, Model, User, PortfolioService)
+     *  responseService.uploadSuccess(...)
+     * @see edu.bu.cs673.stockportfolio.service.utilities.ResponseService#uploadError(boolean, Model)
+     * responseService.uploadError(...)
+     */
     @PostMapping
     public String uploadPortfolio(Authentication authentication,
                                   @RequestParam("csvUpload")MultipartFile multipartFile, Model model) {
@@ -61,10 +102,40 @@ public class PortfolioController {
         }
     }
 
+    /**
+     * Get the current User, if it exists, from the Authentication principal.
+     * 
+     * @param authentication The Spring authentication object - used to get the User principal
+     * @return The User object if found, null otherwise
+     */
     private User getCurrentUser(Authentication authentication) {
         return userService.findUserByName(authentication.getName());
     }
 
+    /**
+     * <h3>POST Request Handler for '/delete'</h3>
+     * 
+     * <p>This method will take the authenticated user from Spring Authentication result
+     * and gets the id of the current portfolio. If the user is authorized to make this request,
+     * the portfolio associated with the given id is deleted by PortfolioService.</p>
+     * 
+     * <p>If the portfolio has successfully been deleted, the 
+     * {@link edu.bu.cs673.stockportfolio.service.utilities.ResponseService#deleteSuccess(boolean, Model)
+     * responseService.deleteSuccess(...)} view will be rendered.</p>
+     * 
+     * <p>If there is an error in deleting the portfolio, the existing portfolio will
+     * be presented to the user and the 
+     * {@link edu.bu.cs673.stockportfolio.service.utilities.ResponseService#deletePortfolioError(boolean, Model)
+     * responseService.deletePortfolioError(...)} view will be rendered.</p>
+     * 
+     * @param authentication The Spring authentication object - used to get the User principal
+     * @param model Model object to provide data to template
+     * @return True if the portfolio has been deleted else show existing portfolio
+     * @see edu.bu.cs673.stockportfolio.service.utilities.ResponseService#deleteSuccess(boolean, Model)
+     * responseService.deleteSuccess(...)
+     * @see edu.bu.cs673.stockportfolio.service.utilities.ResponseService#deletePortfolioError(boolean, Model)
+     * responseService.deletePortfolioError(...)
+     */
     @PostMapping("/delete")
     public String deletePortfolio(Authentication authentication, Model model) {
         User currentUser = getCurrentUser(authentication);
@@ -89,7 +160,16 @@ public class PortfolioController {
         return responseService.deletePortfolioError(true, model);
     }
 
-    // Checks the database to confirm the portfolios existence after the delete request has been committed
+    /** 
+     * Checks the database to confirm the portfolios existence after the delete request 
+     * has been  committed.
+     * 
+     * <p>This method will return true if the portfolio referenced by {@code id} is deleted
+     * or not found.</p>
+     * 
+     * @param id The id of the portfolio
+     * @param true if not found or deleted
+     */
     private boolean isPortfolioDeleted(Long id) {
         try {
             Portfolio currentPortfolio = portfolioService.getPortfolioBy(id);
