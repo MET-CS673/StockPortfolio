@@ -19,7 +19,6 @@ pipeline {
                     dir('/Users/mlewis/IntelliJProjects/CS673/StockPortfolio/src/main/resources') {
                         sh '''
                         cat $FILE
-                        secrets.properties=$FILE
                         '''
                     }
                     sh 'mvn test'
