@@ -21,6 +21,7 @@ pipeline {
         }
         stage('Test') {
             steps {
+                echo 'IexCloudApiKey'
                 sh 'use $IexCloudApiKey'
                 sh 'mvn test'
             }
