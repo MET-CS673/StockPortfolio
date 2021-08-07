@@ -9,13 +9,16 @@ pipeline {
     options {
         skipStagesAfterUnstable()
     }
+    environment {
+        IexCloudApiKey=credentials('IEXCloud')
+    }
     stages {
         stage('Test') {
             steps {
                 script {
                     dir('/Users/mlewis/IntelliJProjects/CS673/StockPortfolio/src/main/resources') {
                         withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
-                            sh 'use $FILE mvn test'
+                            sh 'IexCloudApiKey mvn test'
                         }
                     }
                 }
