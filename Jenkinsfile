@@ -6,9 +6,6 @@ pipeline {
     tools {
         maven 'Maven 3.6.3'
     }
-    withCredentials([file(credentialsId: 'IEXCloud', variable: 'IexCloudApiKey')]) {
-        // some block
-    }
     stages {
         stage('Build') {
             steps {
@@ -20,9 +17,13 @@ pipeline {
         }
         stage('Test') {
             steps {
-                echo 'IexCloudApiKey'
-                sh 'use $IexCloudApiKey'
-                sh 'mvn test'
+                script {
+                    withCredentials([file(credentialsId: 'IEXCloud', variable: 'IexCloudApiKey')]) {
+                        echo 'IexCloudApiKey'
+                        sh 'use $IexCloudApiKey'
+                        sh 'mvn test'
+                    }
+                }
             }
         }
         stage('Deploy') {
