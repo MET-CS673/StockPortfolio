@@ -11,15 +11,17 @@ pipeline {
     }
     environment {
         IexCloudApiKey=credentials('IEXCloud')
+        cat 'IexCloudApiKey'
     }
     stages {
         stage('Test') {
             steps {
-                script {
-                    dir('/Users/mlewis/IntelliJProjects/CS673/StockPortfolio/src/main/resources') {
-                        withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
-                            sh 'IexCloudApiKey mvn test'
-                        }
+                dir('/Users/mlewis/IntelliJProjects/CS673/StockPortfolio/src/main/resources') {
+                    withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
+                        sh '''
+                        cp $FILE '/Users/mlewis/IntelliJProjects/CS673/StockPortfolio/src/main/resources'
+                        mvn test
+                        '''
                     }
                 }
             }
