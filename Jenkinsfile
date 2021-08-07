@@ -19,8 +19,7 @@ pipeline {
             steps {
                 script {
                     withCredentials([file(credentialsId: 'IEXCloud', variable: 'IexCloudApiKey')]) {
-                        echo 'IexCloudApiKey'
-                        sh 'use $IexCloudApiKey'
+                        echo '$IexCloudApiKey'
                         sh 'mvn test'
                     }
                 }
