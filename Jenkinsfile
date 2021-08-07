@@ -18,7 +18,7 @@ pipeline {
                 dir('/Users/mlewis/IntelliJProjects/CS673/StockPortfolio/src/main/resources') {
                     withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
                         sh '''
-                        cat FILE
+                        cat $FILE
                         secrets.properties=$FILE'
                         mvn test
                         '''
