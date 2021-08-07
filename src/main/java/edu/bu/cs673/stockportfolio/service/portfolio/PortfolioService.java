@@ -35,8 +35,10 @@ public class PortfolioService {
     private final CompanyService companyService;
     private final FluentLogger log = FluentLoggerFactory.getLogger(PortfolioService.class);
 
-    public PortfolioService(PortfolioRepository portfolioRepository, MarketDataServiceImpl marketDataServiceImpl,
-                            AccountLineRepository accountLineRepository, CompanyService companyService) {
+    public PortfolioService(PortfolioRepository portfolioRepository,
+                            MarketDataServiceImpl marketDataServiceImpl,
+                            AccountLineRepository accountLineRepository,
+                            CompanyService companyService) {
         this.portfolioRepository = portfolioRepository;
         this.marketDataServiceImpl = marketDataServiceImpl;
         this.accountLineRepository = accountLineRepository;
@@ -70,8 +72,7 @@ public class PortfolioService {
             Set<String> allSymbols = doGetAllSymbols(portfolioData);
             quotes = marketDataServiceImpl.doGetQuotes(allSymbols);
 
-            // Collect company data for the symbols being imported and make the association
-            // with the quotes
+            // Collect company data for the symbols being imported and make an association to its quotes
             companies = marketDataServiceImpl.doGetCompanies(allSymbols);
             doCreateCompanies(companies);
             companyService.doLinkQuotes(quotes);
@@ -153,6 +154,17 @@ public class PortfolioService {
         return allSymbols;
     }
 
+    private Set<String> doGetAllSymbols(List<List<AccountLine>> portfolioData) {
+        Set<String> allSymbols = new HashSet<>();
+        portfolioData.forEach(accountLines -> {
+            accountLines.forEach(accountLine -> {
+                allSymbols.add(String.join(",", accountLine.getQuote().getSymbol()));
+            });
+        });
+
+        return allSymbols;
+    }
+
     // Update or add new portfolio data depending on the existence of the associated account
     private Portfolio doUpdatePortfolio(Long portfolioId, Map<String, Map<String, Integer>> portfolioData,
                                         List<Quote> allQuotes) {
@@ -160,9 +172,8 @@ public class PortfolioService {
         return portfolioRepository.findById(portfolioId)
                 .map(portfolioToBeUpdated -> {
 
-                    // Get the list of all existing accounts and use this as a reference to check the newly uploaded
-                    // portfolioData against. If the account exists, it will get updated. Otherwise, new account lines
-                    // will be created.
+                    // Get the list of all existing accounts and check for its existence in the new portfolioData. If
+                    // the account exists, it will get updated. Otherwise, new account lines are created.
                     List<Account> accounts = portfolioToBeUpdated.getAccounts();
 
                     portfolioData.forEach((accountNumber, accountLines) -> {

@@ -3,9 +3,9 @@ package edu.bu.cs673.stockportfolio.api.login;
 import edu.bu.cs673.stockportfolio.domain.account.Account;
 import edu.bu.cs673.stockportfolio.domain.portfolio.Portfolio;
 import edu.bu.cs673.stockportfolio.domain.user.User;
-import edu.bu.cs673.stockportfolio.service.authentication.HashService;
 import edu.bu.cs673.stockportfolio.service.portfolio.PortfolioNotFoundException;
 import edu.bu.cs673.stockportfolio.service.portfolio.PortfolioService;
+import edu.bu.cs673.stockportfolio.service.portfolio.QuoteService;
 import edu.bu.cs673.stockportfolio.service.user.UserService;
 import edu.bu.cs673.stockportfolio.service.utilities.ResponseService;
 import org.fissore.slf4j.FluentLogger;
@@ -16,8 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**********************************************************************************************************************
  * Handles requests to populate the homepage after a user is logged in.
@@ -28,13 +27,17 @@ public class HomeController {
 
     private final UserService userService;
     private final PortfolioService portfolioService;
+    private final QuoteService quoteService;
     private final ResponseService responseService;
     private final FluentLogger log = FluentLoggerFactory.getLogger(HomeController.class);
 
-    public HomeController(UserService userService, PortfolioService portfolioService,
+    public HomeController(UserService userService,
+                          PortfolioService portfolioService,
+                          QuoteService quoteService,
                           ResponseService responseService) {
         this.userService = userService;
         this.portfolioService = portfolioService;
+        this.quoteService = quoteService;
         this.responseService = responseService;
     }
 
@@ -47,6 +50,7 @@ public class HomeController {
         if (user.getPortfolio() != null) {
             try {
                 portfolio = portfolioService.getPortfolioBy(user.getPortfolio().getId());
+                quoteService.getLatestPrices();
             } catch (PortfolioNotFoundException e) {
                 // Fail gracefully by logging error and returning an arrayList to mimic an empty portfolio
                 log.error().log("Portfolio not found.");
