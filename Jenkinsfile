@@ -3,11 +3,11 @@ pipeline {
     triggers {
         pollSCM '* * * * *' // 5 stars means poll the scm every minute
     }
-    withCredentials([file(credentialsId: 'IEXCloud', variable: 'IexCloudApiKey')]) {
-        // some block
-    }
     tools {
         maven 'Maven 3.6.3'
+    }
+    withCredentials([file(credentialsId: 'IEXCloud', variable: 'IexCloudApiKey')]) {
+        // some block
     }
     stages {
         stage('Build') {
