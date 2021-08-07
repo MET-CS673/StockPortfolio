@@ -14,11 +14,8 @@ pipeline {
             steps {
                 script {
                     dir('/Users/mlewis/IntelliJProjects/CS673/StockPortfolio/src/main/resources') {
-                        withCredentials([file(credentialsId: 'IEXCloud', variable: 'IexCloudApiKey')]) {
-                            echo '$IexCloudApiKey'
-                            sh 'use $IexCloudApiKey'
-                            IexCloudApiKey:'${IexCloudApiKey}'
-                            sh 'mvn test'
+                        withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
+                            sh 'use $FILE mvn test'
                         }
                     }
                 }
