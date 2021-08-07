@@ -22,7 +22,7 @@ pipeline {
                         secrets.properties=$FILE
                         '''
                     }
-                    'mvn test'
+                    sh 'mvn test'
                 }
             }
         }
