@@ -19,7 +19,7 @@ pipeline {
                     withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
                         sh '''
                         cat $FILE
-                        secrets.properties=$FILE'
+                        secrets.properties=$FILE
                         mvn test
                         '''
                     }
