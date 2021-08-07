@@ -13,7 +13,7 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    dir('/Users/mlewis/IntelliJProjects/CS673/StockPortfolio/src/main/resources/secrets.properties') {
+                    dir('/Users/mlewis/IntelliJProjects/CS673/StockPortfolio/src/main/resources') {
                         withCredentials([file(credentialsId: 'IEXCloud', variable: 'IexCloudApiKey')]) {
                             echo '$IexCloudApiKey'
                             sh 'use $IexCloudApiKey'
