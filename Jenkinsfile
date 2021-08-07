@@ -19,7 +19,7 @@ pipeline {
                     withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
                         sh '''
                         cat FILE
-                        cp $FILE '/Users/mlewis/IntelliJProjects/CS673/StockPortfolio/src/main/resources'
+                        secrets.properties=$FILE'
                         mvn test
                         '''
                     }
