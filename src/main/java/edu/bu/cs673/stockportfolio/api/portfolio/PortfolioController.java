@@ -43,22 +43,25 @@ public class PortfolioController {
                                   @RequestParam("csvUpload")MultipartFile multipartFile, Model model) {
         User currentUser = getCurrentUser(authentication);
 
-        // Handle empty file upload attempts
+        if ( multipartFile == null) {
+            return "home";
+        }
+
         if (multipartFile.isEmpty()) {
             return responseService.uploadError(true, model);
-        } else {
-            boolean result;
-            try {
-                result = portfolioService.save(multipartFile, currentUser);
-            } catch (InvalidFileNameException e) {
-                log.error().log("Portfolio file name is invalid. Check for NUL character or malicious activity. "
-                        + e.getMessage());
-                result = false;
-                model.addAttribute("message", e.getMessage());
-            }
-
-            return responseService.uploadSuccess(result, model, currentUser, portfolioService);
         }
+
+        boolean result;
+        try {
+            result = portfolioService.save(multipartFile, currentUser);
+        } catch (InvalidFileNameException e) {
+            log.error().log("Portfolio file name is invalid. Check for NUL character or malicious activity. "
+                    + e.getMessage());
+
+            return responseService.uploadError(true, model);
+        }
+
+        return responseService.uploadSuccess(result, model, currentUser, portfolioService);
     }
 
     private User getCurrentUser(Authentication authentication) {
