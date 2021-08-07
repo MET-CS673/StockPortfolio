@@ -6,22 +6,28 @@ pipeline {
     tools {
         maven 'Maven 3.6.3'
     }
+    options {
+        skipStagesAfterUnstable()
+    }
     stages {
-        stage('Build') {
-            steps {
-                sh 'mvn --version'
-                sh 'echo "Hello World"'
-                sh 'mvn clean'
-                sh 'mvn compile'
-            }
-        }
         stage('Test') {
             steps {
                 script {
                     withCredentials([file(credentialsId: 'IEXCloud', variable: 'IexCloudApiKey')]) {
                         echo '$IexCloudApiKey'
+                        IexCloudApiKey:'${IexCloudApiKey}'
                         sh 'mvn test'
                     }
+                }
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn -B -DskipTests clean package'
+            }
+            post { // 	If the maven build succeeded, archive the JUnit test reports for display in the Jenkins web UI.
+                success {
+                    junit 'target/surefire-reports/**/*.xml'
                 }
             }
         }
