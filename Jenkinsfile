@@ -13,10 +13,13 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    withCredentials([file(credentialsId: 'IEXCloudToken', variable: 'IexCloudApiKey')]) {
-                        echo '$IexCloudApiKey'
-                        IexCloudApiKey:'${IexCloudApiKey}'
-                        sh 'mvn test'
+                    dir('/Users/mlewis/IntelliJProjects/CS673/StockPortfolio/src/main/resources/secrets.properties') {
+                        withCredentials([file(credentialsId: 'IEXCloudToken', variable: 'IexCloudApiKey')]) {
+                            echo '$IexCloudApiKey'
+                            sh 'use $IexCloudApiKey'
+                            IexCloudApiKey:'${IexCloudApiKey}'
+                            sh 'mvn test'
+                        }
                     }
                 }
             }
