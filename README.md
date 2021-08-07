@@ -5,6 +5,8 @@ Stock Portfolio Dashboard provides tools for investors to quickly analyze an inv
 potential investment decisions (e.g., asset allocation based on some common investment patterns such as sector based 
 allocation, market capitalization based allocation, and portfolio tilt).
 
+The product is available at http://portfoliosight.com
+
 # Features
 Stock Portfolio Dashboard features:
 
@@ -49,8 +51,8 @@ IEX Cloud
 * IEX Cloud is a financial data infrastructure platform that connects this application to financial data creators. This 
 application uses the IEX Cloud batch calls for its real-time and historical market data needs.
   
-This application is deployed on AWS and can be freely used by navigating to the URL. However, developers interested in
-running the program need to establish an IEX Cloud account to make API calls. IEX Cloud offers both free and paid 
+This application is deployed on AWS and is available at http://portfoliosight.com/login. However, developers interested 
+in compiling the program need to establish an IEX Cloud account to make API calls. IEX Cloud offers both free and paid 
 accounts. After establishing an account, navigate to the `console/tokens` endpoint and copy and paste the token into a 
 `secrets.properties` file. The key-value pair should be `IexCloudApiKey=YOUR_IEX_CLOUD_TOKEN`
   
