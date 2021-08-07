@@ -11,7 +11,6 @@ pipeline {
             steps {
                 sh 'mvn --version'
                 sh 'echo "Hello World"'
-                sh 'use $IexCloudApiKey'
                 sh 'mvn clean'
                 sh 'mvn compile'
             }
