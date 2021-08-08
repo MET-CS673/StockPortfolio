@@ -10,7 +10,7 @@ pipeline {
         skipStagesAfterUnstable()
     }
     stages {
-        stage('BeforeAll') {
+        stage('Test') {
             steps {
                 withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
@@ -20,39 +20,43 @@ pipeline {
                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
                         sh 'cat $FILE > secrets.properties'
                     }
-                }
-            }
-        }
-        stage('Test') {
-            steps {
-//                 withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
-//                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
-//                         sh 'cat $FILE > secrets.properties'
-//                     }
-//
-//                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
-//                         sh 'cat $FILE > secrets.properties'
-//                     }
 
                     sh 'mvn test'
 
-//                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
-//                         sh 'rm secrets.properties'
-//                     }
-//
-//                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
-//                         sh 'rm secrets.properties'
-//                     }
-//                 }
+                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
+                        sh 'rm secrets.properties'
+                    }
+
+                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
+                        sh 'rm secrets.properties'
+                    }
+                }
             }
         }
         stage('Build') {
             steps {
-                sh 'mvn -B -DskipTests clean package'
+
+                dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
+                    sh 'cat $FILE > secrets.properties'
+                }
+
+                dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
+                    sh 'cat $FILE > secrets.properties'
+                }
+
+                sh 'mvn -B -DskipTests package'
+
+                dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
+                    sh 'rm secrets.properties'
+                }
+
+                dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
+                    sh 'rm secrets.properties'
+                }
             }
             post { // 	If the maven build succeeded, archive the JUnit test reports for display in the Jenkins web UI.
                 success {
-                    junit 'target/surefire-reports/**/*.xml'
+                    junit 'target/surefire-reports/*.xml'
                     archiveArtifacts 'target/*.jar'
                 }
             }
