@@ -42,8 +42,8 @@ pipeline {
             }
             post { // 	If the maven build succeeded, archive the JUnit test reports for display in the Jenkins web UI.
                 success {
-                    junit 'target/surefire-reports/*.xml'
-                    archiveArtifacts 'target/*.jar'
+                    junit '/Users/mlewis/IntelliJProjects/CS673/StockPortfolio/target/surefire-reports/*.xml'
+                    archiveArtifacts '/Users/mlewis/IntelliJProjects/CS673/StockPortfolio/target/*.jar'
                 }
             }
         }
