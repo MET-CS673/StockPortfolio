@@ -60,19 +60,19 @@ public class HomePage extends WaitPage {
     }
 
     public void clickUploadPortfolioButton(WebDriver driver) {
-        waitForElement(driver, UPLOAD_PORTFOLIO_BUTTON).sendKeys(Keys.ENTER);
+        waitForElement(driver, UPLOAD_PORTFOLIO_BUTTON).click();
     }
 
     public void clickSectorBreakdown(WebDriver driver) {
-        waitForElement(driver, NAV_SECTOR_BREAKDOWN).sendKeys(Keys.ENTER);
+        waitForElement(driver, NAV_SECTOR_BREAKDOWN).click();
     }
 
     public void clickMarketCapBreakdown(WebDriver driver) {
-        waitForElement(driver, NAV_MARKET_CAP_BREAKDOWN).sendKeys(Keys.ENTER);
+        waitForElement(driver, NAV_MARKET_CAP_BREAKDOWN).click();
     }
 
     public void clickStockBreakdown(WebDriver driver) {
-        waitForElement(driver, NAV_STOCK_BREAKDOWN).sendKeys(Keys.ENTER);
+        waitForElement(driver, NAV_STOCK_BREAKDOWN).click();
     }
 
     public String find(WebDriver driver, String text) {
@@ -80,7 +80,7 @@ public class HomePage extends WaitPage {
     }
 
     public void logout(WebDriver driver) {
-        waitForElement(driver, LOGOUT_BTN).sendKeys(Keys.ENTER);
+        waitForElement(driver, LOGOUT_BTN).click();
     }
 
     private String getMostRecentAddedElementId(List<WebElement> buttons) {
@@ -95,7 +95,7 @@ public class HomePage extends WaitPage {
     private void clickButton(List<WebElement> buttons, String id) {
         for (WebElement button : buttons) {
             if (button.getAttribute("id").equals(id)) {
-                button.sendKeys(Keys.ENTER);
+                button.click();
                 break;
             }
         }
