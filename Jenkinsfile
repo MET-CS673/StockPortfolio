@@ -16,18 +16,23 @@ pipeline {
         stage('Test') {
             steps {
                 withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
-                    dir('/Users/mlewis/IntelliJProjects/CS673/StockPortfolio/src/main/resources') {
+//                     dir('/Users/mlewis/IntelliJProjects/CS673/StockPortfolio/src/main/resources') {
+//                         sh '''
+//                         cat > secrets.properties
+//                         cat $FILE > secrets.properties
+//                         '''
+//                     }
+
                         sh '''
                         cat > secrets.properties
                         cat $FILE > secrets.properties
+                        mvn test
+                        rm secrets.properties
                         '''
-                    }
 
-                    sh 'mvn test'
-
-                    dir('/Users/mlewis/IntelliJProjects/CS673/StockPortfolio/src/main/resources') {
-                        sh 'rm secrets.properties'
-                    }
+//                     dir('/Users/mlewis/IntelliJProjects/CS673/StockPortfolio/src/main/resources') {
+//                         sh 'rm secrets.properties'
+//                     }
                 }
             }
         }
