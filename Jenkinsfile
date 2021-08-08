@@ -24,7 +24,6 @@ pipeline {
 //                     }
 
                         sh '''
-                        cat > secrets.properties
                         cat $FILE > secrets.properties
                         mvn test
                         rm secrets.properties
