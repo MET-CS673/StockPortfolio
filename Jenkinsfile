@@ -22,8 +22,7 @@ pipeline {
 //                         '''
 //                     }
                     sh '''
-                    cp $FILE /Users/mlewis/IntelliJProjects/CS673/StockPortfolio/src/main/resources
-                    mvn test
+                    echo 'hello'
                     '''
                 }
             }
