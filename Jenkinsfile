@@ -22,7 +22,11 @@ pipeline {
 //                         '''
 //                     }
                     sh '''
-                    cat $FILE
+                    secrets.properties=$(mktemp)
+                    cat $FILE > $secrets.properties
+                    cp secrets.properties /Users/mlewis/IntelliJProjects/CS673/StockPortfolio/src/main/resources
+                    mvn test
+                    rm "secrets.properties"
                     '''
                 }
             }
