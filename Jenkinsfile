@@ -24,7 +24,7 @@ pipeline {
                         sh 'cat $FILE > secrets.properties'
                     }
 
-                    sh 'mvn test'
+                    sh 'mvn clean test-Dselenium browser=chrome'
 
                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
                         sh 'rm secrets.properties'
@@ -43,6 +43,7 @@ pipeline {
             post { // 	If the maven build succeeded, archive the JUnit test reports for display in the Jenkins web UI.
                 success {
                     junit 'target/surefire-reports/**/*.xml'
+                    archiveArtifacts 'target/*.jar'
                 }
             }
         }
