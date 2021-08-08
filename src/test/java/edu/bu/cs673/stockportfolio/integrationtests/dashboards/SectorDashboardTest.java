@@ -6,6 +6,7 @@ import edu.bu.cs673.stockportfolio.integrationtests.signup.SignupPage;
 import edu.bu.cs673.stockportfolio.integrationtests.utilityPages.ResultPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,6 +42,9 @@ public class SectorDashboardTest {
         loginPage = new LoginPage(driver);
         homePage = new HomePage(driver);
         resultPage = new ResultPage(driver);
+
+        Dimension d = new Dimension(1382,744);
+        driver.manage().window().setSize(d);
     }
 
     @Test
