@@ -21,7 +21,10 @@ pipeline {
 //                         cat $FILE
 //                         '''
 //                     }
-                    sh 'cat $FILE mvn test'
+                    sh '''
+                    cp $FILE /Users/mlewis/IntelliJProjects/CS673/StockPortfolio/src/main/resources
+                    mvn test
+                    '''
                 }
             }
         }
