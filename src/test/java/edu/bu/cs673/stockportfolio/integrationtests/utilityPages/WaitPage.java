@@ -14,11 +14,12 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  *********************************************************************************************************************/
 public abstract class WaitPage {
     private final FluentLogger log = FluentLoggerFactory.getLogger(WaitPage.class);
-    private static final int WAIT_TIME_IN_SECONDS = 10;
+    private static final int WAIT_TIME_IN_SECONDS = 30;
 
     protected WebElement waitForElement(WebDriver driver, String elementId) {
         WebDriverWait wait = new WebDriverWait(driver, WAIT_TIME_IN_SECONDS);
-        return wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id(elementId))));
+        return wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id(elementId))));
+        //return wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id(elementId))));
     }
 
     protected String waitForPageSearch(WebDriver driver, String text) {
