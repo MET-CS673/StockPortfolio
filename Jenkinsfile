@@ -35,14 +35,18 @@ pipeline {
                     }
                 }
             }
+            post { // 	If the maven goal succeeded, archive the JUnit test reports for display in the Jenkins web UI.
+                success {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
         }
         stage('Build') {
             steps {
                 sh 'mvn -B -DskipTests clean package'
             }
-            post { // 	If the maven build succeeded, archive the JUnit test reports for display in the Jenkins web UI.
+            post { // 	If the maven build succeeded, archive the jar file
                 success {
-                    junit 'target/surefire-reports/*.xml'
                     archiveArtifacts 'target/*.jar'
                 }
             }
