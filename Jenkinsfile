@@ -16,12 +16,18 @@ pipeline {
         stage('Test') {
             steps {
                 withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
-                    sh 'ls'
-                    sh '''
-                    cat $FILE > secrets.properties
-                    mvn test
-                    rm secrets.properties
-                    '''
+                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
+                        sh '''
+                        cat $FILE > secrets.properties
+                        sh 'ls'
+                        '''
+                    }
+
+                    sh 'mvn test'
+
+                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
+                        sh 'rm secrets.properties'
+                    }
                 }
             }
         }
