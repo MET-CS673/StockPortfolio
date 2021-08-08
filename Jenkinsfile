@@ -17,15 +17,20 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
-                        sh '''
-                        cat $FILE > secrets.properties
-                        ls
-                        '''
+                        sh 'cat $FILE > secrets.properties'
+                    }
+
+                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
+                        sh 'cat $FILE > secrets.properties'
                     }
 
                     sh 'mvn test'
 
                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
+                        sh 'rm secrets.properties'
+                    }
+
+                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
                         sh 'rm secrets.properties'
                     }
                 }
