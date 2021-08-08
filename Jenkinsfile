@@ -42,15 +42,15 @@ pipeline {
             }
             post { // 	If the maven build succeeded, archive the JUnit test reports for display in the Jenkins web UI.
                 success {
-                    junit 'target/surefire-reports/**/*.xml'
+                    junit 'target/surefire-reports/*.xml'
                     archiveArtifacts 'target/*.jar'
                 }
             }
         }
         stage('Deploy') {
             steps {
-                sh 'use $IexCloudApiKey'
-                sh 'mvn package'
+                echo "TODO DEPLOY TO AWS"
+                //sh 'mvn package'
             }
         }
     }
@@ -59,10 +59,10 @@ pipeline {
             echo 'This will always run'
         }
         success {
-            echo 'This will run only if successful'
+            echo 'SUCCESS: SPD-Pipeline completed successfully'
         }
         failure {
-            echo 'This will run only if failed'
+            echo 'FAILURE: SPD-Pipeline failed'
         }
         unstable {
             echo 'This will run only if the run was marked as unstable'
