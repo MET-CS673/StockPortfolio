@@ -16,9 +16,6 @@ public abstract class WaitPage {
     protected WebElement waitForElement(WebDriver driver, String elementId) {
         WebDriverWait wait = new WebDriverWait(driver, WAIT_TIME_IN_SECONDS);
 
-        Dimension d = new Dimension(1382,744);
-        driver.manage().window().setSize(d);
-
         return wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id(elementId))));
         //return wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id(elementId))));
     }
@@ -38,7 +35,8 @@ public abstract class WaitPage {
 
     protected boolean isElementDisplayed(WebDriver driver, String elementId) {
         try {
-            return waitForElement(driver, elementId).isDisplayed();
+            WebElement element = waitForElement(driver, elementId);
+            return element.isDisplayed();
         } catch (NoSuchElementException e) {
             log.error().log(e.getMessage());
             return false;
