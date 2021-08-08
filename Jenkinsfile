@@ -59,6 +59,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
+                echo 'TODO: ADD DEPLOYMENT TO AWS'
                 //sh 'mvn package'
             }
         }
