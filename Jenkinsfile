@@ -9,31 +9,39 @@ pipeline {
     options {
         skipStagesAfterUnstable()
     }
-//     environment {
-//         IexCloudApiKey=credentials('IEXCloud')
-//     }
     stages {
+        stage('BeforeAll') {
+            withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
+                dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
+                    sh 'cat $FILE > secrets.properties'
+                }
+
+                dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
+                    sh 'cat $FILE > secrets.properties'
+                }
+            }
+        }
         stage('Test') {
             steps {
-                withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
-                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
-                        sh 'cat $FILE > secrets.properties'
-                    }
-
-                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
-                        sh 'cat $FILE > secrets.properties'
-                    }
+//                 withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
+//                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
+//                         sh 'cat $FILE > secrets.properties'
+//                     }
+//
+//                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
+//                         sh 'cat $FILE > secrets.properties'
+//                     }
 
                     sh 'mvn test'
 
-                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
-                        sh 'rm secrets.properties'
-                    }
-
-                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
-                        sh 'rm secrets.properties'
-                    }
-                }
+//                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
+//                         sh 'rm secrets.properties'
+//                     }
+//
+//                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
+//                         sh 'rm secrets.properties'
+//                     }
+//                 }
             }
         }
         stage('Build') {
@@ -49,20 +57,28 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh 'use $IexCloudApiKey'
-                sh 'mvn package'
+                //sh 'mvn package'
             }
         }
     }
    post {
         always {
-            echo 'This will always run'
+            echo 'SPD-Pipeline has executed all its stages'
+            echo 'Clean up temporary property files...'
+
+            dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
+                sh 'rm secrets.properties'
+            }
+
+            dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
+                sh 'rm secrets.properties'
+            }
         }
         success {
-            echo 'This will run only if successful'
+            echo 'SUCCESS: SPD-Pipeline completed successfully'
         }
         failure {
-            echo 'This will run only if failed'
+            echo 'FAILURE: SPD-Pipeline failed to complete'
         }
         unstable {
             echo 'This will run only if the run was marked as unstable'
