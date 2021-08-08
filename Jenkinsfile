@@ -67,19 +67,10 @@ pipeline {
                 //sh 'mvn package'
             }
         }
-    }
+   }
    post {
         always {
             echo 'SPD-Pipeline has executed all its stages'
-            echo 'Clean up temporary property files...'
-
-            dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
-                sh 'rm secrets.properties'
-            }
-
-            dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
-                sh 'rm secrets.properties'
-            }
         }
         success {
             echo 'SUCCESS: SPD-Pipeline completed successfully'
