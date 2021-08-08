@@ -19,7 +19,7 @@ pipeline {
                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
                         sh '''
                         cat $FILE > secrets.properties
-                        sh 'ls'
+                        ls
                         '''
                     }
 
