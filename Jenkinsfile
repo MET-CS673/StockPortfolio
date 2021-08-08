@@ -17,6 +17,7 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
                     dir('/Users/mlewis/IntelliJProjects/CS673/StockPortfolio/src/main/resources') {
+                        sh 'ls'
                         sh 'cat $FILE > secrets.properties'
                     }
 
