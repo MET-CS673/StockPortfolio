@@ -9,9 +9,9 @@ pipeline {
     options {
         skipStagesAfterUnstable()
     }
-    environment {
-        IexCloudApiKey=credentials('IEXCloud')
-    }
+//     environment {
+//         IexCloudApiKey=credentials('IEXCloud')
+//     }
     stages {
         stage('Test') {
             steps {
