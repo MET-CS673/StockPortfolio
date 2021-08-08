@@ -9,6 +9,7 @@ import org.junit.jupiter.api.*;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
@@ -36,15 +37,16 @@ public class StockDashboardTest {
 
     @BeforeEach
     public void beforeEach() {
-        driver = new ChromeDriver();
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("start-maximized");
+        options.addArguments("disable-infobars");
+
+        driver = new ChromeDriver(options);
         baseUrl = "http://localhost:" + port;
         signupPage = new SignupPage(driver);
         loginPage = new LoginPage(driver);
         homePage = new HomePage(driver);
         resultPage = new ResultPage(driver);
-
-        Dimension d = new Dimension(1382,744);
-        driver.manage().window().setSize(d);
     }
 
     @Test
