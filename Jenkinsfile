@@ -24,7 +24,7 @@ pipeline {
                         sh 'cat $FILE > secrets.properties'
                     }
 
-                    sh 'mvn clean test-Dselenium browser=chrome'
+                    sh 'mvn test'
 
                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
                         sh 'rm secrets.properties'
