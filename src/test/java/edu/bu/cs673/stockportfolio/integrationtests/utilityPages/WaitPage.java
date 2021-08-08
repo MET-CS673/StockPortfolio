@@ -2,10 +2,7 @@ package edu.bu.cs673.stockportfolio.integrationtests.utilityPages;
 
 import org.fissore.slf4j.FluentLogger;
 import org.fissore.slf4j.FluentLoggerFactory;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -18,6 +15,10 @@ public abstract class WaitPage {
 
     protected WebElement waitForElement(WebDriver driver, String elementId) {
         WebDriverWait wait = new WebDriverWait(driver, WAIT_TIME_IN_SECONDS);
+
+        Dimension d = new Dimension(1382,744);
+        driver.manage().window().setSize(d);
+
         return wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.id(elementId))));
         //return wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id(elementId))));
     }
