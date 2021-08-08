@@ -22,7 +22,7 @@ pipeline {
 //                         '''
 //                     }
                     sh '''
-                    echo 'hello'
+                    cat $FILE
                     '''
                 }
             }
