@@ -20,7 +20,7 @@ public class ResultPage extends WaitPage {
     @FindBy(id = ERROR_MESSAGE)
     private WebElement errorMessage;
 
-    private static final String NAV_LINK = "nav-link";
+    private static final String NAV_LINK = "navlink";
     @FindBy(id = NAV_LINK)
     private WebElement navLink;
 

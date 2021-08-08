@@ -12,14 +12,14 @@
         <div class="container justify-content-center w-50 p-3" style="margin-top: 5em;">
             <div id="success-message" th:if="${success}" class="alert alert-success fill-parent">
                 <h1 class="display-5">Success</h1>
-                <span>Your changes were successfully saved. Click <a id="nav-link" th:href="${nav}">here</a> to continue.</span>
+                <span>Your changes were successfully saved. Click <a id="navlink" th:href="${nav}">here</a> to continue.</span>
             </div>
             <div id="error-message" th:unless="${success}" class="alert alert-danger fill-parent">
                 <h1 class="display-5">Error</h1>
-                <span th:if="${uploadFailed}">Please select a file to upload. Click <a id="nav-link" th:href="${nav}">here</a> to continue.</span>
-                <span th:if="${fileSizeExceeded}">File size exceeded. Limit is 10MB. Click <a id="nav-link" th:href="${nav}">here</a> to continue.</span>
-                <span th:if="${deletePortfolioError}">The Portfolio was not deleted. Click <a id="nav-link" th:href="${nav}">here</a> to continue.</span>
-                <span th:if="${deleteUserProfileError}">Your profile cannot be deleted. Please contact user support. Click <a id="nav-link" th:href="${nav}">here</a> to continue.</span>
+                <span th:if="${uploadFailed}">Please select a file to upload. Click <a id="navlink" th:href="${nav}">here</a> to continue.</span>
+                <span th:if="${fileSizeExceeded}">File size exceeded. Limit is 10MB. Click <a id="navlink" th:href="${nav}">here</a> to continue.</span>
+                <span th:if="${deletePortfolioError}">The Portfolio was not deleted. Click <a id="navlink" th:href="${nav}">here</a> to continue.</span>
+                <span th:if="${deleteUserProfileError}">Your profile cannot be deleted. Please contact user support. Click <a id="navlink" th:href="${nav}">here</a> to continue.</span>
             </div>
         </div>
     </body>
