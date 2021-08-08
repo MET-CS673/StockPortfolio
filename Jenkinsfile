@@ -9,6 +9,9 @@ pipeline {
     options {
         skipStagesAfterUnstable()
     }
+//     environment {
+//         IexCloudApiKey=credentials('IEXCloud')
+//     }
     stages {
         stage('Test') {
             steps {
@@ -35,48 +38,31 @@ pipeline {
         }
         stage('Build') {
             steps {
-
-                dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
-                    sh 'cat $FILE > secrets.properties'
-                }
-
-                dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
-                    sh 'cat $FILE > secrets.properties'
-                }
-
-                sh 'mvn -B -DskipTests package'
-
-                dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
-                    sh 'rm secrets.properties'
-                }
-
-                dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
-                    sh 'rm secrets.properties'
-                }
+                sh 'mvn -B -DskipTests clean package'
             }
             post { // 	If the maven build succeeded, archive the JUnit test reports for display in the Jenkins web UI.
                 success {
-                    junit 'target/surefire-reports/*.xml'
+                    junit 'target/surefire-reports/**/*.xml'
                     archiveArtifacts 'target/*.jar'
                 }
             }
         }
         stage('Deploy') {
             steps {
-                echo 'TODO: ADD DEPLOYMENT TO AWS'
-                //sh 'mvn package'
+                sh 'use $IexCloudApiKey'
+                sh 'mvn package'
             }
         }
-   }
+    }
    post {
         always {
-            echo 'SPD-Pipeline has executed all its stages'
+            echo 'This will always run'
         }
         success {
-            echo 'SUCCESS: SPD-Pipeline completed successfully'
+            echo 'This will run only if successful'
         }
         failure {
-            echo 'FAILURE: SPD-Pipeline failed to complete'
+            echo 'This will run only if failed'
         }
         unstable {
             echo 'This will run only if the run was marked as unstable'

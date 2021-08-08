@@ -151,17 +151,6 @@
         </dependencies>
     </dependencyManagement>
 
-<!--    <profiles>-->
-<!--        &lt;!&ndash; Production mode is activated using -Pproduction &ndash;&gt;-->
-<!--        <profile>-->
-<!--            <id>production</id>-->
-<!--            <properties>-->
-<!--                <project>true</project>-->
-<!--&lt;!&ndash;                <vaadin.poductionMode>true</vaadin.poductionMode>&ndash;&gt;-->
-<!--            </properties>-->
-<!--        </profile>-->
-<!--    </profiles>-->
-
     <build>
         <plugins>
 

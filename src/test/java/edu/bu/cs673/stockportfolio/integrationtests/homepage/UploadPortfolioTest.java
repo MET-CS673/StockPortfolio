@@ -37,11 +37,7 @@ public class UploadPortfolioTest {
 
     @BeforeEach
     public void beforeEach() {
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("start-maximized");
-        options.addArguments("disable-infobars");
-
-        driver = new ChromeDriver(options);
+        driver = new ChromeDriver();
         baseURL = "http://localhost:" + port;
         signupPage = new SignupPage(driver);
         loginPage = new LoginPage(driver);
