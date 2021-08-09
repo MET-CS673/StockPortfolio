@@ -9,31 +9,14 @@ pipeline {
     options {
         skipStagesAfterUnstable()
     }
-//     environment {
-//         IexCloudApiKey=credentials('IEXCloud')
-//     }
-    stages {
+    environment {
+        // Extract branch name in a way that works on a simple pipeline and also on multibranch pipelines
+        BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[0..-1].join('_') : GIT_BRANCH}"
+    }
+    stages { // Continuous Integration phase
         stage('Unit Test') {
             steps {
-                withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
-                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
-                        sh 'cat $FILE > secrets.properties'
-                    }
-
-                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
-                        sh 'cat $FILE > secrets.properties'
-                    }
-
                     sh 'mvn test'
-
-                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
-                        sh 'rm secrets.properties'
-                    }
-
-                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
-                        sh 'rm secrets.properties'
-                    }
-                }
             }
             post { // 	If the maven goal succeeded, archive the JUnit test reports for display in the Jenkins web UI.
                 success {
@@ -41,22 +24,29 @@ pipeline {
                 }
             }
         }
-        stage('Integration Test') {
+
+        stage('Integration Test') { // Usually not run in CI b/c it takes a long time. Usually run by a scheduled job
             steps {
-                sh 'mvn failsafe:integration-test'
+                withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
+                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_' + BRANCH_NAME + '/target/classes') {
+                        sh 'cat $FILE > secrets.properties'
+                    }
+
+                    sh 'mvn -B -Dskip.surefire.tests verify' // failsafe:integration-test'
+                }
             }
         }
-        stage('Build') {
+        stage('Build') { // The Continuous Delivery phase
             steps {
-                sh 'mvn -B -DskipTests clean package'
+                sh 'mvn -B -Dmaven.clean.skip=true -DskipTests package'
             }
-            post { // 	If the maven build succeeded, archive the jar file
+            post { // If the maven build succeeded, archive the jar file
                 success {
                     archiveArtifacts 'target/*.jar'
                 }
             }
         }
-        stage('Deploy') {
+        stage('Deploy') { // The Continuous Deployment phase
             steps {
                 echo "TODO DEPLOY TO AWS"
                 //sh 'mvn -DskipTests deploy'
@@ -65,7 +55,14 @@ pipeline {
     }
    post {
         always {
-            echo 'This will always run'
+            echo 'Cleaning up resources...'
+            echo 'Removing secrets.properties files from Jenkins directories'
+
+            withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
+                dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_' + BRANCH_NAME + '/target/classes') {
+                    sh 'rm secrets.properties'
+                }
+            }
         }
         success {
             echo 'SUCCESS: SPD-Pipeline completed successfully'
@@ -80,5 +77,5 @@ pipeline {
             echo 'This will run only if the state of the Pipeline has changed'
             echo 'For example, if the Pipeline was previously failing but is now successful'
         }
-    }
+   }
 }

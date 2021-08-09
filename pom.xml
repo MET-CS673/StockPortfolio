@@ -200,7 +200,7 @@
                     <!-- This configuration is required to avoid timeout errors in Jenkins -->
                     <configuration>
                         <excludes>
-                            <include>**/*IT.java</include>
+                            <exclude>**/*IT.java</exclude>
                         </excludes>
                     </configuration>
                 </plugin>
