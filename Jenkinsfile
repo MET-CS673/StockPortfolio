@@ -6,6 +6,9 @@ pipeline {
     tools {
         maven 'Maven 3.6.3'
     }
+    environment {
+        def PULL_REQUEST = env.CHANGE_ID
+    }
     options {
         skipStagesAfterUnstable()
     }
@@ -22,7 +25,7 @@ pipeline {
         }
         stage('Integration Test') {
             steps {
-                def PULL_REQUEST = env.CHANGE_ID
+
                 withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_${PULL_REQUEST}/target/classes') {
                         sh 'cat $FILE > secrets.properties'
