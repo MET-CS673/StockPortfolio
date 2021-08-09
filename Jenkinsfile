@@ -9,9 +9,6 @@ pipeline {
     options {
         skipStagesAfterUnstable()
     }
-    environment {
-        PULL_REQUEST = env.CHANGE_ID
-    }
     stages {
         stage('Unit Test') {
             steps {
@@ -23,9 +20,10 @@ pipeline {
                 }
             }
         }
+
+        def PULL_REQUEST = env.CHANGE_ID
         stage('Integration Test') {
             steps {
-
                 withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_${PULL_REQUEST}/target/classes') {
                         sh 'cat $FILE > secrets.properties'
