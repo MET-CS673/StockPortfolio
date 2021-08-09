@@ -32,7 +32,7 @@ pipeline {
                         sh 'cat $FILE > secrets.properties'
                     }
 
-                    sh 'mvn -B -DskipTests failsafe:integration-test'
+                    sh 'mvn -B -Dskip.surefire.tests verify' // failsafe:integration-test'
                 }
             }
         }
