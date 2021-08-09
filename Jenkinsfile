@@ -24,9 +24,10 @@ pipeline {
         stage('Integration Test') {
             steps {
                 withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
-                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_' + env.GIT_BRANCH + '/target/classes') {
+                BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[1..-1].join('/') : GIT_BRANCH}"
+                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_' + BRANCH_NAME + '/target/classes') {
                         sh 'cat $FILE > secrets.properties'
-                        sh 'cat secrets.properties'
+                        echo ${BRANCH_NAME}
                     }
 
                     sh 'mvn -Dmaven.clean.skip=true failsafe:integration-test'
