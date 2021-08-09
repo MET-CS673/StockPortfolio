@@ -62,6 +62,7 @@ pipeline {
                 dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_' + BRANCH_NAME + '/target/classes') {
                     sh 'rm secrets.properties'
                 }
+            }
         }
         success {
             echo 'SUCCESS: SPD-Pipeline completed successfully'
