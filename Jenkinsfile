@@ -10,11 +10,10 @@ pipeline {
         skipStagesAfterUnstable()
     }
     environment {
-        //BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[1..-1].join('_') : GIT_BRANCH}"
-        //BRANCH_NAME = "${GIT_BRANCH}"
-        BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[0..-1].join('_') : false}"
+        // Extract branch name in a way that works on a simple pipeline and also on multibranch pipelines
+        BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[0..-1].join('_') : GIT_BRANCH}"
     }
-    stages {
+    stages { // Continuous Integration phase
         stage('Unit Test') {
             steps {
                     sh 'mvn test'
@@ -26,22 +25,20 @@ pipeline {
             }
         }
 
-        stage('Integration Test') {
+        stage('Integration Test') { // Usually not run in CI b/c it takes a long time. Usually run by a scheduled job
             steps {
                 withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_' + BRANCH_NAME + '/target/classes') {
                         sh 'cat $FILE > secrets.properties'
-                        echo "BRANCH NAME IS: ${BRANCH_NAME}[0] and ${BRANCH_NAME}[1]"
-                        echo "${BRANCH_NAME}"
                     }
 
-                    sh 'mvn -Dmaven.clean.skip=true failsafe:integration-test'
+                    sh 'mvn -B -DskipTests failsafe:integration-test'
                 }
             }
         }
-        stage('Build') {
+        stage('Build') { // The Continuous Delivery phase
             steps {
-                sh 'mvn -B -DskipTests clean package'
+                sh 'mvn -B -DskipTests -Dmaven.clean.skip=true package'
             }
             post { // 	If the maven build succeeded, archive the jar file
                 success {
@@ -49,7 +46,7 @@ pipeline {
                 }
             }
         }
-        stage('Deploy') {
+        stage('Deploy') { // The Continuous Delivery phase
             steps {
                 echo "TODO DEPLOY TO AWS"
                 //sh 'mvn -DskipTests deploy'
