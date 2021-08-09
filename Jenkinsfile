@@ -9,23 +9,10 @@ pipeline {
     options {
         skipStagesAfterUnstable()
     }
-//     environment {
-//         IexCloudApiKey=credentials('IEXCloud')
-//     }
     stages {
         stage('Unit Test') {
             steps {
-//                 withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
-//                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
-//                         sh 'cat $FILE > secrets.properties'
-//                     }
-//
-//                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
-//                         sh 'cat $FILE > secrets.properties'
-//                     }
-
                     sh 'mvn test'
-                }
             }
             post { // 	If the maven goal succeeded, archive the JUnit test reports for display in the Jenkins web UI.
                 success {
@@ -79,5 +66,5 @@ pipeline {
             echo 'This will run only if the state of the Pipeline has changed'
             echo 'For example, if the Pipeline was previously failing but is now successful'
         }
-    }
+   }
 }
