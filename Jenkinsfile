@@ -6,11 +6,11 @@ pipeline {
     tools {
         maven 'Maven 3.6.3'
     }
-    environment {
-        def PULL_REQUEST = env.CHANGE_ID
-    }
     options {
         skipStagesAfterUnstable()
+    }
+    environment {
+        PULL_REQUEST = env.CHANGE_ID
     }
     stages {
         stage('Unit Test') {
