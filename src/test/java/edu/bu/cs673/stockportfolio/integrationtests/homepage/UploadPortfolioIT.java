@@ -1,12 +1,11 @@
-package edu.bu.cs673.stockportfolio.integrationtests.dashboards;
+package edu.bu.cs673.stockportfolio.integrationtests.homepage;
 
 import edu.bu.cs673.stockportfolio.integrationtests.homepage.HomePage;
 import edu.bu.cs673.stockportfolio.integrationtests.login.LoginPage;
-import edu.bu.cs673.stockportfolio.integrationtests.signup.SignupPage;
 import edu.bu.cs673.stockportfolio.integrationtests.utilityPages.ResultPage;
+import edu.bu.cs673.stockportfolio.integrationtests.signup.SignupPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -16,29 +15,30 @@ import org.springframework.boot.web.server.LocalServerPort;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**********************************************************************************************************************
- * Test user story: "As a user, I can signup, login, and view the market cap dashboard for my portfolio."
+ * Test user story: "As a user, I can signup, login, and upload my portfolio."
  *********************************************************************************************************************/
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class MarketCapDashboardTest {
+public class UploadPortfolioIT {
 
     @LocalServerPort
     private int port;
+
     private static WebDriver driver;
-    private String baseUrl;
+    private String baseURL;
     private SignupPage signupPage;
     private LoginPage loginPage;
     private HomePage homePage;
     private ResultPage resultPage;
 
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
         WebDriverManager.chromedriver().setup();
     }
 
     @BeforeEach
     public void beforeEach() {
         driver = new ChromeDriver();
-        baseUrl = "http://localhost:" + port;
+        baseURL = "http://localhost:" + port;
         signupPage = new SignupPage(driver);
         loginPage = new LoginPage(driver);
         homePage = new HomePage(driver);
@@ -46,33 +46,40 @@ public class MarketCapDashboardTest {
     }
 
     @Test
-    @DisplayName("Test market cap link")
-    public void testMarketCapLink() {
+    @DisplayName("Test portfolio upload.")
+    public void testPortfolioUpload() {
         String filePath = "/Users/mlewis/Downloads/TestPortfolio.csv";
+        String testTickerOne = "GS";
+        String testTickerTwo = "FB";
+        String testCompanyNameOne = "Goldman Sachs Group, Inc.";
+        String testCompanyNameTwo = "Facebook Inc - Class A";
 
-        driver.get(baseUrl + "/signup");
-        signupPage.signup("wallstreet@spd.com", "wall", "wallStreet");
+        driver.get(baseURL + "/signup");
+        signupPage.signup("money@spd.com", "John", "10DigitPassword!");
 
-        driver.get(baseUrl + "/login");
-        loginPage.login(driver, "wall", "wallStreet");
+        driver.get(baseURL + "/login");
+        loginPage.login(driver, "John", "10DigitPassword!");
 
-        // First upload a portfolio to ensure full integration testing with IEX Cloud
-        driver.get(baseUrl + "/home");
+        // Go to homepage and upload file
+        driver.get(baseURL + "/home");
         homePage.clickUploadPortfolio(driver, filePath);
         homePage.clickUploadPortfolioButton(driver);
 
         boolean result = resultPage.isSuccessMessageDisplayed(driver);
         resultPage.clickNavLink(driver);
 
-        driver.get(baseUrl + "/home");
-        homePage.clickMarketCapBreakdown(driver);
-        String currentUrl = driver.getCurrentUrl();
+        driver.get(baseURL + "/home");
+        String actualTickerOne = homePage.find(driver, testTickerOne);
+        String actualTickerTwo = homePage.find(driver, testTickerTwo);
+        String actualCompanyNameOne = homePage.find(driver, testCompanyNameOne);
+        String actualCompanyNameTwo = homePage.find(driver, testCompanyNameTwo);
 
-        assertAll("Market Cap Breakdown Dashboard",
+        assertAll("Upload portfolio",
                 () -> assertTrue(result, "Portfolio upload failed."),
-                () -> assertEquals(baseUrl + "/mc_breakdown", currentUrl,
-                        "Incorrect endpoint for market cap dashboard")
-        );
+                () -> assertEquals(testTickerOne, actualTickerOne, "GS symbol is incorrect."),
+                () -> assertEquals(testTickerTwo, actualTickerTwo, "FB symbol is incorrect."),
+                () -> assertEquals(testCompanyNameOne, actualCompanyNameOne, "Company name is incorrect."),
+                () -> assertEquals(testCompanyNameTwo, actualCompanyNameTwo, "Company name is incorrect."));
     }
 
     @AfterEach
@@ -80,7 +87,6 @@ public class MarketCapDashboardTest {
         if (driver != null) {
             driver.quit();
         }
-
         driver = null;
     }
 }

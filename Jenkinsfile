@@ -13,7 +13,7 @@ pipeline {
 //         IexCloudApiKey=credentials('IEXCloud')
 //     }
     stages {
-        stage('Test') {
+        stage('Unit Test') {
             steps {
                 withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
@@ -41,6 +41,11 @@ pipeline {
                 }
             }
         }
+        stage('Integration Test') {
+            steps {
+                sh 'mvn failsafe:integration-test'
+            }
+        }
         stage('Build') {
             steps {
                 sh 'mvn -B -DskipTests clean package'
@@ -54,7 +59,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo "TODO DEPLOY TO AWS"
-                //sh 'mvn package'
+                //sh 'mvn -DskipTests deploy'
             }
         }
     }

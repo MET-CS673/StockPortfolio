@@ -16,10 +16,10 @@ import org.springframework.boot.web.server.LocalServerPort;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**********************************************************************************************************************
- * Test user story: "As a user, I can signup, login, and view the sector dashboard for my portfolio."
+ * Test user story: "As a user, I can signup, login, and view the market cap dashboard for my portfolio."
  *********************************************************************************************************************/
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SectorDashboardTest {
+public class MarketCapDashboardIT {
 
     @LocalServerPort
     private int port;
@@ -46,7 +46,7 @@ public class SectorDashboardTest {
     }
 
     @Test
-    @DisplayName("Test sector dashboard link")
+    @DisplayName("Test market cap link")
     public void testMarketCapLink() {
         String filePath = "/Users/mlewis/Downloads/TestPortfolio.csv";
 
@@ -65,13 +65,13 @@ public class SectorDashboardTest {
         resultPage.clickNavLink(driver);
 
         driver.get(baseUrl + "/home");
-        homePage.clickSectorBreakdown(driver);
+        homePage.clickMarketCapBreakdown(driver);
         String currentUrl = driver.getCurrentUrl();
 
-        assertAll("Sector Breakdown Dashboard",
+        assertAll("Market Cap Breakdown Dashboard",
                 () -> assertTrue(result, "Portfolio upload failed."),
-                () -> assertEquals(baseUrl + "/sector_breakdown", currentUrl,
-                        "Incorrect endpoint for sector dashboard")
+                () -> assertEquals(baseUrl + "/mc_breakdown", currentUrl,
+                        "Incorrect endpoint for market cap dashboard")
         );
     }
 
