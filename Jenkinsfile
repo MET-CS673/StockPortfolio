@@ -27,7 +27,7 @@ pipeline {
                 BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[1..-1].join('/') : GIT_BRANCH}"
                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_' + BRANCH_NAME + '/target/classes') {
                         sh 'cat $FILE > secrets.properties'
-                        echo ${BRANCH_NAME}
+                        echo "${BRANCH_NAME}"
                     }
 
                     sh 'mvn -Dmaven.clean.skip=true failsafe:integration-test'
