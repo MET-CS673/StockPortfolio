@@ -10,7 +10,8 @@ pipeline {
         skipStagesAfterUnstable()
     }
     environment {
-        BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[1..-1].join('/') : GIT_BRANCH}"
+        //BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[1..-1].join('/') : GIT_BRANCH}"
+        BRANCH_NAME = "${GIT_BRANCH.split('/')[1..-1].join('/')}"
     }
     stages {
         stage('Unit Test') {
