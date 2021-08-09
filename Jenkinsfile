@@ -35,7 +35,17 @@ pipeline {
         }
         stage('Integration Test') {
             steps {
-                sh 'mvn failsafe:integration-test'
+                withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
+                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
+                        sh 'cat $FILE > secrets.properties'
+                    }
+
+                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
+                        sh 'cat $FILE > secrets.properties'
+                    }
+
+                    sh 'mvn failsafe:integration-test'
+                }
             }
         }
         stage('Build') {
@@ -59,14 +69,6 @@ pipeline {
         always {
             echo 'Cleaning up resources...'
             echo 'Removing secrets.properties files from Jenkins directories'
-
-            dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
-                sh 'rm secrets.properties'
-            }
-
-            dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
-                sh 'rm secrets.properties'
-            }
         }
         success {
             echo 'SUCCESS: SPD-Pipeline completed successfully'
