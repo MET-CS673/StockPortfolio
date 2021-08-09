@@ -15,14 +15,14 @@ pipeline {
     stages {
         stage('Unit Test') {
             steps {
-                withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
-                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
-                        sh 'cat $FILE > secrets.properties'
-                    }
-
-                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
-                        sh 'cat $FILE > secrets.properties'
-                    }
+//                 withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
+//                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
+//                         sh 'cat $FILE > secrets.properties'
+//                     }
+//
+//                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
+//                         sh 'cat $FILE > secrets.properties'
+//                     }
 
                     sh 'mvn test'
                 }
@@ -36,11 +36,7 @@ pipeline {
         stage('Integration Test') {
             steps {
                 withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
-                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
-                        sh 'cat $FILE > secrets.properties'
-                    }
-
-                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
+                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline*/target/classes') {
                         sh 'cat $FILE > secrets.properties'
                     }
 
