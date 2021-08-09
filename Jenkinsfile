@@ -38,15 +38,15 @@ pipeline {
         }
         stage('Build') { // The Continuous Delivery phase
             steps {
-                sh 'mvn -B -DskipTests -Dmaven.clean.skip=true package'
+                sh 'mvn -B -Dmaven.clean.skip=true -DskipTests package'
             }
-            post { // 	If the maven build succeeded, archive the jar file
+            post { // If the maven build succeeded, archive the jar file
                 success {
                     archiveArtifacts 'target/*.jar'
                 }
             }
         }
-        stage('Deploy') { // The Continuous Delivery phase
+        stage('Deploy') { // The Continuous Deployment phase
             steps {
                 echo "TODO DEPLOY TO AWS"
                 //sh 'mvn -DskipTests deploy'
@@ -57,6 +57,11 @@ pipeline {
         always {
             echo 'Cleaning up resources...'
             echo 'Removing secrets.properties files from Jenkins directories'
+
+            withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
+                dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_' + BRANCH_NAME + '/target/classes') {
+                    sh 'rm secrets.properties'
+                }
         }
         success {
             echo 'SUCCESS: SPD-Pipeline completed successfully'
