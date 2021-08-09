@@ -29,7 +29,7 @@ pipeline {
                         sh 'cat secrets.properties'
                     }
 
-                    sh 'mvn failsafe:integration-test'
+                    sh 'mvn -Dmaven.clean.skip=true failsafe:integration-test'
                 }
             }
         }
