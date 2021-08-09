@@ -25,14 +25,6 @@ pipeline {
                     }
 
                     sh 'mvn test'
-
-                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
-                        sh 'rm secrets.properties'
-                    }
-
-                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
-                        sh 'rm secrets.properties'
-                    }
                 }
             }
             post { // 	If the maven goal succeeded, archive the JUnit test reports for display in the Jenkins web UI.
@@ -65,7 +57,16 @@ pipeline {
     }
    post {
         always {
-            echo 'This will always run'
+            echo 'Cleaning up resources...'
+            echo 'Removing secrets.properties files from Jenkins directories'
+
+            dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master/target/classes') {
+                sh 'rm secrets.properties'
+            }
+
+            dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_master@2/target/classes') {
+                sh 'rm secrets.properties'
+            }
         }
         success {
             echo 'SUCCESS: SPD-Pipeline completed successfully'
