@@ -12,7 +12,7 @@ pipeline {
     environment {
         //BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[1..-1].join('_') : GIT_BRANCH}"
         //BRANCH_NAME = "${GIT_BRANCH}"
-        BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/') : false}"
+        BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[0..-1].join('_') : false}"
     }
     stages {
         stage('Unit Test') {
