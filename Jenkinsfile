@@ -9,6 +9,9 @@ pipeline {
     options {
         skipStagesAfterUnstable()
     }
+    environment {
+        BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[1..-1].join('/') : GIT_BRANCH}"
+    }
     stages {
         stage('Unit Test') {
             steps {
@@ -24,7 +27,6 @@ pipeline {
         stage('Integration Test') {
             steps {
                 withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
-                BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[1..-1].join('/') : GIT_BRANCH}"
                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_' + BRANCH_NAME + '/target/classes') {
                         sh 'cat $FILE > secrets.properties'
                         echo "${BRANCH_NAME}"
