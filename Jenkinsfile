@@ -24,7 +24,7 @@ pipeline {
         stage('Integration Test') {
             steps {
                 withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
-                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_' + env.CHANGE_ID + '/target/classes') {
+                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_' + env.GIT_BRANCH + '/target/classes') {
                         sh 'cat $FILE > secrets.properties'
                     }
 
