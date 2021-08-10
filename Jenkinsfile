@@ -25,17 +25,17 @@ pipeline {
             }
         }
 
-        stage('Integration Test') { // Usually not run in CI b/c it takes a long time. Usually run by a scheduled job
-            steps {
-                withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
-                    dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_' + BRANCH_NAME + '/target/classes') {
-                        sh 'cat $FILE > secrets.properties'
-                    }
-
-                    sh 'mvn -B -Dskip.surefire.tests verify' // failsafe:integration-test'
-                }
-            }
-        }
+//         stage('Integration Test') { // Usually not run in CI b/c it takes a long time. Usually run by a scheduled job
+//             steps {
+//                 withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
+//                     dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_' + BRANCH_NAME + '/target/classes') {
+//                         sh 'cat $FILE > secrets.properties'
+//                     }
+//
+//                     sh 'mvn -B -Dskip.surefire.tests verify' // failsafe:integration-test'
+//                 }
+//             }
+//         }
         stage('Build') { // The Continuous Delivery phase
             steps {
                 sh 'mvn -B -Dmaven.clean.skip=true -DskipTests package'
