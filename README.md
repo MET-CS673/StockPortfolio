@@ -63,10 +63,10 @@ IEX Cloud
 * IEX Cloud is a financial data infrastructure platform that connects this application to financial data creators. This 
 application uses the IEX Cloud batch calls for its real-time and historical market data needs.
   
-* This application is deployed on AWS and is available at http://portfoliosight.com/login. However, developers interested 
-in compiling the program need to establish an IEX Cloud account to make API calls. IEX Cloud offers both free and paid 
-accounts. After establishing an account, navigate to the `console/tokens` endpoint and copy and paste the token into a 
-`secrets.properties` file. The key-value pair should be `IexCloudApiKey=YOUR_IEX_CLOUD_TOKEN`
+* This application is deployed on AWS and is available at http://portfoliosight.com. However, developers interested in 
+  compiling the program need to establish an IEX Cloud account to make API calls. IEX Cloud offers both free and paid 
+  accounts. After establishing an account, navigate to the `console/tokens` endpoint and copy and paste the token into 
+  a `secrets.properties` file. The key-value pair should be `IexCloudApiKey=YOUR_IEX_CLOUD_TOKEN`
 
 Maven
 * Maven is a build automation tool that is used with Jenkins to facilitate the automated build process. Additionally,
@@ -117,7 +117,7 @@ mvn clean compile test
 # Run static analysis tests
 
 Spotbugs is an open-source static code analyzer used to detect possible bugs in this product. It automatically scans 
-the code to look for potential bug patterns and makes the build fails if any bugs are found. Spotbugs will also provide
+the code to look for potential bug patterns and makes the build fail if any bugs are found. Spotbugs will also provide
 the developer with a helpful report that contains the errors and potential solutions.
 
 ```
