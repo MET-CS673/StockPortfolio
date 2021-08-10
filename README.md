@@ -49,37 +49,39 @@ Spring Cloud:
 * Spring Web module provides basic web-oriented integration features such as multipart file upload functionality and 
   the initialization of the IoC container using Servlet listeners and a web-oriented application context. It also 
   contains an HTTP client, and the web-related parts of Spring’s remoting support.
-  
-AWS
-* AWS Elastic Beanstalk is an easy-to-use service for deploying and scaling web applications. The service handles all 
-the deployment needs for this application including provisioning, load balancing, auto-scaling, and health monitoring.
-* AWS RDS is a distributed relational database service designed to simplify the setup, operation, and scaling of a 
-relational database. Stock Portfolio Dashboard uses a MySQL database engine.
 
-Data Processing
-* Jackson-Databind converts JSON data from IEX Cloud into POJOs needed by the application. 
+Thymeleaf
+* Thymeleaf is a Java template engine for processing and creating HTML, JavaScript, and CSS that is integrated with
+  Spring MVC to serve the View Layer.
+
+Jackson-Databind
+* Jackson-Databind is a convenient data-binding (to/from POJOs) tool. This product uses Jackson to deserialize JSON 
+  data from IEX Cloud and construct POJOs used throughout the product. For example, this application uses market data 
+  from IEX Cloud to construct `Quote` objects representing the `latestPrice` (and other attributes) of a security.
 
 IEX Cloud
 * IEX Cloud is a financial data infrastructure platform that connects this application to financial data creators. This 
 application uses the IEX Cloud batch calls for its real-time and historical market data needs.
   
-This application is deployed on AWS and is available at http://portfoliosight.com/login. However, developers interested 
+* This application is deployed on AWS and is available at http://portfoliosight.com/login. However, developers interested 
 in compiling the program need to establish an IEX Cloud account to make API calls. IEX Cloud offers both free and paid 
 accounts. After establishing an account, navigate to the `console/tokens` endpoint and copy and paste the token into a 
 `secrets.properties` file. The key-value pair should be `IexCloudApiKey=YOUR_IEX_CLOUD_TOKEN`
-  
-Thymeleaf
-* Thymeleaf is a Java template engine for processing and creating HTML, JavaScript, and CSS that is integrated with 
-  Spring MVC to serve the View Layer.
+
+Maven
+* Maven is a build automation tool that is used with Jenkins to facilitate the automated build process. Additionally,
+  Maven manages the products dependencies through a `pom.xml` file.
   
 Jenkins
 * Jenkins is an open source automation server that orchestrates the entire software delivery pipeline for this product.
   When a developer opens a PR, Jenkins will automatically integrate, deliver, and deploy successful builds to the 
   products AWS Elastic Beanstalk instance.
-  
-Maven
-* Maven is a build automation tool that is used with Jenkins to facilitate the automated build process. Additionally, 
-  Maven manages the products dependencies through a `pom.xml` file.
+
+AWS
+* AWS Elastic Beanstalk is an easy-to-use service for deploying and scaling web applications. The service handles all
+  the deployment needs for this application including provisioning, load balancing, auto-scaling, and health monitoring.
+* AWS RDS is a distributed relational database service designed to simplify the setup, operation, and scaling of a
+  relational database. Stock Portfolio Dashboard uses a MySQL database engine.
 
 # How to compile the project
 
