@@ -7,6 +7,18 @@ allocation, market capitalization based allocation, and portfolio tilt).
 
 The product is available at http://portfoliosight.com
 
+To avoid the inherent security issues in managing brokerage credentials, this product requires the user to upload a CSV 
+file that contains investment information. These files can typically be exported directly from a brokerage. The 
+template below shows the required fields of a well-formed CSV. The user can upload a master CSV file containing all 
+their accounts from all their brokerages or, they can upload individual CSV files on a per brokerage basis.
+
+|  Account  | Symbol | Quantity |
+| --------- | ------ | -------- |
+| 1234-5678 | GS     | 1000     |
+| 1234-5678 | JPM    | 500      |
+| q34268    | TSLA   | 2000     |
+
+
 # Features
 Stock Portfolio Dashboard features:
 
@@ -59,6 +71,15 @@ accounts. After establishing an account, navigate to the `console/tokens` endpoi
 Thymeleaf
 * Thymeleaf is a Java template engine for processing and creating HTML, JavaScript, and CSS that is integrated with 
   Spring MVC to serve the View Layer.
+  
+Jenkins
+* Jenkins is an open source automation server that orchestrates the entire software delivery pipeline for this product.
+  When a developer opens a PR, Jenkins will automatically integrate, deliver, and deploy successful builds to the 
+  products AWS Elastic Beanstalk instance.
+  
+Maven
+* Maven is a build automation tool that is used with Jenkins to facilitate the automated build process. Additionally, 
+  Maven manages the products dependencies through a `pom.xml` file.
 
 # How to compile the project
 
@@ -68,30 +89,50 @@ You need to install Apache Maven (https://maven.apache.org/) on your system.
 
 Type on the command line:
 
-```bash
+```
 mvn clean compile
 ```
 
 # How to create a binary runnable package
 
-```bash
-mvn clean package
+```
+mvn -B -Dmaven.clean.skip=true -DskipTests package
 ```
 
 # How to deploy
 
-This application runs on AWS Elastic Beanstalk. New versions should be uploaded to Elastic Beanstalk environment and 
+This application runs on AWS Elastic Beanstalk. New versions can be uploaded to Elastic Beanstalk environment and 
 deployed into production.
 
-# Run unit and integration tests
+# Run unit tests
 
-```bash
-mvn clean compile test spotbugs:check
+This application uses the surefire plugin to execute unit tests during the `test` phase of the build lifecycle.
+
+```
+mvn clean compile test
 ```
 
-The check goal runs analysis like spotbugs goal, and will make the build fail if any bugs are found.
+# Run static analysis tests
 
-For more info see
-https://spotbugs.readthedocs.io/en/latest/maven.html
+Spotbugs is an open-source static code analyzer used to detect possible bugs in this product. It automatically scans 
+the code to look for potential bug patterns and makes the build fails if any bugs are found. Spotbugs will also provide
+the developer with a helpful report that contains the errors and potential solutions.
 
-SpotBugs https://spotbugs.github.io/ is the spiritual successor of FindBugs.
+```
+mvn spotbugs:check
+```
+
+# Run integration tests
+
+This application uses the failsafe plugin, which has been configured to run integration tests during the `verify` phase 
+of the build lifecycle. 
+```
+mvn -B -Dskip.surefire.tests verify
+```
+
+# CI/CD
+
+This application uses Jenkins to orchestrate the entire software delivery pipeline. As a result, we recommend that 
+developers avoid the manual steps outlined above and simply open a PR in the project's repo. Jenkins will automatically 
+test, build, and deploy the application. The development team will be notified of any test failures and, the deployment 
+will fail (allowing the developer to fix the build before a new version is deployed into production).
