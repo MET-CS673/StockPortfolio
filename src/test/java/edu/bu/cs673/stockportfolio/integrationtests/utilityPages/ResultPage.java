@@ -23,6 +23,10 @@ public class ResultPage extends WaitPage {
     private static final String NAV_LINK = "nav-link";
     @FindBy(id = NAV_LINK)
     private WebElement navLink;
+    
+    private static final String HOMEPAGE_LINK = "home-page";
+    @FindBy(id = HOMEPAGE_LINK)
+    private WebElement homepageLink;
 
     public ResultPage(WebDriver driver) {
         PageFactory.initElements(driver, this);
@@ -38,5 +42,9 @@ public class ResultPage extends WaitPage {
 
     public void clickNavLink(WebDriver driver) {
         waitForElement(driver, NAV_LINK);
+    }
+    
+    public void clickHomepageLink(WebDriver driver) {
+    	waitForElement(driver, HOMEPAGE_LINK);
     }
 }

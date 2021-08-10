@@ -23,6 +23,12 @@ public class SignupPage {
 
     @FindBy(id = "submitButton")
     private WebElement submitButton;
+    
+    @FindBy(id = "error-msg")
+    private WebElement errorMsg;
+    
+    @FindBy(xpath = "//a")
+    private WebElement xpath;
 
     /**
      * Constructor starts the process of allowing Selenium to automatically process the element selectors.
@@ -38,5 +44,13 @@ public class SignupPage {
         this.username.sendKeys(username);
         this.password.sendKeys(password);
         this.submitButton.click();
+    }
+    
+    public boolean isErrorMessageDisplayed() {
+    	return errorMsg.isDisplayed();
+    }
+    
+    public void clickSignup() {
+    	this.xpath.click();
     }
 }

@@ -1,12 +1,16 @@
 package edu.bu.cs673.stockportfolio.integrationtests.homepage;
 
 import edu.bu.cs673.stockportfolio.integrationtests.utilityPages.WaitPage;
+
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import java.io.File;
 import java.util.List;
 
 /**********************************************************************************************************************
@@ -42,14 +46,26 @@ public class HomePage extends WaitPage {
     private static final String NAV_MARKET_CAP_BREAKDOWN = "nav-marketCap-breakdown";
     @FindBy(id = NAV_MARKET_CAP_BREAKDOWN)
     private WebElement marketCapBreakdown;
+    
+    private static final String PROFILE = "profile";
+    @FindBy(id = PROFILE)
+    private WebElement profile;
 
-    private static final String PORTFOLIO_TABLE = "portfolioTable";
-    @FindBy(id = PORTFOLIO_TABLE)
-    private WebElement portfolioTable;
+    private static final String PORTFOLIO_TABLE = "tbody";
+    @FindBy(tagName = PORTFOLIO_TABLE)
+    private WebElement tbody;
+    
+    private static final String PORTFOLIO_TABLE_TEST = "//table/tbody/tr/th";
+    @FindBy(xpath = PORTFOLIO_TABLE_TEST)
+    private WebElement test;
 
     private static final String LOGOUT_BTN = "logout-btn";
     @FindBy(id = LOGOUT_BTN)
     private WebElement logoutButton;
+    
+    private static final String DELETE_PORTFOLIO_BUTTON = "delete-portfolio-btn";
+    @FindBy(id = DELETE_PORTFOLIO_BUTTON)
+    private WebElement deletePortfolio;
 
     public HomePage(WebDriver driver) {
         PageFactory.initElements(driver, this);
@@ -58,9 +74,13 @@ public class HomePage extends WaitPage {
     public void clickUploadPortfolio(WebDriver driver, String filepath) {
         waitForElement(driver, UPLOAD_PORTFOLIO).sendKeys(filepath);
     }
-
+    
     public void clickUploadPortfolioButton(WebDriver driver) {
         waitForElement(driver, UPLOAD_PORTFOLIO_BUTTON).sendKeys(Keys.ENTER);
+    }
+    
+    public void clickDeletePortfolioButton(WebDriver driver) {
+    	waitForElement(driver, DELETE_PORTFOLIO_BUTTON).sendKeys(Keys.ENTER);
     }
 
     public void clickSectorBreakdown(WebDriver driver) {
@@ -73,6 +93,10 @@ public class HomePage extends WaitPage {
 
     public void clickStockBreakdown(WebDriver driver) {
         waitForElement(driver, NAV_STOCK_BREAKDOWN).sendKeys(Keys.ENTER);
+    }
+    
+    public void clickProfile(WebDriver driver) {
+    	waitForElement(driver, PROFILE).sendKeys(Keys.ENTER);
     }
 
     public String find(WebDriver driver, String text) {
@@ -110,5 +134,27 @@ public class HomePage extends WaitPage {
         }
 
         return false;
+    }
+    
+    public static String getPortfolioTable() {
+		return PORTFOLIO_TABLE;
+	}
+    
+    public boolean checkElementPresent(WebDriver driver, String elementId) {
+    	try {
+    		driver.findElement(By.tagName(elementId));
+    		return true;
+    	} catch (NoSuchElementException e) {
+    		return false;
+    	}
+    }
+    
+    public boolean checkPortfolioTablePresent(WebDriver driver) {
+    	try {
+    		driver.findElement(By.xpath(PORTFOLIO_TABLE_TEST));
+    		return true;
+    	} catch (NoSuchElementException e) {
+    		return false;
+    	}
     }
 }
