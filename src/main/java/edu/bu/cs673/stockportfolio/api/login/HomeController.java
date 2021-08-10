@@ -5,7 +5,7 @@ import edu.bu.cs673.stockportfolio.domain.portfolio.Portfolio;
 import edu.bu.cs673.stockportfolio.domain.user.User;
 import edu.bu.cs673.stockportfolio.service.portfolio.PortfolioNotFoundException;
 import edu.bu.cs673.stockportfolio.service.portfolio.PortfolioService;
-import edu.bu.cs673.stockportfolio.service.portfolio.QuoteService;
+import edu.bu.cs673.stockportfolio.service.portfolio.QuoteServiceScheduler;
 import edu.bu.cs673.stockportfolio.service.user.UserService;
 import edu.bu.cs673.stockportfolio.service.utilities.ResponseService;
 import org.fissore.slf4j.FluentLogger;
@@ -27,17 +27,17 @@ public class HomeController {
 
     private final UserService userService;
     private final PortfolioService portfolioService;
-    private final QuoteService quoteService;
+    private final QuoteServiceScheduler quoteServiceScheduler;
     private final ResponseService responseService;
     private final FluentLogger log = FluentLoggerFactory.getLogger(HomeController.class);
 
     public HomeController(UserService userService,
                           PortfolioService portfolioService,
-                          QuoteService quoteService,
+                          QuoteServiceScheduler quoteServiceScheduler,
                           ResponseService responseService) {
         this.userService = userService;
         this.portfolioService = portfolioService;
-        this.quoteService = quoteService;
+        this.quoteServiceScheduler = quoteServiceScheduler;
         this.responseService = responseService;
     }
 
@@ -46,11 +46,12 @@ public class HomeController {
         User user = getUser(authentication);
         model.addAttribute("user", user);
 
-        Portfolio portfolio = null;
-        if (user.getPortfolio() != null) {
+        Portfolio portfolio = user.getPortfolio();
+        if (portfolio != null) {
             try {
-                portfolio = portfolioService.getPortfolioBy(user.getPortfolio().getId());
-                quoteService.getLatestPrices();
+                Long id = portfolio.getId();
+                portfolio = portfolioService.getPortfolioBy(id);
+                scheduleMarketDataUpdates();
             } catch (PortfolioNotFoundException e) {
                 // Fail gracefully by logging error and returning an arrayList to mimic an empty portfolio
                 log.error().log("Portfolio not found.");
@@ -62,11 +63,18 @@ public class HomeController {
             List<Account> accounts = portfolio.getAccounts();
             model.addAttribute("portfolio", responseService.createPortfolioTable(accounts));
         }
-        
+
         return "home";
     }
 
     private User getUser(Authentication authentication) {
         return userService.findUserByName(authentication.getName());
+    }
+
+    private void scheduleMarketDataUpdates() {
+        boolean isSchedule = quoteServiceScheduler.isScheduled();
+        if (!isSchedule) {
+            quoteServiceScheduler.schedule();
+        }
     }
 }
