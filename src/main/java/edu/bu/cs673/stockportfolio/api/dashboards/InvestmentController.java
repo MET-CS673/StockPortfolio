@@ -19,6 +19,9 @@ import edu.bu.cs673.stockportfolio.service.portfolio.PortfolioService;
 import edu.bu.cs673.stockportfolio.service.user.UserService;
 import edu.bu.cs673.stockportfolio.service.utilities.ResponseService;
 
+/**
+ * Controller bean responsible for handling "stock_breakdown" requests.
+ */
 @Controller
 @RequestMapping("/stock_breakdown")
 public class InvestmentController {
@@ -27,6 +30,14 @@ public class InvestmentController {
     private final UserService userService;
     private final FluentLogger log = FluentLoggerFactory.getLogger(InvestmentController.class);
 
+    /**
+     * Creates an InvestmentController. (Autowired by Spring).
+     * Responsible for handling request(s) to show stock breakdowns.
+     * 
+     * @param portfolioService the PortfolioService (provided by Spring dependency injection).
+     * @param responseService the ResponseService (provided by Spring dependency injection).
+     * @param userService the UserService (provided by Spring dependency injection).
+     */
     public InvestmentController(PortfolioService portfolioService,
                                 ResponseService responseService, UserService userService) {
 
@@ -35,6 +46,18 @@ public class InvestmentController {
         this.userService = userService;
     }
 
+    /**
+     * <h3>GET Mapping for '/stock_breakdown', shows the "stock_breakdown" view </h3>
+     * 
+     * <p>This method will take the authenticated user from Spring Authentication result
+     * and look up the user's portfolio using portfolioService. From the portfolio, it will get 
+     * the user's accounts and then it will aggregate data for rendering in the view
+     * '/stock_breakdown.html'.</p>
+     * 
+     * @param authentication the Spring authentication object - used to get the User principal.
+     * @param model the Model object to provide data to template.
+     * @return the name of the view to show 'resources/templates/stock_breakdown.html'.
+     */
     @GetMapping
     public String securityBreakdownView(Authentication authentication, Model model) {
         User user = getUser(authentication);
@@ -56,6 +79,12 @@ public class InvestmentController {
         return "stock_breakdown";
     }
 
+    /*
+     * Get the User Object from Authentication principal
+     * 
+     * @param authentication the Spring authentication object - used to get the User principal. 
+     * @return the User object if found, null otherwise.
+     */
     private User getUser(Authentication authentication) {
 
         return userService.findUserByName(authentication.getName());
