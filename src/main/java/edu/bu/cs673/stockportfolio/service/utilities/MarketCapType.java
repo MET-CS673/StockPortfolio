@@ -10,15 +10,31 @@ public enum MarketCapType {
     private final long minimum;
     private final long maximum;
 
+    /**
+     * Creates a MarketCapType.
+     * 
+     * @param minimum the minimum of a Market cap.
+     * @param maximum the maximum of a Market cap.
+     */
     private MarketCapType(long minimum, long maximum) {
         this.minimum = minimum;
         this.maximum = maximum; 
     }
 
+    /**
+     * Returns the maximum of a market cap.
+     * 
+     * @return the maximum.
+     */
     public long getMaximum() {
         return maximum;
     }
 
+    /**
+     * Returns the minimum of a market cap.
+     * 
+     * @return the minimum.
+     */
     public long getMinimum() {
         return minimum;
     }

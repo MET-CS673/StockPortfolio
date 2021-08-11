@@ -16,15 +16,33 @@ public class IexCloudConfig {
     private static final String IEX_CLOUD = "IexCloudApiKey";
     private final String apiKey;
 
+    /**
+     * Creates an IEXCloudConfig.
+     * Looks for the api key in the IexCloudApiKey.
+     * 
+     * @param env the environment (autowired by Spring).
+     */
     public IexCloudConfig(Environment env) {
         apiKey = env.getProperty(IEX_CLOUD);
     }
 
+    /**
+     * Creates a string bean containing the api key.
+     * 
+     * @return the api key.
+     */
     @Bean
     public String getApiKey() {
         return apiKey;
     }
 
+    /**
+     * Creates a {@link org.springframework.web.client.RestTemplate RestTemplate} bean,
+     * for autowiring.
+     * 
+     * @param builder the builder.
+     * @return an instance of a {@code RestTemplate}
+     */
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder.build();
