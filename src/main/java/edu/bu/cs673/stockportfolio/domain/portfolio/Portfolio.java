@@ -23,18 +23,39 @@ public class Portfolio {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "portfolio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Account> accounts = new ArrayList<>();
 
+    /**
+     * This constructor creates a new blank Portfolio instance.
+     */
     public Portfolio() {
     }
 
+    /**
+     * This constructor creates a new Portfolio instance, with a user given.
+     * 
+     * @param user the user.
+     */
     public Portfolio(User user) {
         this.user = user;
     }
 
+    /**
+     * This constructor creates a new Portfolio instance, with a user and list of accounts given.
+     * 
+     * @param user the user.
+     * @param accounts the list of accounts.
+     */
     public Portfolio(User user, List<Account> accounts) {
         this.user = user;
         this.accounts = accounts;
     }
 
+    /**
+     * This constructor creates a new Portfolio instance, with an id, user and list of accounts given.
+     * 
+     * @param id the id of the portfolio.
+     * @param user the user.
+     * @param accounts the list of account.
+     */
     public Portfolio(Long id, User user, List<Account> accounts) {
         this.id = id;
         this.user = user;
@@ -53,26 +74,56 @@ public class Portfolio {
         accounts.add(account);
     }
 
+    /**
+     * Returns the id.
+     * 
+     * @return the id.
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Sets the id.
+     * 
+     * @param id
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
+    /**
+     * Returns the user.
+     * 
+     * @return the user.
+     */
     public User getUser() {
         return user;
     }
 
+    /**
+     * Sets the user.
+     * 
+     * @param user
+     */
     public void setUser(User user) {
         this.user = user;
     }
 
+    /**
+     * Returns the list of accounts.
+     * 
+     * @return the accounts.
+     */
     public List<Account> getAccounts() {
         return accounts;
     }
 
+    /**
+     * Sets the accounts.
+     * 
+     * @param accounts
+     */
     public void setAccounts(List<Account> accounts) {
         this.accounts = accounts;
     }

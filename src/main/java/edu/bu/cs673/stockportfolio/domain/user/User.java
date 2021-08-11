@@ -38,9 +38,22 @@ public class User {
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Portfolio portfolio;
 
+    /**
+     * This constructor creates a new blank User instance.
+     */
     public User() {
     }
 
+    /**
+     * This constructor creates a new User instance, with a username, password,
+     * salt, email and portfolio given.
+     * 
+     * @param username the username.
+     * @param password the password.
+     * @param salt the salt value - the randomly generated string.
+     * @param email the email.
+     * @param portfolio the portfolio.
+     */
     public User(String username, String password, String salt, String email, Portfolio portfolio) {
         this.username = username;
         this.password = password;
@@ -49,6 +62,17 @@ public class User {
         this.portfolio = portfolio;
     }
 
+    /**
+     * This constructor creates a new User instance, with an id, username, password,
+     * salt, email and portfolio given.
+     * 
+     * @param id the id.
+     * @param username the username.
+     * @param password the password.
+     * @param salt the salt value - the randomly generated string.
+     * @param email the email.
+     * @param portfolio the portfolio.
+     */
     public User(Long id, String username, String password, String salt, String email, Portfolio portfolio) {
         this.id = id;
         this.username = username;
@@ -58,50 +82,110 @@ public class User {
         this.portfolio = portfolio;
     }
 
+    /**
+     * Returns the id.
+     * 
+     * @return the id.
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Sets the id.
+     * 
+     * @param id
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
+    /**
+     * Returns the username.
+     * 
+     * @return the username.
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Sets the username.
+     * 
+     * @param username
+     */
     public void setUsername(String username) {
         this.username = username;
     }
 
+    /**
+     * Returns the password.
+     * 
+     * @return the password.
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Sets the password.
+     * 
+     * @param password
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
+    /**
+     * Returns the email. 
+     * 
+     * @return the email.
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Sets the email.
+     * 
+     * @param email
+     */
     public void setEmail(String email) {
         this.email = email;
     }
 
+    /**
+     * Returns the salt value.
+     * 
+     * @return the salt
+     */
     public String getSalt() {
         return salt;
     }
 
+    /**
+     * Sets the salt value.
+     * 
+     * @param salt
+     */
     public void setSalt(String salt) {
         this.salt = salt;
     }
 
+    /**
+     * Returns the portfolio.
+     * 
+     * @return the portfolio.
+     */
     public Portfolio getPortfolio() {
         return portfolio;
     }
 
+    /**
+     * Sets the portfolio.
+     * 
+     * @param portfolio
+     */
     public void setPortfolio(Portfolio portfolio) {
         this.portfolio = portfolio;
     }
