@@ -36,21 +36,23 @@ public class QuoteService {
         });
 
         // GET new quotes from IEX Cloud
-        List<Quote> quotes = marketDataServiceImpl.doGetQuotes(allSymbols);
+        if (allSymbols.size() != 0) {
+            List<Quote> quotes = marketDataServiceImpl.doGetQuotes(allSymbols);
 
-        quotes.forEach(quote -> {
-            existingQuotes.forEach(existingQuote -> {
-                if (existingQuote.getSymbol().equals(quote.getSymbol())) {
+            quotes.forEach(quote -> {
+                existingQuotes.forEach(existingQuote -> {
+                    if (existingQuote.getSymbol().equals(quote.getSymbol())) {
 
-                    // Pull the existing quote into the persistence context
-                    Optional<Quote> optionalQuote = quoteRepository.findById(existingQuote.getId());
+                        // Pull the existing quote into the persistence context
+                        Optional<Quote> optionalQuote = quoteRepository.findById(existingQuote.getId());
 
-                    if (optionalQuote.isPresent()) {
-                        Quote quoteToBeUpdated = optionalQuote.get();
-                        quoteToBeUpdated.setLatestPrice(quote.getLatestPrice());
+                        if (optionalQuote.isPresent()) {
+                            Quote quoteToBeUpdated = optionalQuote.get();
+                            quoteToBeUpdated.setLatestPrice(quote.getLatestPrice());
+                        }
                     }
-                }
+                });
             });
-        });
+        }
     }
 }
