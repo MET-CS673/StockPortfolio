@@ -57,7 +57,7 @@ public class UploadPortfolioIT {
     @Test
     @DisplayName("Test portfolio upload.")
     public void testPortfolioUpload() {
-        file = new File("/src/test/resources/csv/PortfolioDashboardTest.csv");
+        file = new File("/src/test/resources/csv/TestPortfolio.csv");
         String csvDataPath = file.getPath();
         String filePath = projectPath + csvDataPath;
         
@@ -133,7 +133,8 @@ public class UploadPortfolioIT {
         driver.get(baseURL + "/home");
         homePage.clickUploadPortfolio(driver, filePath);
         homePage.clickUploadPortfolioButton(driver);
-        boolean result = resultPage.isErrorMessageDisplayed();
+
+        boolean result = resultPage.isError500Displayed();
         assertTrue(result);
         resultPage.clickHomepageLink(driver);
     }
@@ -155,14 +156,15 @@ public class UploadPortfolioIT {
         driver.get(baseURL + "/home");
         homePage.clickUploadPortfolio(driver, filePath);
         homePage.clickUploadPortfolioButton(driver);
-        boolean result = resultPage.isErrorMessageDisplayed();
+
+        boolean result = resultPage.isError500Displayed();
         assertTrue(result);
         resultPage.clickHomepageLink(driver);
     }
     
     @Test
-    @DisplayName("Test upload weird format")
-    public void testInvalidFileNameUpload() {
+    @DisplayName("Test upload incorrect file type")
+    public void testInvalidFileTypeUpload() {
     	file = new File("/src/test/resources/csv/foo.exe.png");
         String csvDataPath = file.getPath();
         String filePath = projectPath + csvDataPath;
@@ -177,6 +179,7 @@ public class UploadPortfolioIT {
         driver.get(baseURL + "/home");
         homePage.clickUploadPortfolio(driver, filePath);
         homePage.clickUploadPortfolioButton(driver);
+        
         boolean result = resultPage.isErrorMessageDisplayed();
         assertTrue(result);
         resultPage.clickNavLink(driver);
@@ -199,10 +202,10 @@ public class UploadPortfolioIT {
         driver.get(baseURL + "/home");
         homePage.clickUploadPortfolio(driver, filePath);
         homePage.clickUploadPortfolioButton(driver);
-        // Test is failing as error is not handled
+        
         boolean result = resultPage.isErrorMessageDisplayed();
         assertTrue(result);
-        resultPage.clickHomepageLink(driver);
+        resultPage.clickNavLink(driver);
     }
 
     @AfterEach

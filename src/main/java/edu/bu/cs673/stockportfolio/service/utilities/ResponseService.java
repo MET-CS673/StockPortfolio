@@ -45,6 +45,13 @@ public class ResponseService {
         return uploadSuccess(result, model);
     }
 
+    public String createExceedFileSizeError(boolean result, Model model) {
+        model.addAttribute("fileSizeExceeded", result);
+        model.addAttribute("applicationEdgeCaseErrorMessage", true);
+        model.addAttribute("nav", "/home");
+        return "result";
+    }
+
     /**
      * Creates a data structure capable of presenting Portfolio data in a table view
      * @param accounts A list of all accounts within a Portfolio
@@ -110,7 +117,6 @@ public class ResponseService {
     private String uploadSuccess(boolean result, Model model) {
         model.addAttribute("success", result);
         model.addAttribute("nav", "/home");
-
         return "result";
     }
 

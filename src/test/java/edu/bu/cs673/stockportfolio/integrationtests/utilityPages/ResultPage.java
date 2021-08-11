@@ -20,6 +20,14 @@ public class ResultPage extends WaitPage {
     @FindBy(id = ERROR_MESSAGE)
     private WebElement errorMessage;
 
+    private static final String ERROR_500_MESSAGE = "error-500-message";
+    @FindBy(id = ERROR_500_MESSAGE)
+    private WebElement error500Message;
+
+    private static final String ERROR_404_MESSAGE = "error-404-message";
+    @FindBy(id = ERROR_404_MESSAGE)
+    private WebElement error404Message;
+
     private static final String NAV_LINK = "nav-link";
     @FindBy(id = NAV_LINK)
     private WebElement navLink;
@@ -38,6 +46,14 @@ public class ResultPage extends WaitPage {
 
     public boolean isErrorMessageDisplayed() {
         return errorMessage.isDisplayed();
+    }
+
+    public boolean isError500Displayed() {
+        return error500Message.isDisplayed();
+    }
+
+    public boolean isError404Displayed() {
+        return error404Message.isDisplayed();
     }
 
     public void clickNavLink(WebDriver driver) {
