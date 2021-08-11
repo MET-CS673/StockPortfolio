@@ -3,9 +3,10 @@ package edu.bu.cs673.stockportfolio.domain.investment.quote;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import edu.bu.cs673.stockportfolio.domain.account.Account;
+import com.sun.istack.NotNull;
 import edu.bu.cs673.stockportfolio.domain.account.AccountLine;
 import edu.bu.cs673.stockportfolio.domain.investment.sector.Company;
+import org.hibernate.annotations.Check;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -24,6 +25,11 @@ import java.util.List;
         "marketCap"
 })
 @Entity
+@Check(constraints = "CHECK (LENGTH(TRIM(company_name)) > 0) &&"
+        + " CHECK (LENGTH(TRIM(symbol)) > 0) &&"
+        + " CHECK (latest_price >= 0) &&"
+        + " CHECK (market_cap >= 0) &&"
+        + " CONSTRAINT UNIQUE (symbol)")
 public class Quote {
 
     @Id
@@ -31,15 +37,19 @@ public class Quote {
     private Long id;
 
     @JsonProperty("companyName")
+    @NotNull
     private String companyName;
 
     @JsonProperty("symbol")
+    @NotNull
     private String symbol;
 
     @JsonProperty("latestPrice")
+    @NotNull
     private BigDecimal latestPrice;
 
     @JsonProperty("marketCap")
+    @NotNull
     private Long marketCap;
 
     @OneToMany(mappedBy = "quote", cascade = CascadeType.ALL)
