@@ -14,14 +14,24 @@ import java.security.spec.KeySpec;
 import java.util.Base64;
 
 /**********************************************************************************************************************
- * Generate a unique value for the users password that can be safely persisted. For simplicity, this services uses
- * the SHA-1 cryptographic hash function and 5000 rounds to produce a 128 bit hashed value.
+ * Generate a unique value for the users password that can be safely persisted. For simplicity, 
+ * this services uses the SHA-1 cryptographic hash function and 5000 rounds to produce 
+ * a 128 bit hashed value.
  *
  *********************************************************************************************************************/
 @Component
 public class HashService {
     private final FluentLogger log = FluentLoggerFactory.getLogger(HashService.class);
 
+    /**
+     * <h3>Generates a hash value</h3>
+     * 
+     * <p>This method generates a hash value based on the data and a salt value.</p>
+     * 
+     * @param data the data to be hashed (ie.password).
+     * @param salt the salt value - the randomly generated string.
+     * @return the hash value.
+     */
     public String getHashedValue(String data, String salt) {
         byte[] hashedValue = null;
 

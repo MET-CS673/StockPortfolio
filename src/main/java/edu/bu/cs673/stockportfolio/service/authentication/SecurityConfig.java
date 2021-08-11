@@ -8,8 +8,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 
 /**********************************************************************************************************************'
- * Spring configuration class that implements the methods that modify Spring's configuration to use our Services. The
- * WebSecurityConfigurerAdapter describes the methods that modify Spring's security configuration.
+ * Spring configuration class that implements the methods that modify Spring's configuration to use 
+ * our Services. The WebSecurityConfigurerAdapter describes the methods that modify 
+ * Spring's security configuration.
  *
  * @author Michael Lewis
  *********************************************************************************************************************/
@@ -18,6 +19,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final AuthenticationService authenticationService;
 
+    /**
+     * Creates a SecurityConfig
+     * 
+     * @param authenticationService the AuthenticationService (provided by Spring dependency injection).
+     */
     public SecurityConfig(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
     }
