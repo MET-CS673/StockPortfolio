@@ -9,10 +9,10 @@ pipeline {
     options {
         skipStagesAfterUnstable()
     }
-    environment {
+//     environment {
         // Extract branch name in a way that works on a simple pipeline and also on multibranch pipelines
 //         BRANCH_NAME = "${GIT_BRANCH.split('/').size() > 1 ? GIT_BRANCH.split('/')[0..-1].join('_') : GIT_BRANCH}"
-    }
+//     }
     stages { // Continuous Integration phase
         stage('Unit Test') {
             steps {
