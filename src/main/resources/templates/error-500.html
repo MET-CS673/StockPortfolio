@@ -6,7 +6,7 @@
 
     <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/bootstrap.min.css}">
 
-    <title>Home</title>
+    <title>Error-500</title>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-D66STNNHEG"></script>
@@ -23,10 +23,10 @@
     </script>
 </head>
 <body class="p-3 mb-2 bg-light text-black">
-<div class="container" id="error-message">
+<div class="container" th:id="error-500-message">
     <h1>
-        Something went wrong!
+        Oops...Our server seems to be down.
     </h1>
-    <h2>Our Engineers are on it</h2>
-    <a id="home-page" th:href="@{/home}">Home</a>
+    <h2>Please try again later</h2>
+    <a a id="home-page" th:href="@{/home}">Home</a>
 </div>

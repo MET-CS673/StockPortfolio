@@ -30,6 +30,7 @@
                 <span th:if="${fileSizeExceeded}">File size exceeded. Limit is 10MB. Click <a id="nav-link" th:href="${nav}">here</a> to continue.</span>
                 <span th:if="${deletePortfolioError}">The Portfolio was not deleted. Click <a id="nav-link" th:href="${nav}">here</a> to continue.</span>
                 <span th:if="${deleteUserProfileError}">Your profile cannot be deleted. Please contact user support. Click <a id="nav-link" th:href="${nav}">here</a> to continue.</span>
+                <span th:if="${success eq false and applicationEdgeCaseErrorMessage eq false}">Your changes were not saved. Click <a id="nav-link" th:href="${nav}">here</a> to continue.</span>
             </div>
         </div>
     </body>
