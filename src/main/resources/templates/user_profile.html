@@ -140,7 +140,7 @@
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-1">
-          <button type="button" onclick="modifyPassword();" class="btn btn-primary">Change password</button>
+          <button type="button" onclick="modifyPassword();" class="btn btn-primary" id="changePassword">Change password</button>
           <script>
             function modifyPassword() {
               errorMsg = $("#errorMsg")
@@ -211,7 +211,7 @@
         >
         </div>
         <div class="col-sm-10 col-sm-offset-1">
-        <button type="button" onclick="deleteAccount();" class="btn btn-danger">Delete account</button>
+        <button type="button" onclick="deleteAccount();" class="btn btn-danger" id="delete-account">Delete account</button>
           <script>
             function deleteAccount() {
               if (confirm('Are you sure you want delete your account?')) {

@@ -15,6 +15,8 @@ import org.springframework.boot.web.server.LocalServerPort;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.File;
+
 /**********************************************************************************************************************
  * Test user story: "As a user, I can signup, login, and view the sector dashboard for my portfolio."
  *********************************************************************************************************************/
@@ -29,6 +31,8 @@ public class SectorDashboardIT {
     private LoginPage loginPage;
     private HomePage homePage;
     private ResultPage resultPage;
+    private File file;
+    private String projectPath;
 
     @BeforeAll
     public static void beforeAll() {
@@ -43,12 +47,16 @@ public class SectorDashboardIT {
         loginPage = new LoginPage(driver);
         homePage = new HomePage(driver);
         resultPage = new ResultPage(driver);
+        file = new File("");
+        projectPath = file.getAbsolutePath();
     }
 
     @Test
     @DisplayName("Test sector dashboard link")
     public void testMarketCapLink() {
-        String filePath = "/Users/mlewis/Downloads/TestPortfolio.csv";
+    	file = new File("/src/test/resources/csv/PortfolioDashboardTest.csv");
+        String csvDataPath = file.getPath();
+        String filePath = projectPath + csvDataPath;
 
         driver.get(baseUrl + "/signup");
         signupPage.signup("wallstreet@spd.com", "wall", "wallStreet");
