@@ -42,7 +42,9 @@ pipeline {
                     dir('/target/classes') {
                         sh 'cat $FILE > secrets.properties'
                     }
-                sh 'mvn -B -Dmaven.clean.skip=true -DskipTests package'
+
+                    sh 'mvn -B -Dmaven.clean.skip=true -DskipTests package'
+                }
             }
             post { // If the maven build succeeded, archive the jar file
                 success {
