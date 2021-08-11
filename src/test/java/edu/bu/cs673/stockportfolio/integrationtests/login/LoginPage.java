@@ -25,6 +25,10 @@ public class LoginPage extends WaitPage {
     private static final String SUBMIT_BUTTON = "submitButton";
     @FindBy(id = SUBMIT_BUTTON)
     private WebElement submitButton;
+    
+    private static final String ERROR_MSG = "errorMsg";
+    @FindBy(id = ERROR_MSG)
+    private WebElement errorMsg;
 
     public LoginPage(WebDriver driver) {
         PageFactory.initElements(driver, this);
@@ -34,5 +38,9 @@ public class LoginPage extends WaitPage {
         waitForElement(driver, USERNAME).sendKeys(username);
         waitForElement(driver, PASSWORD).sendKeys(password);
         waitForElement(driver, SUBMIT_BUTTON).sendKeys(Keys.ENTER);
+    }
+    
+    public boolean isErrorMessageDisplayed() {
+    	return errorMsg.isDisplayed();
     }
 }

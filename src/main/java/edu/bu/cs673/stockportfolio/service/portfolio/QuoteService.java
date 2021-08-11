@@ -3,12 +3,12 @@ package edu.bu.cs673.stockportfolio.service.portfolio;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.Quote;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.QuoteRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.*;
 
 @Service
 public class QuoteService {
@@ -22,23 +22,21 @@ public class QuoteService {
     }
 
     /**
-     * Creates a ScheduledExecutorService to run a task every 1 minute. The task will GET the latestPrice for each
-     * symbol in the Portfolio from IEXCloud.
+     * Gets the latestPrice from IEXCloud for a basket of securities. This task is scheduled by the
+     * QuoteServiceScheduler.
      */
+    @Transactional
     public void getLatestPrices() {
-        BlockingQueue<List<Quote>> results = new LinkedBlockingDeque<>();
+        List<Quote> existingQuotes = quoteRepository.findAll();
 
-        Runnable task = () -> {
+        // Package the existing quotes into a set for the marketDataServiceImpl
+        Set<String> allSymbols = new HashSet<>();
+        existingQuotes.forEach(quoteToBeUpdated -> {
+            allSymbols.add(String.join(",", quoteToBeUpdated.getSymbol()));
+        });
 
-            List<Quote> existingQuotes = quoteRepository.findAll();
-
-            // Package the existing quotes into a set for the marketDataServiceImpl
-            Set<String> allSymbols = new HashSet<>();
-            existingQuotes.forEach(quoteToBeUpdated -> {
-                allSymbols.add(String.join(",", quoteToBeUpdated.getSymbol()));
-            });
-
-            // GET new quotes from IEX Cloud
+        // GET new quotes from IEX Cloud
+        if (allSymbols.size() != 0) {
             List<Quote> quotes = marketDataServiceImpl.doGetQuotes(allSymbols);
 
             quotes.forEach(quote -> {
@@ -55,11 +53,6 @@ public class QuoteService {
                     }
                 });
             });
-
-            results.add(existingQuotes);
-        };
-
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-        executor.scheduleAtFixedRate(task,0, 1, TimeUnit.MINUTES);
+        }
     }
 }

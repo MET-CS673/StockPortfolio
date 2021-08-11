@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import edu.bu.cs673.stockportfolio.domain.investment.quote.Quote;
+import org.hibernate.annotations.Check;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -24,6 +25,9 @@ import edu.bu.cs673.stockportfolio.domain.investment.quote.Quote;
         "companyName"
 })
 @Entity
+@Check(constraints = "CHECK (LENGTH(TRIM(symbol)) > 0) &&"
+        + " CHECK (LENGTH(TRIM(sector)) > 0) &&"
+        + " CHECK (LENGTH(TRIM(company_name)) > 0)")
 public class Company {
 
     @Id

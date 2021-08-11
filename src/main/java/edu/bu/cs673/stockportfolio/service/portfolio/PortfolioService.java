@@ -136,6 +136,9 @@ public class PortfolioService {
                 Map<String, Integer> line = accountLines.get(account);
                 if (line.containsKey(symbol)) {
                     line.put(symbol, line.get(symbol) + quantity);
+                } else {
+                    // The account number already exists, but the user added a new symbol to it
+                    line.put(symbol, quantity);
                 }
             } else {
                 accountLines.put(account, new HashMap<>(Map.of(symbol, quantity)));
