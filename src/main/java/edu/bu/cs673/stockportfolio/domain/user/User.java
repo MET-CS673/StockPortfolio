@@ -12,10 +12,9 @@ import javax.persistence.*;
  * Account can have many AccountLines. An AccountLine represents a symbol and quantity for an active investment.
  *********************************************************************************************************************/
 @Entity
-@Check(constraints = "LENGTH(TRIM(username)) > 0 &&"
-        + " LENGTH(TRIM(username)) > 0 &&"
-        + " LENGTH(TRIM(email)) > 0 &&"
-        + " LENGTH(TRIM(password)) > 10")
+@Check(constraints = "CHECK (LENGTH(TRIM(username)) > 0) &&"
+        + " CHECK (LENGTH(TRIM(email)) > 0) &&"
+        + " CHECK (LENGTH(TRIM(password)) > 10)")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
