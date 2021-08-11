@@ -38,6 +38,10 @@ pipeline {
 //         }
         stage('Build') { // The Continuous Delivery phase
             steps {
+                withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
+                    dir('/target/classes') {
+                        sh 'cat $FILE > secrets.properties'
+                    }
                 sh 'mvn -B -Dmaven.clean.skip=true -DskipTests package'
             }
             post { // If the maven build succeeded, archive the jar file

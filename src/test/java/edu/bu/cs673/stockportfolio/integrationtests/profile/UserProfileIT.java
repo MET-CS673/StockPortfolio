@@ -1,11 +1,13 @@
-package edu.bu.cs673.stockportfolio.integrationtests.homepage;
+package edu.bu.cs673.stockportfolio.integrationtests.profile;
 
 import edu.bu.cs673.stockportfolio.integrationtests.homepage.HomePage;
 import edu.bu.cs673.stockportfolio.integrationtests.login.LoginPage;
 import edu.bu.cs673.stockportfolio.integrationtests.utilityPages.ResultPage;
+import edu.bu.cs673.stockportfolio.integrationtests.utilityPages.ErrorPage;
 import edu.bu.cs673.stockportfolio.integrationtests.signup.SignupPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,14 +15,12 @@ import org.springframework.boot.web.server.LocalServerPort;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.File;
-
 
 /**********************************************************************************************************************
- * Test user story: "As a user, I can signup, login, upload portfolio, and delete my portfolio"
+ * Test user story: "As a user, I can signup, login, change password, and delete my account"
  *********************************************************************************************************************/
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class DeletePortfolioTest {
+public class UserProfileIT {
 	@LocalServerPort
     private int port;
 
@@ -29,9 +29,7 @@ public class DeletePortfolioTest {
     private SignupPage signupPage;
     private LoginPage loginPage;
     private HomePage homePage;
-    private ResultPage resultPage;
-    private File file;
-    private String projectPath;
+    private ProfilePage profilePage;
 
     @BeforeAll
     static void beforeAll() {
@@ -45,64 +43,68 @@ public class DeletePortfolioTest {
         signupPage = new SignupPage(driver);
         loginPage = new LoginPage(driver);
         homePage = new HomePage(driver);
-        resultPage = new ResultPage(driver);
-        file = new File("");
-        projectPath = file.getAbsolutePath();
+        profilePage = new ProfilePage(driver);
     }
 
     @Test
-    @DisplayName("Test delete portfolio")
-    public void testPortfolioDelete() {
-        file = new File("/src/test/resources/csv/PortfolioDashboardTest.csv");
-        String csvDataPath = file.getPath();
-        String filePath = projectPath + csvDataPath;
-
-        driver.get(baseURL + "/signup");
+    @DisplayName("Test profile page")
+    public void testProfile() {
+    	driver.get(baseURL + "/signup");
         signupPage.signup("money@spd.com", "John", "10DigitPassword!");
 
         driver.get(baseURL + "/login");
         loginPage.login(driver, "John", "10DigitPassword!");
 
-        // Go to homepage and upload file
+        // Go to homepage and profile
         driver.get(baseURL + "/home");
-        homePage.clickUploadPortfolio(driver, filePath);
-        homePage.clickUploadPortfolioButton(driver);
-
-        boolean result = resultPage.isSuccessMessageDisplayed(driver);
-        resultPage.clickNavLink(driver);
-        driver.get(baseURL + "/home");
-        
-        // Delete portfolio from homepage and verify url
-        homePage.clickDeletePortfolioButton(driver);
+        homePage.clickProfile(driver);
         String currentUrl = driver.getCurrentUrl();
 
-        assertAll("Delete",
-                () -> assertEquals(baseURL + "/portfolio/delete", currentUrl,
-                        "Incorrect endpoint for delete"));
-        
-        result = resultPage.isSuccessMessageDisplayed(driver);
-        assertTrue(result);
-        resultPage.clickNavLink(driver);
-        
-        // Go to home and verify portfolio is deleted
-        driver.get(baseURL + "/home");
-        result = homePage.checkPortfolioTablePresent(driver);
-        assertFalse(result);
-    }
-
-    @Test
-    @DisplayName("Test delete not existing portfolio")
-    public void testDeleteNotExistingPortfolio() {
-        driver.get(baseURL + "/login");
-        loginPage.login(driver, "john", "10DigitPassword!");
-        driver.get(baseURL + "/home");
-        
-        // Delete not existing portfolio and verify error message is displayed
-        homePage.clickDeletePortfolioButton(driver);
-        boolean result = homePage.checkPortfolioTablePresent(driver);
-        assertFalse(result);
+        assertAll("Profile",
+                () -> assertEquals(baseURL + "/profile", currentUrl,
+                        "Incorrect endpoint for profile"));
     }
     
+    @Test
+    @DisplayName("Test delete profile")
+    public void testDeleteProfile() throws InterruptedException {
+       	driver.get(baseURL + "/signup");
+        signupPage.signup("money@spd.com", "John5", "10DigitPassword!");
+
+        driver.get(baseURL + "/login");
+        loginPage.login(driver, "John5", "10DigitPassword!");
+        driver.get(baseURL + "/home");
+        homePage.clickProfile(driver);
+        
+        profilePage.clickDeleteAccountButton(driver);
+        profilePage.confirmPrompt(driver);
+        String currentUrl = driver.getCurrentUrl();
+
+        assertAll("Back to sign up",
+                () -> assertEquals(baseURL + "/signup", currentUrl,
+                        "Incorrect endpoint for sign up after profile deletion"));
+    }
+    
+    @Test
+    @DisplayName("Test change password")
+    public void testChangePassword() throws InterruptedException {
+    	String username = profilePage.generateRandomUsername();
+    	
+    	driver.get(baseURL + "/signup");
+        signupPage.signup("money@spd.com", username, "10DigitPassword!");
+
+        driver.get(baseURL + "/login");
+        loginPage.login(driver, username, "10DigitPassword!");
+
+        driver.get(baseURL + "/home");
+        homePage.clickProfile(driver);
+        profilePage.changePassword(driver, "10DigitPassword!", "11DigitPassword!!", "11DigitPassword!!");
+        profilePage.confirmPrompt(driver);
+        
+        boolean result = profilePage.isSuccessMessageDisplayed(driver);
+        assertTrue(result);
+    }
+
     @AfterEach
     public void afterEach() {
         if (driver != null) {
