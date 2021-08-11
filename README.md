@@ -129,7 +129,7 @@ mvn spotbugs:check
 This application uses the failsafe plugin, which has been configured to run integration tests during the `verify` phase 
 of the build lifecycle. 
 ```
-mvn -B -Dskip.surefire.tests verify
+mvn -DskipSurefire=true verify
 ```
 
 # CI/CD

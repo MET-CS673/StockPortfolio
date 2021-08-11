@@ -199,6 +199,7 @@
                     <version>3.0.0-M5</version>
                     <!-- This configuration is required to avoid timeout errors in Jenkins -->
                     <configuration>
+                        <skip>${skipSurefire}</skip>
                         <excludes>
                             <exclude>**/*IT.java</exclude>
                         </excludes>
