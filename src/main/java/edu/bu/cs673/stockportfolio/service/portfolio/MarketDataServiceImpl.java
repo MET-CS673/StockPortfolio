@@ -11,6 +11,7 @@ import edu.bu.cs673.stockportfolio.domain.investment.sector.StockSector;
 import edu.bu.cs673.stockportfolio.service.company.CompanyService;
 import edu.bu.cs673.stockportfolio.service.utilities.IexCloudConfig;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Service
+@Transactional
 public class MarketDataServiceImpl implements MarketDataService {
 
     private static final String BASE_URL = "https://cloud.iexapis.com/";
@@ -59,12 +61,29 @@ public class MarketDataServiceImpl implements MarketDataService {
         if (quoteRoot != null) {
             Map<String, StockQuote> stocks = quoteRoot.getStocks();
             stocks.forEach((key, value) -> {
-                quotes.add(value.getQuote());
-                quoteRepository.save(value.getQuote());
+                Quote quoteToBeUpdated = getExistingQuote(value);
+                quoteRepository.save(quoteToBeUpdated);
+                quotes.add(quoteToBeUpdated);
             });
         }
 
         return quotes;
+    }
+
+    // If the symbol already exists, avoid polluting the database by updating the existing quote.
+    // If the symbol is not yet in the database return the new quote so it can be added to the database.
+    private Quote getExistingQuote(StockQuote stockQuote) {
+        Quote quote = stockQuote.getQuote();
+        String symbol = quote.getSymbol();
+
+        Quote existingQuote = quoteRepository.findQuoteBySymbol(symbol);
+        if (existingQuote != null) {
+            existingQuote.setMarketCap(quote.getMarketCap());
+            existingQuote.setLatestPrice(quote.getLatestPrice());
+            return existingQuote;
+        }
+
+        return quote;
     }
 
     @Override
