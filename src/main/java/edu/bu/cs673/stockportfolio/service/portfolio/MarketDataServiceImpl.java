@@ -41,6 +41,19 @@ public class MarketDataServiceImpl implements MarketDataService {
     }
 
     @Override
+    public boolean isUSMarketOpen() {
+        // Use a well known symbol to check if market is open.
+        String symbol = "GS";
+        String field = "isUSMarketOpen";
+        String endpointPath = String.format("stock/%s/quote/%s?token=", symbol, field);
+
+        Boolean isUSMarketOpen = restTemplate.getForObject(
+                BASE_URL + VERSION + endpointPath + apiKey, Boolean.class);
+
+       return isUSMarketOpen != null && isUSMarketOpen;
+    }
+
+    @Override
     public List<Quote> doGetQuotes(Set<String> symbols) {
 
         // Convert the Set of Strings to a String for batch IEX request

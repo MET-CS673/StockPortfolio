@@ -21,6 +21,11 @@ public class QuoteService {
         this.marketDataServiceImpl = marketDataServiceImpl;
     }
 
+    @Transactional
+    public boolean isUSMarketOpen() {
+        return marketDataServiceImpl.isUSMarketOpen();
+    }
+
     /**
      * Gets the latestPrice from IEXCloud for a basket of securities. This task is scheduled by the
      * QuoteServiceScheduler.
