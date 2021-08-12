@@ -3,9 +3,7 @@ package edu.bu.cs673.stockportfolio.api.login;
 import edu.bu.cs673.stockportfolio.domain.account.Account;
 import edu.bu.cs673.stockportfolio.domain.portfolio.Portfolio;
 import edu.bu.cs673.stockportfolio.domain.user.User;
-import edu.bu.cs673.stockportfolio.service.portfolio.PortfolioNotFoundException;
-import edu.bu.cs673.stockportfolio.service.portfolio.PortfolioService;
-import edu.bu.cs673.stockportfolio.service.portfolio.QuoteServiceScheduler;
+import edu.bu.cs673.stockportfolio.service.portfolio.*;
 import edu.bu.cs673.stockportfolio.service.user.UserService;
 import edu.bu.cs673.stockportfolio.service.utilities.ResponseService;
 import org.fissore.slf4j.FluentLogger;
@@ -27,16 +25,19 @@ public class HomeController {
 
     private final UserService userService;
     private final PortfolioService portfolioService;
+    private final MarketDataScheduler marketDataScheduler;
     private final QuoteServiceScheduler quoteServiceScheduler;
     private final ResponseService responseService;
     private final FluentLogger log = FluentLoggerFactory.getLogger(HomeController.class);
 
     public HomeController(UserService userService,
                           PortfolioService portfolioService,
+                          MarketDataScheduler marketDataScheduler,
                           QuoteServiceScheduler quoteServiceScheduler,
                           ResponseService responseService) {
         this.userService = userService;
         this.portfolioService = portfolioService;
+        this.marketDataScheduler = marketDataScheduler;
         this.quoteServiceScheduler = quoteServiceScheduler;
         this.responseService = responseService;
     }
@@ -51,7 +52,10 @@ public class HomeController {
             try {
                 Long id = portfolio.getId();
                 portfolio = portfolioService.getPortfolioBy(id);
-                scheduleMarketDataUpdates();
+
+                if (isUSMarketOpen()) {
+                    quoteServiceScheduler.schedule();
+                }
             } catch (PortfolioNotFoundException e) {
                 // Fail gracefully by logging error and returning an arrayList to mimic an empty portfolio
                 log.error().log("Portfolio not found.");
@@ -71,10 +75,7 @@ public class HomeController {
         return userService.findUserByName(authentication.getName());
     }
 
-    private void scheduleMarketDataUpdates() {
-        boolean isSchedule = quoteServiceScheduler.isScheduled();
-        if (!isSchedule) {
-            quoteServiceScheduler.schedule();
-        }
+    private boolean isUSMarketOpen() {
+        return marketDataScheduler.isUSMarketOpen();
     }
 }

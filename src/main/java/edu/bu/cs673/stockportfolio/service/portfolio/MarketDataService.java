@@ -12,6 +12,8 @@ import java.util.Set;
  *********************************************************************************************************************/
 public interface MarketDataService {
 
+    boolean isUSMarketOpen();
+
     List<Quote> doGetQuotes(Set<String> symbols);
 
     List<Company> doGetCompanies(Set<String> symbols);
