@@ -1,7 +1,6 @@
 package edu.bu.cs673.stockportfolio.api.userprofile;
 
 import edu.bu.cs673.stockportfolio.domain.user.User;
-import edu.bu.cs673.stockportfolio.domain.user.UserRepository;
 import edu.bu.cs673.stockportfolio.service.authentication.HashService;
 import edu.bu.cs673.stockportfolio.service.portfolio.PortfolioService;
 import edu.bu.cs673.stockportfolio.service.user.UserService;
@@ -20,15 +19,13 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/profile")
 public class UserProfileController {
 
+    private static final FluentLogger LOGGER = FluentLoggerFactory.getLogger(PortfolioService.class);
     private final UserService userService;
     private final ResponseService responseService;
-    private final HashService hashService;
-    private final FluentLogger log = FluentLoggerFactory.getLogger(PortfolioService.class);
 
-    public UserProfileController(UserService userService, ResponseService responseService, HashService hashService) {
+    public UserProfileController(UserService userService, ResponseService responseService) {
         this.userService = userService;
         this.responseService = responseService;
-        this.hashService = hashService;
     }
 
     @GetMapping()
@@ -55,7 +52,7 @@ public class UserProfileController {
                 return "signup";
             }
         } catch (Exception e) {
-            log.error().log("Error deleting account for userId=" + currentUser.getId());
+            LOGGER.error().log("Error deleting account for userId=" + currentUser.getId());
         }
 
         return responseService.deletePortfolioError(true, model);

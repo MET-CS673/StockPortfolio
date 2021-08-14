@@ -24,11 +24,12 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 @RequestMapping("/portfolio")
 public class PortfolioController {
+
+    private static final FluentLogger LOGGER = FluentLoggerFactory.getLogger(PortfolioController.class);
     private final UserService userService;
     private final PortfolioService portfolioService;
     private final ValidationService validationService;
     private final ResponseService responseService;
-    private final FluentLogger log = FluentLoggerFactory.getLogger(PortfolioController.class);
 
     public PortfolioController(UserService userService, PortfolioService portfolioService,
                                ValidationService validationService, ResponseService responseService) {
@@ -55,7 +56,7 @@ public class PortfolioController {
         try {
             result = portfolioService.save(multipartFile, currentUser);
         } catch (InvalidFileNameException e) {
-            log.error().log("Portfolio file name is invalid. Check for NUL character or malicious activity. "
+            LOGGER.error().log("Portfolio file name is invalid. Check for NUL character or malicious activity. "
                     + e.getMessage());
 
             return responseService.uploadError(true, model);
@@ -99,7 +100,7 @@ public class PortfolioController {
             return currentPortfolio == null;
         } catch (PortfolioNotFoundException e) {
             // Fail gracefully by logging error and return true because the portfolio can't be found
-            log.error().log("Portfolio not found.");
+            LOGGER.error().log("Portfolio not found.");
             return true;
         }
     }

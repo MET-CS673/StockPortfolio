@@ -18,9 +18,9 @@ import java.util.Base64;
 @Transactional
 public class UserService {
 
+    private static final FluentLogger LOGGER = FluentLoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final HashService hashService;
-    private final FluentLogger log = FluentLoggerFactory.getLogger(UserService.class);
 
     public UserService(UserRepository userRepository, HashService hashService) {
         this.userRepository = userRepository;
@@ -111,7 +111,7 @@ public class UserService {
         try {
             return findUserById(id);
         } catch (UserNotFoundException e) {
-            log.error().log("User id=" + " not found.");
+            LOGGER.error().log("User id=" + " not found.");
             return null;
         }
     }
@@ -129,7 +129,7 @@ public class UserService {
             Long id = currentUser.getId();
             existingUser = getExistingUser(id);
         } catch (UserNotFoundException e) {
-            log.error().log("User id=" + " not found.");
+            LOGGER.error().log("User id=" + " not found.");
             return false;
         }
 

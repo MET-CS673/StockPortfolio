@@ -2,6 +2,8 @@ package edu.bu.cs673.stockportfolio.service.portfolio;
 
 import edu.bu.cs673.stockportfolio.domain.investment.quote.Quote;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.QuoteRepository;
+import org.fissore.slf4j.FluentLogger;
+import org.fissore.slf4j.FluentLoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +15,7 @@ import java.util.Set;
 @Service
 public class QuoteService {
 
+    private static final FluentLogger LOGGER = FluentLoggerFactory.getLogger(QuoteService.class);
     private final QuoteRepository quoteRepository;
     private final MarketDataServiceImpl marketDataServiceImpl;
 
@@ -21,17 +24,13 @@ public class QuoteService {
         this.marketDataServiceImpl = marketDataServiceImpl;
     }
 
-    @Transactional
-    public boolean isUSMarketOpen() {
-        return marketDataServiceImpl.isUSMarketOpen();
-    }
-
     /**
      * Gets the latestPrice from IEXCloud for a basket of securities. This task is scheduled by the
      * QuoteServiceScheduler.
      */
     @Transactional
     public void getLatestPrices() {
+        LOGGER.info().log("Getting latest prices from IEX Cloud");
         List<Quote> existingQuotes = quoteRepository.findAll();
 
         // Package the existing quotes into a set for the marketDataServiceImpl

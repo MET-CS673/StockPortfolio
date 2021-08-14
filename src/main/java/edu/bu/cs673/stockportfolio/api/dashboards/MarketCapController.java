@@ -22,10 +22,11 @@ import edu.bu.cs673.stockportfolio.service.utilities.ResponseService;
 @Controller
 @RequestMapping("/mc_breakdown")
 public class MarketCapController {
+
+    private static final FluentLogger LOGGER = FluentLoggerFactory.getLogger(MarketCapController.class);
     private final PortfolioService portfolioService;
     private final ResponseService responseService;
     private final UserService userService;
-    private final FluentLogger log = FluentLoggerFactory.getLogger(MarketCapController.class);
 
     public MarketCapController(PortfolioService portfolioService,
                                ResponseService responseService, UserService userService) {
@@ -53,7 +54,7 @@ public class MarketCapController {
                 }
             } catch (PortfolioNotFoundException e) {
                 // Fail gracefully by logging error, while allowing control flow to return an empty html page.
-                log.error().log("Portfolio not found.");
+                LOGGER.error().log("Portfolio not found.");
             }
         }
 

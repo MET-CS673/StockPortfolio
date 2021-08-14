@@ -10,6 +10,8 @@ import edu.bu.cs673.stockportfolio.domain.investment.sector.CompanyRoot;
 import edu.bu.cs673.stockportfolio.domain.investment.sector.StockSector;
 import edu.bu.cs673.stockportfolio.service.company.CompanyService;
 import edu.bu.cs673.stockportfolio.service.utilities.IexCloudConfig;
+import org.fissore.slf4j.FluentLogger;
+import org.fissore.slf4j.FluentLoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -31,6 +33,7 @@ public class MarketDataServiceImpl implements MarketDataService {
     private final String apiKey;
     private final QuoteRepository quoteRepository;
     private final CompanyService companyService;
+    private final FluentLogger log = FluentLoggerFactory.getLogger(MarketDataServiceImpl.class);
 
     public MarketDataServiceImpl(IexCloudConfig iexCloudConfig, RestTemplate restTemplate,
                                  QuoteRepository quoteRepository, CompanyService companyService) {
@@ -42,6 +45,7 @@ public class MarketDataServiceImpl implements MarketDataService {
 
     @Override
     public boolean isUSMarketOpen() {
+        log.info().log("Checking if US Market is open");
         // Use a well known symbol to check if market is open.
         String symbol = "GS";
         String field = "isUSMarketOpen";
