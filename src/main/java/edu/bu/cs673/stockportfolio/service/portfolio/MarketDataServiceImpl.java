@@ -5,7 +5,6 @@ import edu.bu.cs673.stockportfolio.domain.investment.quote.QuoteRepository;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.QuoteRoot;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.StockQuote;
 import edu.bu.cs673.stockportfolio.domain.investment.sector.Company;
-import edu.bu.cs673.stockportfolio.domain.investment.sector.CompanyRepository;
 import edu.bu.cs673.stockportfolio.domain.investment.sector.CompanyRoot;
 import edu.bu.cs673.stockportfolio.domain.investment.sector.StockSector;
 import edu.bu.cs673.stockportfolio.service.company.CompanyService;
@@ -28,17 +27,16 @@ public class MarketDataServiceImpl implements MarketDataService {
 
     private static final String BASE_URL = "https://cloud.iexapis.com/";
     private static final String VERSION = "stable/";
-    private static final String TOKEN = "&token=";
+    private static final String TOKEN = "&token=" + IexCloudConfig.getToken();
     private final RestTemplate restTemplate;
-    private final String apiKey;
     private final QuoteRepository quoteRepository;
     private final CompanyService companyService;
     private final FluentLogger log = FluentLoggerFactory.getLogger(MarketDataServiceImpl.class);
 
-    public MarketDataServiceImpl(IexCloudConfig iexCloudConfig, RestTemplate restTemplate,
-                                 QuoteRepository quoteRepository, CompanyService companyService) {
+    public MarketDataServiceImpl(RestTemplate restTemplate,
+                                 QuoteRepository quoteRepository,
+                                 CompanyService companyService) {
         this.restTemplate = restTemplate;
-        this.apiKey = iexCloudConfig.getApiKey();
         this.quoteRepository = quoteRepository;
         this.companyService = companyService;
     }
@@ -52,7 +50,7 @@ public class MarketDataServiceImpl implements MarketDataService {
         String endpointPath = String.format("stock/%s/quote/%s?token=", symbol, field);
 
         Boolean isUSMarketOpen = restTemplate.getForObject(
-                BASE_URL + VERSION + endpointPath + apiKey, Boolean.class);
+                BASE_URL + VERSION + endpointPath + IexCloudConfig.getToken(), Boolean.class);
 
        return isUSMarketOpen != null && isUSMarketOpen;
     }
@@ -72,7 +70,7 @@ public class MarketDataServiceImpl implements MarketDataService {
                 symbolFilter);
 
         QuoteRoot quoteRoot = restTemplate.getForObject(
-                BASE_URL + VERSION + endpointPath + queryParams + TOKEN + apiKey, QuoteRoot.class);
+                BASE_URL + VERSION + endpointPath + queryParams + TOKEN, QuoteRoot.class);
 
         List<Quote> quotes = new ArrayList<>();
         if (quoteRoot != null) {
@@ -125,7 +123,7 @@ public class MarketDataServiceImpl implements MarketDataService {
         String queryParams = String.format("?symbols=%s&types=company&filter=symbol,sector,companyName", symbolFilter);
 
         CompanyRoot companyRoot = restTemplate.getForObject(
-                BASE_URL + VERSION + endpointPath + queryParams + TOKEN + apiKey, CompanyRoot.class);
+                BASE_URL + VERSION + endpointPath + queryParams + TOKEN, CompanyRoot.class);
 
         List<Company> companies = new ArrayList<>();
         if (companyRoot != null) {
