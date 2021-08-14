@@ -28,12 +28,13 @@ import java.util.*;
 @Service
 @Transactional
 public class PortfolioService {
+
+    private static final FluentLogger LOGGER = FluentLoggerFactory.getLogger(PortfolioService.class);
     private static final String[] HEADERS = {"Account", "Symbol", "Quantity"};
     private final PortfolioRepository portfolioRepository;
     private final MarketDataServiceImpl marketDataServiceImpl;
     private final AccountLineRepository accountLineRepository;
     private final CompanyService companyService;
-    private final FluentLogger log = FluentLoggerFactory.getLogger(PortfolioService.class);
 
     public PortfolioService(PortfolioRepository portfolioRepository,
                             MarketDataServiceImpl marketDataServiceImpl,
@@ -59,7 +60,7 @@ public class PortfolioService {
             BufferedReader fileReader = doCreateBufferedReader(multipartFile);
             records = doCreateCSVRecords(fileReader);
         } catch (IOException e) {
-            log.error().log("File upload error for User: " + currentUser + ". ", e.getMessage());
+            LOGGER.error().log("File upload error for User: " + currentUser + ". ", e.getMessage());
         }
 
         Map<String, Map<String, Integer>> portfolioData = null;
@@ -86,7 +87,7 @@ public class PortfolioService {
                 savedPortfolio = doUpdatePortfolio(currentPortfolio.getId(), portfolioData, quotes);
             } catch (PortfolioNotFoundException e) {
                 // Fail gracefully by logging error and allow the program to continue executing
-                log.error().log("Portfolio not found. " + e.getMessage());
+                LOGGER.error().log("Portfolio not found. " + e.getMessage());
             }
         }
 

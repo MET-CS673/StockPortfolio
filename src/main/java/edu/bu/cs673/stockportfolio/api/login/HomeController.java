@@ -23,22 +23,16 @@ import java.util.*;
 @RequestMapping("/home")
 public class HomeController {
 
+    private static final FluentLogger LOGGER = FluentLoggerFactory.getLogger(HomeController.class);
     private final UserService userService;
     private final PortfolioService portfolioService;
-    private final MarketDataScheduler marketDataScheduler;
-    private final QuoteServiceScheduler quoteServiceScheduler;
     private final ResponseService responseService;
-    private final FluentLogger log = FluentLoggerFactory.getLogger(HomeController.class);
 
     public HomeController(UserService userService,
                           PortfolioService portfolioService,
-                          MarketDataScheduler marketDataScheduler,
-                          QuoteServiceScheduler quoteServiceScheduler,
                           ResponseService responseService) {
         this.userService = userService;
         this.portfolioService = portfolioService;
-        this.marketDataScheduler = marketDataScheduler;
-        this.quoteServiceScheduler = quoteServiceScheduler;
         this.responseService = responseService;
     }
 
@@ -52,13 +46,9 @@ public class HomeController {
             try {
                 Long id = portfolio.getId();
                 portfolio = portfolioService.getPortfolioBy(id);
-
-                if (isUSMarketOpen()) {
-                    quoteServiceScheduler.schedule();
-                }
             } catch (PortfolioNotFoundException e) {
                 // Fail gracefully by logging error and returning an arrayList to mimic an empty portfolio
-                log.error().log("Portfolio not found.");
+                LOGGER.error().log("Portfolio not found.");
                 model.addAttribute("portfolio", new ArrayList<>());
             }
         }
@@ -73,9 +63,5 @@ public class HomeController {
 
     private User getUser(Authentication authentication) {
         return userService.findUserByName(authentication.getName());
-    }
-
-    private boolean isUSMarketOpen() {
-        return marketDataScheduler.isUSMarketOpen();
     }
 }

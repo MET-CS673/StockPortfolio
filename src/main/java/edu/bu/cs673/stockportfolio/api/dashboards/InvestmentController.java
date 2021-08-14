@@ -22,10 +22,11 @@ import edu.bu.cs673.stockportfolio.service.utilities.ResponseService;
 @Controller
 @RequestMapping("/stock_breakdown")
 public class InvestmentController {
+
+    private static final FluentLogger LOGGER = FluentLoggerFactory.getLogger(InvestmentController.class);
     private final PortfolioService portfolioService;
     private final ResponseService responseService;
     private final UserService userService;
-    private final FluentLogger log = FluentLoggerFactory.getLogger(InvestmentController.class);
 
     public InvestmentController(PortfolioService portfolioService,
                                 ResponseService responseService, UserService userService) {
@@ -50,7 +51,7 @@ public class InvestmentController {
                 model.addAttribute("data", data);
             } catch (PortfolioNotFoundException e) {
                 // Fail gracefully by logging error, while allowing control flow to return an empty html page.
-                log.error().log("Portfolio not found.");
+                LOGGER.error().log("Portfolio not found.");
             }
         }
         return "stock_breakdown";

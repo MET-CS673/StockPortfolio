@@ -1,6 +1,5 @@
 package edu.bu.cs673.stockportfolio.service.utilities;
 
-import edu.bu.cs673.stockportfolio.api.portfolio.PortfolioController;
 import edu.bu.cs673.stockportfolio.domain.account.Account;
 import edu.bu.cs673.stockportfolio.domain.account.AccountLine;
 import edu.bu.cs673.stockportfolio.domain.investment.quote.Quote;
@@ -26,7 +25,8 @@ import java.util.Map;
  *********************************************************************************************************************/
 @Service
 public class ResponseService {
-    private final FluentLogger log = FluentLoggerFactory.getLogger(ResponseService.class);
+
+    private static final FluentLogger LOGGER = FluentLoggerFactory.getLogger(ResponseService.class);
 
     public String uploadSuccess(boolean result, Model model, User user, PortfolioService service) {
         Long id = user.getPortfolio().getId();
@@ -38,7 +38,7 @@ public class ResponseService {
             model.addAttribute("portfolio", response);
         } catch (PortfolioNotFoundException e) {
             // Fail gracefully by logging error and returning an arrayList to mimic an empty portfolio
-            log.error().log("Portfolio not found.");
+            LOGGER.error().log("Portfolio not found.");
             model.addAttribute("portfolio", new ArrayList<>(List.of()));
         }
 
