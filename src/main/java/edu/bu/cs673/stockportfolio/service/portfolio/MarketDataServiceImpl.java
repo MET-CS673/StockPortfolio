@@ -104,13 +104,10 @@ public class MarketDataServiceImpl implements MarketDataService {
     @Override
     public List<Company> doGetCompanies(Set<String> symbols) {
 
-        // We don't need to retrieve Company data that we already have so befory making the request, remove existing
-        // symbols from the set.
+        // Don't retrieve Company data that we already have so remove existing symbols from the request.
         Set<String> newSymbols = new HashSet<String>();
         for (String symbol : symbols) {
-            
-            if ( !companyService.contains(symbol) ) {
-
+            if (!companyService.contains(symbol)) {
                 newSymbols.add(symbol);
             }
         }
