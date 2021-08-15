@@ -21,6 +21,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**********************************************************************************************************************
+ * The MarketDataServiceImpl uses a synchronous client to perform HTTP requests to IEX Cloud endpoints. It retrieves
+ * representations for the products Quote and Company entities and persists them into the database.
+ *********************************************************************************************************************/
 @Service
 @Transactional
 public class MarketDataServiceImpl implements MarketDataService {
@@ -107,7 +111,7 @@ public class MarketDataServiceImpl implements MarketDataService {
     public List<Company> doGetCompanies(Set<String> symbols) {
 
         // Don't retrieve Company data that we already have so remove existing symbols from the request.
-        Set<String> newSymbols = new HashSet<String>();
+        Set<String> newSymbols = new HashSet<>();
         for (String symbol : symbols) {
             if (!companyService.contains(symbol)) {
                 newSymbols.add(symbol);
@@ -127,9 +131,7 @@ public class MarketDataServiceImpl implements MarketDataService {
         List<Company> companies = new ArrayList<>();
         if (companyRoot != null) {
             Map<String, StockSector> companyData = companyRoot.getCompanies();
-            companyData.forEach((key, value) -> {
-                companies.add(value.getCompany());
-            });
+            companyData.forEach((key, value) -> companies.add(value.getCompany()));
         }
 
         return companies;
