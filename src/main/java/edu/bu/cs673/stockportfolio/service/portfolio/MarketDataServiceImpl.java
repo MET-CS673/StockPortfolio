@@ -79,7 +79,7 @@ public class MarketDataServiceImpl implements MarketDataService {
         if (quoteRoot != null) {
             Map<String, StockQuote> stocks = quoteRoot.getStocks();
             stocks.forEach((key, value) -> {
-                Quote quoteToBeUpdated = getExistingQuote(value);
+                Quote quoteToBeUpdated = updateExistingQuoteOrGetNewQuote(value);
                 quoteRepository.save(quoteToBeUpdated);
                 quotes.add(quoteToBeUpdated);
             });
@@ -88,9 +88,8 @@ public class MarketDataServiceImpl implements MarketDataService {
         return quotes;
     }
 
-    // If the symbol already exists, avoid polluting the database by updating the existing quote.
-    // If the symbol is not yet in the database return the new quote so it can be added to the database.
-    private Quote getExistingQuote(StockQuote stockQuote) {
+    // Update the quote if it exists, otherwise return the new quote
+    private Quote updateExistingQuoteOrGetNewQuote(StockQuote stockQuote) {
         Quote quote = stockQuote.getQuote();
         String symbol = quote.getSymbol();
 
