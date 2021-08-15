@@ -61,7 +61,7 @@ public class MarketDataServiceImplTest {
     public void setup() {
         symbols = new HashSet<>(Set.of("GS"));
 
-        apiKey = IexCloudConfig.getToken();
+        apiKey = iexCloudConfig.getToken();
 
         quote = new Quote();
         quote.setId(1L);
