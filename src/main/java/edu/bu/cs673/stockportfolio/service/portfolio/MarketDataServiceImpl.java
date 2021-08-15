@@ -30,13 +30,16 @@ public class MarketDataServiceImpl implements MarketDataService {
     private static final String VERSION = "stable/";
     private static final String TOKEN_PARAM = "&token=";
     private final RestTemplate restTemplate;
+    private final IexCloudConfig iexCloudConfig;
     private final QuoteRepository quoteRepository;
     private final CompanyService companyService;
 
     public MarketDataServiceImpl(RestTemplate restTemplate,
+                                 IexCloudConfig iexCloudConfig,
                                  QuoteRepository quoteRepository,
                                  CompanyService companyService) {
         this.restTemplate = restTemplate;
+        this.iexCloudConfig = iexCloudConfig;
         this.quoteRepository = quoteRepository;
         this.companyService = companyService;
     }
@@ -50,7 +53,7 @@ public class MarketDataServiceImpl implements MarketDataService {
         String endpointPath = String.format("stock/%s/quote/%s?token=", symbol, field);
 
         Boolean isUSMarketOpen = restTemplate.getForObject(
-                BASE_URL + VERSION + endpointPath + IexCloudConfig.getToken(), Boolean.class);
+                BASE_URL + VERSION + endpointPath + iexCloudConfig.getToken(), Boolean.class);
 
        return isUSMarketOpen != null && isUSMarketOpen;
     }
@@ -70,7 +73,7 @@ public class MarketDataServiceImpl implements MarketDataService {
                 symbolFilter);
 
         QuoteRoot quoteRoot = restTemplate.getForObject(
-                BASE_URL + VERSION + endpointPath + queryParams + TOKEN_PARAM + IexCloudConfig.getToken(), QuoteRoot.class);
+                BASE_URL + VERSION + endpointPath + queryParams + TOKEN_PARAM + iexCloudConfig.getToken(), QuoteRoot.class);
 
         List<Quote> quotes = new ArrayList<>();
         if (quoteRoot != null) {
@@ -120,7 +123,7 @@ public class MarketDataServiceImpl implements MarketDataService {
         String queryParams = String.format("?symbols=%s&types=company&filter=symbol,sector,companyName", symbolFilter);
 
         CompanyRoot companyRoot = restTemplate.getForObject(
-                BASE_URL + VERSION + endpointPath + queryParams + TOKEN_PARAM + IexCloudConfig.getToken(), CompanyRoot.class);
+                BASE_URL + VERSION + endpointPath + queryParams + TOKEN_PARAM + iexCloudConfig.getToken(), CompanyRoot.class);
 
         List<Company> companies = new ArrayList<>();
         if (companyRoot != null) {
