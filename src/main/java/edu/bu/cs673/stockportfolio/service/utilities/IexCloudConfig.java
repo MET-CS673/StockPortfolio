@@ -14,14 +14,14 @@ import org.springframework.web.client.RestTemplate;
 @PropertySource("classpath:secrets.properties")
 public class IexCloudConfig {
     private static final String IEX_CLOUD = "IEX_CLOUD_API_KEY";
-    private static String TOKEN;
+    private final String TOKEN;
 
     public IexCloudConfig(Environment env) {
         TOKEN = env.getProperty(IEX_CLOUD);
     }
 
     @Bean
-    public static String getToken() {
+    public String getToken() {
         return TOKEN;
     }
 
