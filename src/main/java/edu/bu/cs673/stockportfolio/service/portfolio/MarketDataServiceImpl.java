@@ -25,13 +25,13 @@ import java.util.Set;
 @Transactional
 public class MarketDataServiceImpl implements MarketDataService {
 
+    private static final FluentLogger LOGGER = FluentLoggerFactory.getLogger(MarketDataServiceImpl.class);
     private static final String BASE_URL = "https://cloud.iexapis.com/";
     private static final String VERSION = "stable/";
-    private static final String TOKEN = "&token=" + IexCloudConfig.getToken();
+    private static final String TOKEN_PARAM = "&token=";
     private final RestTemplate restTemplate;
     private final QuoteRepository quoteRepository;
     private final CompanyService companyService;
-    private final FluentLogger log = FluentLoggerFactory.getLogger(MarketDataServiceImpl.class);
 
     public MarketDataServiceImpl(RestTemplate restTemplate,
                                  QuoteRepository quoteRepository,
@@ -43,7 +43,7 @@ public class MarketDataServiceImpl implements MarketDataService {
 
     @Override
     public boolean isUSMarketOpen() {
-        log.info().log("Checking if US Market is open");
+        LOGGER.info().log("Checking if US Market is open");
         // Use a well known symbol to check if market is open.
         String symbol = "GS";
         String field = "isUSMarketOpen";
@@ -70,7 +70,7 @@ public class MarketDataServiceImpl implements MarketDataService {
                 symbolFilter);
 
         QuoteRoot quoteRoot = restTemplate.getForObject(
-                BASE_URL + VERSION + endpointPath + queryParams + TOKEN, QuoteRoot.class);
+                BASE_URL + VERSION + endpointPath + queryParams + TOKEN_PARAM + IexCloudConfig.getToken(), QuoteRoot.class);
 
         List<Quote> quotes = new ArrayList<>();
         if (quoteRoot != null) {
@@ -120,7 +120,7 @@ public class MarketDataServiceImpl implements MarketDataService {
         String queryParams = String.format("?symbols=%s&types=company&filter=symbol,sector,companyName", symbolFilter);
 
         CompanyRoot companyRoot = restTemplate.getForObject(
-                BASE_URL + VERSION + endpointPath + queryParams + TOKEN, CompanyRoot.class);
+                BASE_URL + VERSION + endpointPath + queryParams + TOKEN_PARAM + IexCloudConfig.getToken(), CompanyRoot.class);
 
         List<Company> companies = new ArrayList<>();
         if (companyRoot != null) {
