@@ -62,8 +62,6 @@ pipeline {
    post {
         always {
             echo 'Cleaning up resources...'
-            echo 'Removing secrets.properties files from Jenkins directories'
-
 //             withCredentials([file(credentialsId: 'IEXCloud', variable: 'FILE')]) {
 //                 dir('/Users/mlewis/.jenkins/workspace/SPD-Pipeline_' + BRANCH_NAME + '/target/classes') {
 //                     sh 'rm secrets.properties'
